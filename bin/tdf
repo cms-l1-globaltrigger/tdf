@@ -1,0 +1,20 @@
+#!/usr/bin/env python2
+# -*- coding: utf-8 -*-
+# PYTHON_ARGCOMPLETE_OK (tag required by argcomplete, DO NOT REMOVE)
+#
+# Copyright 2013-2015 Bernhard Arnold <bernahrd.arnold@cern.ch>
+#
+# Repository path   : $HeadURL: svn://heros.hephy.oeaw.ac.at/GlobalTriggerUpgrade/software/tdf/trunk/bin/tdf-control $
+# Last committed    : $Revision: 3272 $
+# Last changed by   : $Author: arnold $
+# Last changed date : $Date: 2014-09-26 12:47:28 +0200 (Fri, 26 Sep 2014) $
+#
+
+import sys, os
+from tdf.core.commandline import TDFCommandLine
+
+def main():
+    return TDFCommandLine().exec_()
+
+if __name__ == '__main__':
+    sys.exit(main())

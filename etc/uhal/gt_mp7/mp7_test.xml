@@ -1,0 +1,24 @@
+<node description="Test registers">
+	<node id="test_read" address="0x00000000" size="0x8" permission="r">
+		<node id="module_info" address="0x00000000" permission="r">
+            <node id="protocol"         address="0x00000000" mask="0x0000000f" permission="r" tags="0x0:UNDEFINED,0x1:PCI_E,0x2:IP_BUS_v1.3,0x3:IP_BUS_v2.0"/>
+            <node id="type"             address="0x00000000" mask="0x000000f0" permission="r" tags="0x0:UNDEFINED,0x1:MINI_T5,0x2:MP7,0x3:VADATECH_V7,0x4:AMC514,0x5:GLIB2,0x6:GLIB3"/>
+            <node id="serial"           address="0x00000000" mask="0xffffff00" permission="r"/>
+            <node id="major"            address="0x00000001" mask="0x00ff0000" permission="r"/>
+            <node id="minor"            address="0x00000001" mask="0x0000ff00" permission="r"/>
+            <node id="rev"              address="0x00000001" mask="0x000000ff" permission="r"/>
+            <node id="author_1"         address="0x00000002" mask="0x000000ff" permission="r"/>
+            <node id="author_2"         address="0x00000002" mask="0x0000ff00" permission="r"/>
+            <node id="author_3"         address="0x00000002" mask="0x00ff0000" permission="r"/>
+            <node id="author_4"         address="0x00000002" mask="0xff000000" permission="r"/>
+            <node id="timestamp"        address="0x00000003" mask="0xffffffff" permission="r"/>
+            <node id="vendor_serial_lo" address="0x00000004" mask="0xffffffff" permission="r"/>
+            <node id="vendor_serial_hi" address="0x00000005" mask="0xffffffff" permission="r"/>
+            <node id="test"             address="0x00000006" mask="0xffffffff" permission="r"/>
+		</node>
+	</node>
+	<node id="test_write" address="0x00000010" size="0x8" permission="rw">
+		<node id="reg_one" address="0x00000000" mask="0xffffffff" permission="rw"/>
+	</node>
+    <node id="dpmem0" address="0x00001000" mode="incremental" size="4096" permission="rw"/>
+</node>

@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<connections>
+    <connection id="amc13_s6" uri="chtcp-2.0://localhost:10203?target=192.168.1.84:50001" address_table="file://amc13xg/AMC13_AddressTable_S6.xml" />
+    <connection id="amc13_k7" uri="chtcp-2.0://localhost:10203?target=192.168.1.85:50001" address_table="file://amc13xg/AMC13_AddressTable_K7.xml" />
+</connections>

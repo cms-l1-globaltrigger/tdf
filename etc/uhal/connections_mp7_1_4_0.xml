@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<connections>
+  <!-- BR 2014-10-28:TOP xml of fw tag 1_4_0 is mp7_infra.xml for 3 MP7 cards-->
+  <!-- BR 2014-09-18:TOP xml of fw tag 1_4_0 is mp7_infra.xml -->
+    <connection id="MP7_HEPHY3" uri="chtcp-2.0://localhost:10203?target=amc-gtlab-03.vie:50001" address_table="file://gt_mp7_1_4_0/mp7_infra.xml" />
+    <connection id="MP7_HEPHY6" uri="chtcp-2.0://localhost:10203?target=amc-gtlab-06.vie:50001" address_table="file://gt_mp7_1_4_0/mp7_infra.xml" />
+</connections>

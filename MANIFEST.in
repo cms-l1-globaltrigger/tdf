@@ -1,0 +1,11 @@
+include setup.sh
+include completion.sh
+include Makefile
+include etc/config/*/*.cfg
+include etc/uhal/*.xml
+include etc/uhal/*/*.xml
+include etc/routines/*.py
+include etc/unittest/*/*.py
+include doc/sphinx/Makefile
+include doc/sphinx/conf.py
+include doc/sphinx/*.rst

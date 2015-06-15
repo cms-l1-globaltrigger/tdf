@@ -1,0 +1,9 @@
+<node description="MP7 formatter block">
+	<node id="ctrl" address="0x0" description="ctrl register" fwinfo="endpoint;width=0">
+		<node id="enable_strip" mask="0x1"/>
+		<node id="enable_insert" mask="0x2"/>
+		<node id="sel_bxsrc" mask="0x4"/>
+		<node id="dest" mask="0xff0000"/>
+		<node id="src" mask="0xff000000"/>
+	</node>
+</node>

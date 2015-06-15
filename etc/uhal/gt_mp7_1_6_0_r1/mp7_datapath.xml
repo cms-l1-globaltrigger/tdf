@@ -1,0 +1,4 @@
+<node description="MP7 IO datapath" fwinfo="endpoint" class="DatapathNode">
+	<node id="region" module="file://mp7_region.xml" address="0x0"/>
+	<node id="bc0_mon" module="file://align_mon.xml" address="0x800"/>
+</node>

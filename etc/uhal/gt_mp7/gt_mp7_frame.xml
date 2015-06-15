@@ -1,0 +1,236 @@
+<node description="FRAME registers">
+	<node id="module_info" address="0x00000000" permission="r" parameters="type=parent">
+		<node id="timestamp"        address="0x00000000" mask="0xffffffff" permission="r" parameters="type=timestamp"/>
+
+	<node id="hostname" address="0x00000001" mode="incremental" size="8" permission="r" parameters="type=string"/>
+	<node id="username" address="0x00000009" mode="incremental" size="8" permission="r" parameters="type=string"/>
+
+		<node id="module_type"      address="0x00000011" permission="r" parameters="type=parent">
+			<node id="protocol"     address="0x00000000" mask="0x0000000f" permission="r" parameters="type=module_protocol"/>
+			<node id="type"         address="0x00000000" mask="0x000000f0" permission="r" parameters="type=module_protocol"/>
+			<node id="serial"       address="0x00000000" mask="0xffffff00" permission="r"/>
+		</node>
+		<node id="vendor_serial_lo" address="0x00000012" permission="r" parameters="type=parent">
+			<node id="ven_ser1"   address="0x00000000" mask="0x000000ff" permission="r" parameters="type=hex"/>
+			<node id="ven_ser2"   address="0x00000000" mask="0x0000ff00" permission="r"/>
+			<node id="ven_ser3"   address="0x00000000" mask="0x00ff0000" permission="r"/>
+			<node id="ven_ser4"   address="0x00000000" mask="0xff000000" permission="r"/>
+		</node>
+		<node id="vendor_serial_hi" address="0x00000013" permission="r" parameters="type=parent">
+			<node id="ven_ser5"   address="0x00000000" mask="0x000000ff" permission="r" parameters="type=hex"/>
+			<node id="ven_ser6"   address="0x00000000" mask="0x0000ff00" permission="r"/>
+			<node id="ven_ser7"   address="0x00000000" mask="0x00ff0000" permission="r"/>
+			<node id="ven_ser8"   address="0x00000000" mask="0xff000000" permission="r"/>
+		</node>
+		<node id="frame_version"    address="0x00000014" permission="r" parameters="type=version">
+			<node id="major"        address="0x00000000" mask="0x00ff0000" permission="r" parameters="type=number"/>
+			<node id="minor"        address="0x00000000" mask="0x0000ff00" permission="r" parameters="type=number"/>
+			<node id="rev"          address="0x00000000" mask="0x000000ff" permission="r" parameters="type=number"/>
+		</node>
+	</node>
+
+	<node id="test_regs_0"       address="0x00000020" permission="r" parameters="type=parent">
+		<node id="simmem_in_use" address="0x00000000" mask="0x00000001" permission="r"/> <!-- "simmem_in_use_o" -->
+		<node id="spy1" address="0x00000000" mask="0x00000002" permission="r"/>
+		<node id="spy2" address="0x00000000" mask="0x00000004" permission="r"/>
+		<node id="spy3" address="0x00000000" mask="0x00000008" permission="r"/>
+		<node id="demux_lane_adjust" address="0x00000000" mask="0x00000070" permission="r"/> <!-- del_a of demux_lane_data.vhd -->
+		<node id="sw_regs_in_spytrigger_spy12_once_event" address="0x00000000" mask="0x00000100" permission="r"/>
+		<node id="sw_regs_in_spytrigger_spy12_next_event" address="0x00000000" mask="0x00000200" permission="r"/>
+		<node id="sw_regs_in_spytrigger_spy3_event" address="0x00000000" mask="0x00000400" permission="r"/>
+		<node id="sw_regs_in_spytrigger_clear_spy12_ready_event" address="0x00000000" mask="0x00000800" permission="r"/>
+		<node id="sw_regs_in_spytrigger_clear_spy3_ready_event" address="0x00000000" mask="0x00001000" permission="r"/>
+		<node id="sw_regs_in_spytrigger_clear_spy12_error_event" address="0x00000000" mask="0x00002000" permission="r"/>
+		<node id="tcm_bx_nr" address="0x00000000" mask="0x0fff0000" permission="r"/> <!-- bx_nr of TCM for tests -->
+	</node>
+<!-- HB 2014-07-10: added test status register addresses -->
+	<node id="test_reg_spytrigger_status" address="0x00000021" permission="r" parameters="type=parent"> <!-- HB 2014-06-26: register for status of spytrigger (in AMC514 part of address 0x00700308), bit 11 of address selects status registers of rb (see rb.vhd) -->
+		<node id="trig_spy12_error" address="0x00000000" mask="0x08000000" permission="r" tags="0x0:OK,0x1:ERROR"/>
+		<node id="trig_spy3_ready" address="0x00000000" mask="0x10000000" permission="r" tags="0x0:NOTREADY,0x1:READY"/>
+		<node id="trig_spy12_ready" address="0x00000000" mask="0x20000000" permission="r" tags="0x0:NOTREADY,0x1:READY"/>
+		<node id="trig_spy3_busy" address="0x00000000" mask="0x40000000" permission="r" tags="0x0:READY,0x1:BUSY"/>
+		<node id="trig_spy12_busy" address="0x00000000" mask="0x80000000" permission="r" tags="0x0:READY,0x1:BUSY"/>
+	</node>
+	<node id="test_reg_dm_status" address="0x00000022" permission="r" parameters="type=parent">
+		<node id="valid" address="0x00000000" mask="0x00000001" permission="r" parameters="type=boolean"/>
+	</node>
+	<node id="test_reg_tcm_status" address="0x00000023" permission="r" parameters="type=parent">
+		<node id="bx_nr" address="0x00000000" mask="0x00000fff" permission="r"/>
+		<node id="event_nr" address="0x00000001" mask="0xffffffff" permission="r"/>
+		<node id="trigger_nr_l" address="0x00000002" mask="0xffffffff" permission="r"/>
+		<node id="trigger_nr_h" address="0x00000003" mask="0x0000ffff" permission="r"/>
+		<node id="orbit_nr_l" address="0x00000004" mask="0xffffffff" permission="r"/>
+		<node id="orbit_nr_h" address="0x00000005" mask="0x0000ffff" permission="r"/>
+		<node id="bx_nr_chk" address="0x00000006" mask="0xffffffff" permission="r"/> <!-- should always be less or equal 0xdeb -->
+		<node id="bx_nr_max" address="0x00000007" mask="0xffffffff" permission="r"/> <!-- should always be equal 0xdeb -->
+		<node id="err_det" address="0x00000008" mask="0x00000001" permission="r"/> <!-- set, when bcres was not asserted correctly. can be reset via err_det_reset_event -->
+		<node id="bx_nr_d_fdl" address="0x00000009" mask="0x00000fff" permission="r"/> <!-- a different version of bx_nr used by fdl -->
+		<node id="luminosity_seg_nr" address="0x0000000A" mask="0xffffffff" permission="r"/>
+	</node>
+	<!--<node id="test_reg_rop_status" address="0x00000034" permission="r">
+		<node id="busy" address="0x00000000" mask="0x00000001" permission="r"/>
+		</node>-->
+
+	<node id="demux_lane_adjust" address="0x00000040" mask="0x00000007" permission="rw" parameters="type=parent"/>
+
+	<!-- SIM-SPY-MEMS -->
+	<node id="simspymem" address="0x00300000" mode="incremental" size="245760" permission="rw" parameters="type=mem"/>
+	<node id="spymem2_algos" address="0x00240000" mode="incremental" size="65536" permission="rw" parameters="type=mem"/>
+	<node id="spymem2_finor" address="0x00200000" mode="incremental" size="4096" permission="rw" parameters="type=mem"/>
+	<node id="spymem3" address="0x00280000" mode="incremental" size="65536" permission="rw" parameters="type=mem"/>
+	<!-- <node id="Muon[0]" address="0x00300000" permission="rw">
+	  <node id="bx0_L"  address="0x00000000" mask="0xffffffff" permission="rw"/>
+	  <node id="bx0_H"  address="0x00000001" mask="0xffffffff" permission="rw"/>
+	  <node id="bx1_L"  address="0x00000040" mask="0xffffffff" permission="rw"/>
+	  <node id="bx1_H"  address="0x00000041" mask="0xffffffff" permission="rw"/>
+	  <node id="bx2_L"  address="0x00000080" mask="0xffffffff" permission="rw"/>
+	  <node id="bx2_H"  address="0x00000081" mask="0xffffffff" permission="rw"/>
+	  <node id="bx3_L"  address="0x000000c0" mask="0xffffffff" permission="rw"/>
+	  <node id="bx3_H"  address="0x000000c1" mask="0xffffffff" permission="rw"/>
+	  <node id="bx4_L"  address="0x00000100" mask="0xffffffff" permission="rw"/>
+	  <node id="bx4_H"  address="0x00000101" mask="0xffffffff" permission="rw"/>
+	  <node id="bx5_L"  address="0x00000140" mask="0xffffffff" permission="rw"/>
+	  <node id="bx5_H"  address="0x00000141" mask="0xffffffff" permission="rw"/>
+	  <node id="bx6_L"  address="0x00000180" mask="0xffffffff" permission="rw"/>
+	  <node id="bx6_H"  address="0x00000181" mask="0xffffffff" permission="rw"/>
+	  <node id="bx7_L"  address="0x000001c0" mask="0xffffffff" permission="rw"/>
+	  <node id="bx7_H"  address="0x000001c1" mask="0xffffffff" permission="rw"/>
+	  <node id="bx8_L"  address="0x00000200" mask="0xffffffff" permission="rw"/>
+	  <node id="bx8_H"  address="0x00000201" mask="0xffffffff" permission="rw"/>
+
+	</node>  -->
+<!--	<node id="bx0_L"  address="0x00300000" mask="0xffffffff" permission="rw"/>
+	  <node id="bx0_H"  address="0x00300001" mask="0xffffffff" permission="rw"/>
+	  <node id="bx1_L"  address="0x00300040" mask="0xffffffff" permission="rw"/>
+	  <node id="bx1_H"  address="0x00300041" mask="0xffffffff" permission="rw"/>
+	  <node id="bx2_L"  address="0x00300080" mask="0xffffffff" permission="rw"/>
+	  <node id="bx2_H"  address="0x00300081" mask="0xffffffff" permission="rw"/>
+	  <node id="bx3_L"  address="0x003000c0" mask="0xffffffff" permission="rw"/>
+	  <node id="bx3_H"  address="0x003000c1" mask="0xffffffff" permission="rw"/>
+	  <node id="bx4_L"  address="0x00300100" mask="0xffffffff" permission="rw"/>
+	  <node id="bx4_H"  address="0x00300101" mask="0xffffffff" permission="rw"/>
+	  <node id="bx5_L"  address="0x00300140" mask="0xffffffff" permission="rw"/>
+	  <node id="bx5_H"  address="0x00300141" mask="0xffffffff" permission="rw"/>
+	  <node id="bx6_L"  address="0x00300180" mask="0xffffffff" permission="rw"/>
+	  <node id="bx6_H"  address="0x00300181" mask="0xffffffff" permission="rw"/>
+	  <node id="bx7_L"  address="0x003001c0" mask="0xffffffff" permission="rw"/>
+	  <node id="bx7_H"  address="0x003001c1" mask="0xffffffff" permission="rw"/>
+	  <node id="bx8_L"  address="0x00300200" mask="0xffffffff" permission="rw"/>
+	  <node id="bx8_H"  address="0x00300201" mask="0xffffffff" permission="rw"/>-->
+	<!--RB control register-->
+	<node id="rb" address="0x00700000" permission="rw">
+		<node id="dsmux" address="0x0000004C" permission="rw" parameters="type=parent">
+			<node id="muon_src" address="0x00000000" mask="0x00000001" permission="rw"/>
+			<node id="eg_src" address="0x00000000" mask="0x00000002" permission="rw"/>
+			<node id="tau_src" address="0x00000000" mask="0x00000004" permission="rw"/>
+			<node id="jet_src" address="0x00000000" mask="0x00000008" permission="rw"/>
+			<node id="ett_src" address="0x00000000" mask="0x00000010" permission="rw"/>
+			<node id="ht_src" address="0x00000000" mask="0x00000020" permission="rw"/>
+			<node id="etm_src" address="0x00000000" mask="0x00000040" permission="rw"/>
+			<node id="htm_src" address="0x00000000" mask="0x00000080" permission="rw"/>
+			<node id="ext_con_src" address="0x00000000" mask="0x00000100" permission="rw"/>
+		</node>
+		<node id="l1asim" address="0x00000140" permission="rw">
+			<node id="l1asim_config" address="0x00000000" permission="rw" parameters="type=parent">
+				<node id="enable_l1a_sim" address="0x00000000" mask="0x00000001" permission="rw"/> <!-- Enables the simulation of l1a events. All others configurations of the l1asim module can only have an effect if this bit is one -->
+				<node id="fire_once_event" address="0x00000000" mask="0x00000002" permission="rw"/> <!-- triggers one l1a, when written with 1 -->
+				<node id="cntrl" address="0x00000000" mask="0x0000000c" permission="rw" tags="0x0:NONE,0x1:PATTERN_AT_ORBIT,0x2:ALTERNATING"/> <!-- l1asim mode -->
+			</node>
+			<node id="orbit_nr_l" address="0x00000004" mask="0xffffffff" permission="rw"/>
+			<node id="orbit_nr_h" address="0x00000008" mask="0x0000ffff" permission="rw"/>
+			<node id="pattern_a" address="0x0000000c" permission="rw" parameters="type=parent"> <!-- HB 2014-06-26: structure of AMC514 - may be changed -->
+				<node id="trigger_pattern_a0" address="0x00000000" mask="0x00000fff" permission="rw"/>
+				<node id="trigger_pattern_a1" address="0x00000004" mask="0x00000fff" permission="rw"/>
+				<node id="trigger_pattern_a2" address="0x00000008" mask="0x00000fff" permission="rw"/>
+				<node id="trigger_pattern_a3" address="0x0000000c" mask="0x00000fff" permission="rw"/>
+				<node id="trigger_pattern_a4" address="0x00000010" mask="0x00000fff" permission="rw"/>
+			</node>
+			<node id="pattern_b" address="0x00000020" permission="rw" parameters="type=parent">
+				<node id="trigger_pattern_b0" address="0x00000000" mask="0x00000fff" permission="rw"/>
+				<node id="trigger_pattern_b1" address="0x00000004" mask="0x00000fff" permission="rw"/>
+				<node id="trigger_pattern_b2" address="0x00000008" mask="0x00000fff" permission="rw"/>
+				<node id="trigger_pattern_b3" address="0x0000000c" mask="0x00000fff" permission="rw"/>
+				<node id="trigger_pattern_b4" address="0x00000010" mask="0x00000fff" permission="rw"/>
+			</node>
+		</node>
+		<node id="spytrigger" address="0x00000300" permission="rw">
+			<node id="orbit_nr_l" address="0x00000000" mask="0xffffffff" permission="rw"/>
+			<node id="orbit_nr_h" address="0x00000004" mask="0x0000ffff" permission="rw"/>
+			<node id="control" address="0x00000008" permission="rw" parameters="type=parent">
+				<node id="spy12_once_event" address="0x00000000" mask="0x00000001" permission="rw"/> <!-- Triggers a spy event (for a specific orbit) for spy memory I and II, when written 1 -->
+				<node id="spy12_next_event" address="0x00000000" mask="0x00000002" permission="rw"/> <!-- Triggers a spy event (for the next orbit) for spy memory I and II, when written 1 -->
+				<node id="spy3_event" address="0x00000000" mask="0x00000004" permission="rw"/> <!-- Triggers a spy event (for the next ROP output packet) for spy memory III, when written 1 -->
+				<node id="clear_spy12_ready_event" address="0x00000000" mask="0x00000008" permission="rw"/> <!-- Clears the ready flag of the spy I/II trigger, when written 1 -->
+				<node id="clear_spy3_ready_event" address="0x00000000" mask="0x00000010" permission="rw"/> <!-- Clears the ready flag of the spy III trigger, when written 1 -->
+				<node id="clear_spy12_error_event" address="0x00000000" mask="0x00000020" permission="rw"/> <!-- Clears the error flag of the spy I/II trigger, when written 1 -->
+			</node>
+		</node>
+		<node id="sw_reset" address="0x0000005c" permission="rw" parameters="type=parent">
+			<node id="reset_event" address="0x00000000" mask="0x00000001" permission="rw"/>
+		</node>
+		<node id="dm" address="0x00000014" permission="rw" parameters="type=parent">
+			<node id="delay_muons"     address="0x00000000" mask="0x00000fff" permission="rw"/>
+			<node id="delay_eg"        address="0x00000004" mask="0x00000fff" permission="rw"/>
+			<node id="delay_tau"       address="0x00000008" mask="0x00000fff" permission="rw"/>
+			<node id="delay_jet"       address="0x0000000C" mask="0x00000fff" permission="rw"/>
+			<node id="delay_ett"       address="0x00000010" mask="0x00000fff" permission="rw"/>
+			<node id="delay_ht"        address="0x00000014" mask="0x00000fff" permission="rw"/>
+			<node id="delay_etm"       address="0x00000018" mask="0x00000fff" permission="rw"/>
+			<node id="delay_htm"       address="0x0000001C" mask="0x00000fff" permission="rw"/>
+			<node id="delay_ext_con"   address="0x00000020" mask="0x00000fff" permission="rw"/>
+			<node id="delay_bcres"     address="0x00000024" mask="0x00000fff" permission="rw"/>
+			<node id="delay_bcres_fdl" address="0x00000028" mask="0x00000fff" permission="rw"/>
+		</node>
+		<node id="tcm" address="0x00000100" permission="rw" parameters="type=parent">
+			<node id="cmd_ignbcres"                 address="0x00000000" mask="0x00000001" permission="rw"/> <!-- the check for bcres is ignored when cmd_ignbcres is set. the bx_nr then automatically resets after 0xdeb without checking if bcres is asserted correctly -->
+			<node id="err_det_reset_event"          address="0x00000028" mask="0x00000001" permission="rw"/> <!-- resets err_det when 1 is written to this register -->
+			<node id="bgos"                         address="0x00000038" mask="0x0000000f" permission="rw"/> <!-- used to simulate bgos events. set this register to the desired value and use bgos_event overwrite the real bgos by the value of this register for exactly one clock cycle -->
+			<node id="bgos_event"                   address="0x0000003C" mask="0x00000001" permission="rw"/> <!-- the real bgos is overwritten by the value of the software register bgos for exactly one clock cycle when 1 is written to this register -->
+			<node id="test_reg"                     address="0x00000074" mask="0xffffffff" permission="rw"/> <!-- this register has no effect but can be written and read back for debug purposes -->
+			<node id="luminosity_seg_period_msk"    address="0x00000008" mask="0xffffffff" permission="rw"/> <!-- luminosity_seg_nr is increased when the orbit_nr mod lum_seg_period_mask = 0 -->
+		</node>
+		<node id="rop" address="0x00000200" permission="rw" parameters="type=parent">
+			<node id="version"                      address="0x00000000" mask="0xffffffff" permission="rw"/>
+			<node id="BoardID"                      address="0x00000004" mask="0x0000ffff" permission="rw"/>
+			<node id="total_bx_in_event_decision"   address="0x00000008" mask="0x0000000f" permission="rw"/>
+			<node id="total_bx_in_event_ext_cond"   address="0x0000000C" mask="0x0000000f" permission="rw"/>
+			<node id="total_bx_in_event_gmt"        address="0x00000010" mask="0x0000000f" permission="rw"/>
+			<node id="total_bx_in_event_gct"        address="0x00000014" mask="0x0000000f" permission="rw"/>
+			<node id="prescale_factor_set_index"    address="0x00000018" mask="0x000000ff" permission="rw"/>
+			<node id="lhc_data_delay"               address="0x0000001C" mask="0x0000000f" permission="rw"/>
+			<node id="tcm_delay"                    address="0x00000020" mask="0x0000000f" permission="rw"/>
+			<node id="algo_delay"                   address="0x00000024" mask="0x0000000f" permission="rw"/>
+			<node id="busy_reset_event"             address="0x0000002C" mask="0x00000001" permission="rw"/>
+			<node id="Payload"                      address="0x00000030" mask="0x000fffff" permission="rw"/>
+		</node>
+
+<!--RB status register-->
+<!-- HB 2014-07-10: changed status register addresses -->
+		<node id="spytrigger_status" address="0x00000800" permission="r" parameters="type=parent"> <!-- HB 2014-06-26: register for status of spytrigger (in AMC514 part of address 0x00700308), bit 11 of address selects status registers of rb (see rb.vhd) -->
+			<node id="trig_spy12_error" address="0x00000000" mask="0x08000000" permission="r" tags="0x0:OK,0x1:ERROR"/>
+			<node id="trig_spy3_ready" address="0x00000000" mask="0x10000000" permission="r" tags="0x0:NOTREADY,0x1:READY"/>
+			<node id="trig_spy12_ready" address="0x00000000" mask="0x20000000" permission="r" tags="0x0:NOTREADY,0x1:READY"/>
+			<node id="trig_spy3_busy" address="0x00000000" mask="0x40000000" permission="r" tags="0x0:READY,0x1:BUSY"/>
+			<node id="trig_spy12_busy" address="0x00000000" mask="0x80000000" permission="r" tags="0x0:READY,0x1:BUSY"/>
+		</node>
+		<node id="dm_status" address="0x00000801" permission="r" parameters="type=parent">
+			<node id="valid" address="0x00000000" mask="0x00000001" permission="r"/>
+		</node>
+		<node id="tcm_status" address="0x00000802" permission="r" parameters="type=parent">
+			<node id="bx_nr" address="0x00000000" mask="0x00000fff" permission="r"/>
+			<node id="event_nr" address="0x00000001" mask="0xffffffff" permission="r"/>
+			<node id="trigger_nr_l" address="0x00000002" mask="0xffffffff" permission="r"/>
+			<node id="trigger_nr_h" address="0x00000003" mask="0x0000ffff" permission="r"/>
+			<node id="orbit_nr_l" address="0x00000004" mask="0xffffffff" permission="r"/>
+			<node id="orbit_nr_h" address="0x00000005" mask="0x0000ffff" permission="r"/>
+			<node id="bx_nr_chk" address="0x00000006" mask="0xffffffff" permission="r"/> <!-- should always be less or equal 0xdeb -->
+			<node id="bx_nr_max" address="0x00000007" mask="0xffffffff" permission="r"/> <!-- should always be equal 0xdeb -->
+			<node id="err_det" address="0x00000008" mask="0x00000001" permission="r"/> <!-- set, when bcres was not asserted correctly. can be reset via err_det_reset_event -->
+			<node id="bx_nr_d_fdl" address="0x00000009" mask="0x00000fff" permission="r"/> <!-- a different version of bx_nr used by fdl -->
+			<node id="luminosity_seg_nr" address="0x0000000A" mask="0xffffffff" permission="r"/>
+		</node>
+		<node id="rop_status" address="0x0000080D" permission="r" parameters="type=parent">
+			<node id="busy" address="0x00000000" mask="0x00000001" permission="r"/>
+		</node>
+	</node>
+</node>

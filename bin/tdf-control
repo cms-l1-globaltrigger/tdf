@@ -1,0 +1,58 @@
+#!/usr/bin/env python2
+# -*- coding: utf-8 -*-
+#
+# Copyright 2013-2015 Bernhard Arnold <bernahrd.arnold@cern.ch>
+#                     Johannes Wittmann <johannes.wittmann@cern.ch>
+#
+# Repository path   : $HeadURL: svn://heros.hephy.oeaw.ac.at/GlobalTriggerUpgrade/software/tdf/trunk/bin/tdf-control $
+# Last committed    : $Revision: 3750 $
+# Last changed by   : $Author: arnold $
+# Last changed date : $Date: 2015-02-13 13:04:45 +0100 (Fri, 13 Feb 2015) $
+#
+
+import uhal
+from PyQt4 import QtCore, QtGui
+from tdf.core import TDF
+from tdf.extern import argparse
+from tdf.widgets.control import MainWindow
+from tdf.widgets.control import __version__
+import sys, os
+
+# -----------------------------------------------------------------------------
+#  Parsing command line arguments
+# -----------------------------------------------------------------------------
+
+def parse():
+    """Parse command line arguments."""
+    argp = argparse.ArgumentParser(prog = "tdf-control", description = "View and edit uHAL items of devices listed in a connections file.")
+    argp.add_argument('filename', default = None, metavar='<file>', nargs='?', help = "uHAL connection file (XML), required if using --configure, --read or --write")
+    argp.add_argument('-v', '--verbose', action = 'store_true', help = "show uHAL logging information")
+    argp.add_argument('-V, --version', action='version', version='%(prog)s {__version__}'.format(**globals()))
+    return argp.parse_args()
+
+# -----------------------------------------------------------------------------
+#  Main routine
+# -----------------------------------------------------------------------------
+
+def main():
+    """Main routine."""
+    args = parse()
+
+    # Disable uhal logging if not in verbose mode.
+    if not args.verbose:
+        uhal.disableLogging()
+
+    # Create application and main window.
+    app = QtGui.QApplication(sys.argv)
+    window = MainWindow()
+    window.show()
+
+    # Open connections file using command line argument.
+    if args.filename:
+        window.loadConnections(args.filename)
+
+    # Run execution loop.
+    return app.exec_()
+
+if __name__ == '__main__':
+    sys.exit(main())
