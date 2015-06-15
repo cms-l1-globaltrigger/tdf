@@ -1,0 +1,41 @@
+<node description="MGT alignment control block" fwinfo="endpoint;width=3" class="AlignmentNode">
+	<node id="ctrl" address="0x0">
+		<node id="enable" mask="0x00000001"/>
+		<node id="margin" mask="0x0000001E"/>
+                <node id="secondary_master" mask="0x00000020"/>		
+		<node id="disable_ch23_ch00" mask="0xFFFFFF00"/>
+	</node>
+	<node id="ctrl_r1" address="0x1">
+		<node id="disable_ch55_ch24" mask="0xFFFFFFFF"/>
+	</node>
+	<node id="ctrl_r2" address="0x2">
+		<node id="disable_ch71_ch56" mask="0x0000FFFF"/>
+		<node id="bunch_ctr_req" mask="0x0FFF0000"/>
+		<node id="sub_bunch_ctr_req" mask="0x70000000"/>
+		<node id="fixed_latency" mask="0x80000000"/>
+	</node>
+	<node id="stat" address="0x4">
+		<node id="error_during_check" mask="0x00000001"/>
+		<node id="error_master_period_unstable" mask="0x00000002"/>
+		<node id="error_master_missing" mask="0x00000004"/>
+		<node id="qpll_lock" mask="0x00000010"/>
+		<node id="min_bunch_ctr" mask="0x00FFF000"/>
+		<node id="min_sub_bunch_ctr" mask="0x07000000"/>
+		<node id="error_aligning_links" mask="0x08000000"/>
+		<node id="error_minimising_latency" mask="0x10000000"/>
+		<node id="error_req_latency_invalid" mask="0x20000000"/>
+		<node id="align_operating" mask="0x40000000"/>
+		<node id="align_ok" mask="0x80000000"/>
+	</node>
+	<node id="stat_r1" address="0x5">
+		<node id="aligned_links_ch31_ch00" mask="0xFFFFFFFF"/>
+	</node>
+	<node id="stat_r2" address="0x6">
+		<node id="aligned_links_ch63_ch32" mask="0xFFFFFFFF"/>
+	</node>
+	<node id="stat_r3" address="0x7">
+		<node id="aligned_links_ch71_ch64" mask="0x000000FF"/>
+	</node>
+</node>
+
+

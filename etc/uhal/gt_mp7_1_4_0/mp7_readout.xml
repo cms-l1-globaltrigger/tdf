@@ -1,0 +1,12 @@
+<node description="MP7 readout" fwinfo="endpoint">
+	<node id="daq_csr" address="0x0" description="DAQ/Readout CSR" fwinfo="endpoint;width=1">
+		<node id="mode" address="0x0">
+			<node id="trig_bx" mask="0xfff00"/>
+			<node id="max_word" mask="0xfff00000"/>
+		</node>
+	</node>
+	<node id="daq_buffer" address="0x2" size="0x2" description="DAQ/Readout buffer" fwinfo="endpoint;width=1">
+		<node id="daq_addr" address="0x0"/>
+		<node id="daq_data" address="0x1" size="0x80000" mode="port"/>
+	</node>
+</node>

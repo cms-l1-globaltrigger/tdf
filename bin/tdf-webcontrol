@@ -1,0 +1,78 @@
+#!/usr/bin/env python2
+# -*- coding: utf-8 -*-
+
+from tdf.extern import bottle
+from tdf.extern.bottle import route, view, run, template
+from tdf.extern import argparse
+from tdf.core import TDF
+
+import uhal
+import sys, os
+
+__version__ = '$Revision: $'
+
+# Append HTML template location.
+bottle.TEMPLATE_PATH.append(os.path.join(TDF.ROOT_DIR, 'etc', 'shared', 'webcontrol', 'templates'))
+
+from tdf.core import TDFCore
+from tdf.core import toolbox
+import uhal
+import sys
+import tempfile
+
+CRATE_NAME = 'vienna_testing'
+
+api = TDFCore('file://{TDF.ROOT_DIR}/etc/uhal/connections_{CRATE_NAME}.xml'.format(**locals()))
+
+def scansd(device, model):
+    """Read stdout results from butler command (bitfiles located on uSD).
+    Returns list of filenames stored on uSD card.
+    """
+    # Create temporary file in memory.
+    tmp = tempfile.SpooledTemporaryFile()
+    # Capture stdout from butler (should contain list of bitfiles).
+    api.mp7butler("scansd", device, "-m", model, stdout = tmp)
+    # Set file pointer to begin of temporary file.
+    tmp.seek(0)
+    # Read content of temporary file.
+    result = tmp.read().strip().split("\n")
+    # Close the temporary file.
+    tmp.close()
+    # Return list of bitfiles.
+    return [filename.strip() for filename in result]
+
+
+@route('/api/scansd/<device>')
+@view('sample')
+def index(device):
+    filenames = scansd(device, 'xe')
+    return dict(device = device, filenames = filenames)
+
+@route('/')
+@route('/crate')
+@view('crate')
+def index():
+    states = toolbox.cratescan(api)
+    for i, state in enumerate(states):
+        if state.type == 'gt_mp7':
+            if state.state == toolbox.STATES.DEVICE_PRESENT:
+                states[i].l1menu = api.read(state.device, 'gt_mp7_gtlfdl.read_versions.l1tm_name', translate = True)
+    return dict(devices = states, crate_name = CRATE_NAME)
+
+def parse():
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--hostname', default = "localhost", help = "set the servers hostname")
+    parser.add_argument('-p', '--port', default = 8080, type = int, help = "set the servers port")
+    parser.add_argument('-v', '--verbose', action = 'store_true', help = "print additional information")
+    parser.add_argument('-V', '--version', action = 'version', version = "%(prog)s {0}".format(TDF.VERSION))
+    return parser.parse_args()
+
+if __name__ == '__main__':
+    args = parse()
+
+    # Disable uhal logging if not verbose mode.
+    if not args.verbose:
+        uhal.disableLogging()
+
+    # Run the web application server.
+    run(host = args.hostname, port = args.port)

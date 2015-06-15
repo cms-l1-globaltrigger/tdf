@@ -1,0 +1,5 @@
+<node description="QDR RAM" fwinfo="endpoint;width=22" >
+    <node id="ram0" address="0x000000" size="0x200000" mode="block" fwinfo="endpoint;width=21"/>
+    <node id="ram1" address="0x200000" size="0x200000" mode="block" fwinfo="endpoint;width=21"/>
+</node>
+
