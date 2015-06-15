@@ -126,3 +126,6 @@ if args.pattern not in (':counter', ':zero'):
                         result = "OK" if l1a_tv == l1a_hw else "ERROR"
                         print "{bit}\t{l1a_tv}\t{l1a_hw}\t{result}\t{name}".format(**locals())
                 break
+#mp7butler("buffers", args.device, "captureTx", "--cap", "1500", "--enablelinks", args.links)
+mp7butler("buffers", args.device, "captureTx", "--enablelinks",  "0-3")
+mp7butler("capture", args.device, "--enablelinks", "0-3")
