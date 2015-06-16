@@ -1,13 +1,33 @@
 # Simple ROP (spymem3)
+#from tdf.extern import argparse
+#import sys, os
+#import time
+
 from tdf.extern import argparse
-import sys, os
+#from tdf.core.testvector import TestVector
+import os, re
 import time
+import datetime
+
+
+def result_area():
+    from datetime import datetime
+    dirname = "{0}_{1}".format(TDF_NAME, datetime.strftime(datetime.now(), "%Y-%m-%dT%H-%M-%S"))
+    return dirname
 
 parser = argparse.ArgumentParser()
 parser.add_argument('device', help = "device defined in connections file")
 parser.add_argument('filename', help = "testvector filename")
 parser.add_argument('--clksrc', choices = ("external", "internal"), default = "external", help = "clock source, default `external'")
+parser.add_argument('-o', '--output-dir', default = result_area(), help = "name of output directory")
 args = parser.parse_args(TDF_ARGS)
+
+
+if not os.path.isdir(args.output_dir):
+    print "creating result area directory:", args.output_dir
+    os.makedirs(args.output_dir)
+    os.chdir(args.output_dir)
+
 
 print "The routine is for testing the ROP with emulator data, which will be uploaded into simspy memory: "
 # Reset link's logic
@@ -93,5 +113,12 @@ write (args.device, "gt_mp7_frame.rb.spytrigger.control.spy12_once_event", 0)
 #		time.sleep(0.1)
 #	else:
 #		break;
+
+    # Read the emulator log file if available (for active algorithms and names).
+    
+
+
+
+
 
 dump(args.device, "gt_mp7_frame.spymem3", outfile = TDF_NAME + "_spymem3_rop.txt")
