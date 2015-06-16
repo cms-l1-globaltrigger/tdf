@@ -28,7 +28,8 @@
 	<node id="simspymem"    address="0x00300000" mode="incremental" size="245760" permission="rw" parameters="class=SimSpyMemoryImage"/>
 	<node id="spymem2_algos" address="0x00240000" mode="incremental" size="65536" permission="rw" parameters="class=AlgorithmMemoryImage"/>
 	<node id="spymem2_finor" address="0x00200000" mode="incremental" size="4096" permission="rw" parameters="class=FinorMemoryImage"/>
-	<node id="spymem3"      address="0x00280000" mode="incremental" size="65536" permission="rw" parameters="class=RopMemoryImage"/>
+        <!-- <node id="spymem3"      address="0x00280000" mode="incremental" size="65536" permission="rw" parameters="class=RopMemoryImage"/> -->
+	<node id="spymem3"      address="0x00280000" mode="incremental" size="65536" permission="rw"/>
 	<!-- <node id="Muon[0]" address="0x00300000" permission="rw">
 	  <node id="bx0_L"  address="0x00000000" mask="0xffffffff" permission="rw"/>
 	  <node id="bx0_H"  address="0x00000001" mask="0xffffffff" permission="rw"/>
