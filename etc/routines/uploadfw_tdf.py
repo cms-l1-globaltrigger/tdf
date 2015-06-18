@@ -6,7 +6,7 @@ import tempfile
 import shutil
 import re, os
 
-def scansd(device, model):
+def scansd(device):
     """Read stdout results from butler command (bitfiles located on uSD).
     Returns list of filenames stored on uSD card.
     """
@@ -14,7 +14,7 @@ def scansd(device, model):
     # Create temporary file in memory.
     tmp = tempfile.SpooledTemporaryFile()
     # Capture stdout from butler (should contain list of bitfiles).
-    mp7butler("scansd", device, "-m", model, stdout = tmp)
+    mp7butler("scansd", device, stdout = tmp)
     # Set file pointer to begin of temporary file.
     tmp.seek(0)
     # Read content of temporary file.
@@ -82,7 +82,7 @@ print
 print " => checking uSD card contents on device `{device}'...".format(**locals())
 
 # Read stdout results from butler command (bitfiles located on uSD).
-filenames = scansd(device, boardtype)
+filenames = scansd(device)
 print " => current files on uSD card:"
 print "\n".join(filenames)
 
@@ -92,7 +92,7 @@ if filename in filenames:
         print
         print " => bit file `{filename}' does already exist, deleting...".format(**locals())
         if not args.dryrun:
-            mp7butler("deleteimage", device, filename, "-m", boardtype)
+            mp7butler("deleteimage", device, filename)
     else:
         message = "bit file `{filename}' does already exist. Use `--force' to overwrite.".format(**locals())
         raise RuntimeError(message)
@@ -113,7 +113,7 @@ try:
     print
     print " => uploading `{filename}' to uSD on device `{device}'".format(**locals())
     if not args.dryrun:
-        mp7butler("uploadfw", device, tmp_filename, filename, "-m", boardtype)
+        mp7butler("uploadfw", device, tmp_filename, filename)
     shutil.rmtree(tmpdir)
 except:
     # Note:
@@ -125,4 +125,4 @@ if args.rebootfpga:
     print
     print " => rebootfpga `{filename}' on device `{device}'".format(**locals())
     if not args.dryrun:
-        mp7butler("rebootfpga", device, filename, "-m", boardtype)
+        mp7butler("rebootfpga", device, filename)
