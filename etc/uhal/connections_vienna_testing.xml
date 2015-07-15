@@ -24,8 +24,11 @@
     <!-- FINOR slot -->
     <connection id="finor_amc502.12" uri="chtcp-2.0://localhost:10203?target=amc-gtlab-12.vie:50001" address_table="file://gt_mp7_1_4_0/mp7_infra.xml" />
 
-    <!-- AMC13 -->
+    <!-- AMC13 
     <connection id="amc13_s6.13" uri="chtcp-2.0://localhost:10203?target=192.168.1.86:50001" address_table="file://amc13xg/AMC13_AddressTable_S6.xml" />
     <connection id="amc13_k7.13" uri="chtcp-2.0://localhost:10203?target=192.168.1.87:50001" address_table="file://amc13xg/AMC13_AddressTable_K7.xml" />
-
+    -->
+    
+    <connection id="amc13_s6.13" uri="chtcp-2.0://localhost:10203?target=192.168.1.86:50001" address_table="file://amc13xg/AMC13XG_T2.xml" />
+    <connection id="amc13_k7.13" uri="chtcp-2.0://localhost:10203?target=192.168.1.87:50001" address_table="file://amc13xg/AMC13XG_T1.xml" />
 </connections>
