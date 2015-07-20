@@ -11,7 +11,8 @@ import datetime
 DEFAULT_INPUT_DELAY = 11
 DEFAULT_GTL_LATENCY = 6
 DEFAULT_SIZE = 170
-DEFAULT_LINKS = '0-15'
+DEFAULT_RX_LINKS = '0-15'
+DEFAULT_TX_LINKS = '0-3'
 
 def result_area():
     from datetime import datetime
@@ -24,7 +25,8 @@ parser.add_argument('--loopback', action = 'store_true', help = "run internal lo
 parser.add_argument('--pattern', default = ':counter', metavar = '<source>', help = "source test vector to be loaded into the TX buffers (or ':counter' for generic counter, default)")
 parser.add_argument('--delay', default = DEFAULT_INPUT_DELAY, metavar = '<n>', type = int, help = "delay in BX for incomming data in spy memory, default is '{DEFAULT_INPUT_DELAY}'".format(**locals()))
 parser.add_argument('--clksrc', choices = ("external", "internal"), default = "internal", help = "clock source, default is 'internal'")
-parser.add_argument('--links', default = DEFAULT_LINKS, metavar = '<n-m>', help = "links to be configured, default is '{DEFAULT_LINKS}'".format(**locals()))
+parser.add_argument('--rx-links', '--links', default = DEFAULT_RX_LINKS, metavar = '<n-m>', help = "RX links to be configured, default is '{DEFAULT_RX_LINKS}'".format(**locals()))
+parser.add_argument('--tx-links', default = DEFAULT_TX_LINKS, metavar = '<n-m>', help = "TX links to be configured, default is '{DEFAULT_TX_LINKS}'".format(**locals()))
 parser.add_argument('--gtl-latency', default = DEFAULT_GTL_LATENCY, metavar = '<n>', type = int, help = "set latency for GTL logic in BX, default is '{DEFAULT_GTL_LATENCY}'".format(**locals()))
 parser.add_argument('--size', default = DEFAULT_SIZE, metavar = '<n>', type = int, help = "number of BX to be compared, default is '{DEFAULT_INPUT_DELAY}'".format(**locals()))
 parser.add_argument('--align-to', default = None, help = "overwrite link alignment eg. 38,5 (bx, cycle)")
@@ -55,15 +57,15 @@ if args.run_unittests:
 
 # Setup for loopback or cable mode.
 if args.loopback:
-    mp7butler("mgts", args.device, "--loopback", "--enablelinks", args.links, "--align-to", args.align_to or "8,5")
+    mp7butler("mgts", args.device, "--loopback", "--enablelinks", args.rx_links, "--align-to", args.align_to or "8,5")
 else:
-    mp7butler("mgts", args.device, "--enablelinks", args.links, "--align-to", args.align_to or "38,5")
+    mp7butler("mgts", args.device, "--enablelinks", args.rx_links, "--align-to", args.align_to or "38,5")
 
 data_filename = TDF_NAME + "_in.dat" # Returns "tagged" filename tdf_simple_buffer_loopback_in.dat
 buffgen(args.pattern, board = args.device, outfile = data_filename)
 
 if args.loopback:
-    mp7butler("buffers", args.device, "loopPlay", "--inject", "file://{data_filename}".format(**locals()))
+    mp7butler("buffers", args.device, "loopPlay", "--enablelinks", args.rx_links, "--inject", "file://{data_filename}".format(**locals()))
 else:
     mp7butler("buffers", args.device, "loopPlay")
 
@@ -126,6 +128,7 @@ if args.pattern not in (':counter', ':zero'):
                         result = "OK" if l1a_tv == l1a_hw else "ERROR"
                         print "{bit}\t{l1a_tv}\t{l1a_hw}\t{result}\t{name}".format(**locals())
                 break
-#mp7butler("buffers", args.device, "captureTx", "--cap", "1500", "--enablelinks", args.links)
-mp7butler("buffers", args.device, "captureTx", "--enablelinks",  "0-3")
-mp7butler("capture", args.device, "--enablelinks", "0-3")
+
+# Dumping TX buffer content
+mp7butler("buffers", args.device, "captureTx", "--enablelinks",  args.tx_links)
+mp7butler("capture", args.device, "--enablelinks", args.tx_links, "--outputpath", "tx_buffer_dump")
