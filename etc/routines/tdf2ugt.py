@@ -46,8 +46,8 @@ configure("amc13_k7.13", os.path.join(TDF.ROOT_DIR, "etc/config/amc13xg/default_
 # -----------------------------------------------------------------------------
 #  Reset devices to use external clock
 # -----------------------------------------------------------------------------
-mp7butler("reset", args.source, "--clksrc", "external", "-m", MODEL)
-mp7butler("reset", args.target, "--clksrc", "external", "-m", MODEL)
+mp7butler("reset", args.source, "--clksrc", "external")
+mp7butler("reset", args.target, "--clksrc", "external")
 
 # -----------------------------------------------------------------------------
 #  Run unittests to RESET and verify integrity.
@@ -64,7 +64,7 @@ run_unittest(args.target, "tcm_locked")
 # -----------------------------------------------------------------------------
 configure(args.source, os.path.join(TDF.ROOT_DIR, "etc/config/tdf_mp7/tdf.cfg"))
 load(args.source, "tdf_mp7.simspymem", args.pattern)
-mp7butler("buffers", args.source, "algoPlay", "--enablelinks", args.links, "-m", MODEL)
+mp7butler("buffers", args.source, "algoPlay", "--enablelinks", args.links)
 
 # -----------------------------------------------------------------------------
 #  Align GT links (twice to trick powerup problems...)
@@ -73,9 +73,9 @@ for i in range(2):
     if args.fix_latency:
         # Apply fixed latencies.
         for links, latency in args.fix_latency:
-            mp7butler("mgts", args.target, "--forcepattern", "--fix-latency", latency, "--enablelinks", args.links, "-m", MODEL)
+            mp7butler("mgts", args.target, "--force-patterns", "--fix-latency", latency, "--enablelinks", args.links, "--align-to", "")
     else:
-        mp7butler("mgts", args.target, "--forcepattern", "--enablelinks", args.links, "-m", MODEL)
+        mp7butler("mgts", args.target, "--force-patterns", "--enablelinks", args.links, "--align-to", "0,5")
 
 # -----------------------------------------------------------------------------
 #  Setup GT logic
@@ -94,6 +94,9 @@ if args.bcres_delay is not None:
 clear(args.target, "gt_mp7_frame.simspymem")
 clear(args.target, "gt_mp7_frame.spymem2_algos")
 clear(args.target, "gt_mp7_frame.spymem2_finor")
+
+# Setup GTL algorithm masks.
+run_routine("enable_algo_bx_mem", args.target)
 
 # -----------------------------------------------------------------------------
 #  Start spy
@@ -126,6 +129,6 @@ compare(args.target, "gt_mp7_frame.spymem2_finor", TDF_NAME + "_spymem2_finor.da
 # -----------------------------------------------------------------------------
 #  Dump TX buffers
 # -----------------------------------------------------------------------------
-mp7butler("buffers", args.target, "captureTx", "--enablelinks", "0-3", "-m", MODEL)
-mp7butler("capture", args.target,"-m", MODEL)
+#mp7butler("buffers", args.target, "captureTx", "--enablelinks", "0-3")
+#mp7butler("capture", args.target, "--enablelinks", "0-3")
 TDF_WARNING("see data/tx_summary.txt for algorithm/finor data")
