@@ -1,0 +1,37 @@
+<node description="TDF registers">
+    <node id="module_info" address="0x00000000" permission="r" parameters="type=parent">
+        <node id="timestamp"        address="0x00000000" mask="0xffffffff" permission="r" parameters="type=timestamp"/>
+        <node id="hostname" address="0x00000001" mode="incremental" size="8" permission="r" parameters="type=string"/>
+        <node id="username" address="0x00000009" mode="incremental" size="8" permission="r" parameters="type=string"/>
+        <node id="module_type"      address="0x00000011" permission="r" parameters="type=parent">
+            <node id="protocol"     address="0x00000000" mask="0x0000000f" permission="r" parameters="type=module_protocol"/>
+            <node id="type"         address="0x00000000" mask="0x000000f0" permission="r" parameters="type=module_protocol"/>
+            <node id="serial"       address="0x00000000" mask="0xffffff00" permission="r"/>
+        </node>
+        <node id="vendor_serial_lo" address="0x00000012" permission="r" parameters="type=parent">
+            <node id="ven_ser1"   address="0x00000000" mask="0x000000ff" permission="r" parameters="type=hex"/>
+            <node id="ven_ser2"   address="0x00000000" mask="0x0000ff00" permission="r"/>
+            <node id="ven_ser3"   address="0x00000000" mask="0x00ff0000" permission="r"/>
+            <node id="ven_ser4"   address="0x00000000" mask="0xff000000" permission="r"/>
+        </node>
+        <node id="vendor_serial_hi" address="0x00000013" permission="r" parameters="type=parent">
+            <node id="ven_ser5"   address="0x00000000" mask="0x000000ff" permission="r" parameters="type=hex"/>
+            <node id="ven_ser6"   address="0x00000000" mask="0x0000ff00" permission="r"/>
+            <node id="ven_ser7"   address="0x00000000" mask="0x00ff0000" permission="r"/>
+            <node id="ven_ser8"   address="0x00000000" mask="0xff000000" permission="r"/>
+        </node>
+        <node id="tdf_version"    address="0x00000014" permission="r" parameters="type=version">
+            <node id="major"        address="0x00000000" mask="0x00ff0000" permission="r" parameters="type=number"/>
+            <node id="minor"        address="0x00000000" mask="0x0000ff00" permission="r" parameters="type=number"/>
+            <node id="rev"          address="0x00000000" mask="0x000000ff" permission="r" parameters="type=number"/>
+        </node>
+    </node>
+    <node id="tdf_ctrl1" address="0x00000020" permission="rw" parameters="type=parent">
+        <node id="valid_low"    address="0x00000000" mask="0x00000fff" permission="rw" parameters="type=hex"/>
+        <node id="valid_high"   address="0x00000001" mask="0x00000fff" permission="rw" parameters="type=hex"/>
+        <node id="start"        address="0x00000002" mask="0x00000001" permission="rw" parameters="type=hex"/>
+        <node id="strobe"       address="0x00000003" mask="0x00000001" permission="rw" parameters="type=hex"/>
+    </node>
+	<!-- TDF-MEMS -->
+	<node id="simspymem" address="0x00300000" mode="incremental" size="245760" permission="rw" parameters="foo=bar;type=mem;class=SimSpyMemoryImage"/>
+</node>
