@@ -253,8 +253,8 @@ class TDFCore(object):
     def mp7butler(self, *args, **kwargs):
         """Execute a MP7 butler command. Optional positional argument list
         *args* is forwared to the MP7 butler call. Take note that the following
-        command line options are preprended to any given arguments: *-q* to
-        disable the branding and *-c* to set the connections file used by TDF.
+        command line options are preprended to any given arguments: *-c* to set
+        the connections file used by TDF.
 
         For capturing *stdout* use the *stdout* named argument writing to a
         spooled tempfile:
@@ -267,7 +267,7 @@ class TDFCore(object):
         >>> tmp.close()
         """
         DEBUG_API(inspect.currentframe())
-        command = [MP7_EXECUTABLE, '-q', '-c', self.connections]
+        command = [MP7_EXECUTABLE, '-c', self.connections]
         if self.verbose:
             command.append('-v')
         command.extend([str(arg) for arg in args])
