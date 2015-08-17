@@ -12,5 +12,5 @@
 """This package implements the Test and Development Framework software suite.
 """
 
-__version__ = '2.3.0'
+__version__ = '2.3.1'
 """Overall TDF software version."""
