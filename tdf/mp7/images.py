@@ -26,7 +26,7 @@ from tdf.core.binutils import (
     bitsplit,
 )
 import json
-import sys
+import sys, re
 
 __version__ = '$Revision: 3982 $'
 
@@ -450,6 +450,36 @@ class AlgoBxMemoryImage(AlgorithmMemoryImage):
     def setEnabled(self, enabled):
         """Enable or disable all algorithms of all BX."""
         self.clear(bitmask(TDF.DATA_WIDTH) if enabled else 0x0)
+
+    def readBxMaskFile(self, fs):
+        """Read algorithm mask from file."""
+        # TODO rewrite
+        masks = {}
+        for line in fs:
+            algorithm, bxs_ = line.strip().split(':')
+            algorithm = int(algorithm)
+            bxs_ = [bx.strip() for bx in bxs_.split(',')]
+            bxs = []
+            for bx in bxs_:
+                try:
+                    bxs.append(int(bx))
+                except ValueError:
+                    try:
+                        b, e = bx.strip().split('-')
+                        b, e = int(b), int(e)
+                        for i in range(b, e + 1):
+                            bxs.append(i)
+                    except:
+                        raise RuntimeError("error reading algorithm mask file...")
+            masks[algorithm] = bxs
+        # inverted algorithm map
+        values = [0] * TDF.ORBIT_LENGTH
+        for algorithm, bxs in masks.items():
+            for bx in bxs:
+                values[bx] = values[bx] | 1 << algorithm
+        # invert to get actual masking
+        values = [~value for value in values]
+        self.inject(values, 0, TDF.ALGORITHM.dwords)
 
 # TODO to be replaced by column based memory
 class RopMemoryImage(GenericMemoryImage):
