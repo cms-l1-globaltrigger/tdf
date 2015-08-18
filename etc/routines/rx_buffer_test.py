@@ -75,6 +75,9 @@ clear(args.device, "gt_mp7_frame.spymem2_finor")
 # Setup GTL algorithm masks.
 run_routine("enable_algo_bx_mem", args.device)
 
+# Start spy
+configure(args.device, TDF.ROOT_DIR + "/etc/config/gt_mp7/cfg-140/mp7-spy.cfg")
+
 # Dump the memories.
 dump(args.device, "gt_mp7_frame.simspymem", outfile = TDF_NAME + "_simspymem.dat")
 algo_dump = dump(args.device, "gt_mp7_frame.spymem2_algos", outfile = TDF_NAME + "_spymem2_algos.dat")
