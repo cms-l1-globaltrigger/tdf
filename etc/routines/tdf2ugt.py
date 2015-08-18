@@ -6,6 +6,9 @@
 # *Prerequisites*
 #   Connect the 1:1 pstched MTP48 conenction from TDF TX1 to uGT RX1
 #
+#
+# 3528 - 3562
+#
 
 from tdf.extern import argparse
 from tdf.core import binutils
@@ -36,6 +39,7 @@ parser.add_argument('--gtl-latency', default = DEFAULT_GTL_LATENCY, metavar = '<
 parser.add_argument('--fix-latency', nargs = 2, action = 'append', metavar = '<n>', help = "set latency for a range of links (links, latency)")
 parser.add_argument('--bcres-delay', metavar = '<n>', type = binutils.integer, help = "overwrite BC_RES delay applied by configuration files")
 parser.add_argument('--size', default = 170, type = int, help = "number of BX to be compared")
+parser.add_argument('--align-to', default = '0,5', help = "BX and sub BX for alignment. e.g. 0,5")
 args = parser.parse_args(TDF_ARGS)
 
 # -----------------------------------------------------------------------------
@@ -73,9 +77,9 @@ for i in range(2):
     if args.fix_latency:
         # Apply fixed latencies.
         for links, latency in args.fix_latency:
-            mp7butler("mgts", args.target, "--force-patterns", "--fix-latency", latency, "--enablelinks", args.links, "--align-to", "")
+            mp7butler("mgts", args.target, "--force-patterns", "--fix-latency", latency, "--enablelinks", args.links, "--align-to", args.align_to)
     else:
-        mp7butler("mgts", args.target, "--force-patterns", "--enablelinks", args.links, "--align-to", "0,5")
+        mp7butler("mgts", args.target, "--force-patterns", "--enablelinks", args.links, "--align-to", args.align_to)
 
 # -----------------------------------------------------------------------------
 #  Setup GT logic
