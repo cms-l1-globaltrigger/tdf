@@ -30,6 +30,7 @@ parser.add_argument('--tx-links', default = DEFAULT_TX_LINKS, metavar = '<n-m>',
 parser.add_argument('--gtl-latency', default = DEFAULT_GTL_LATENCY, metavar = '<n>', type = int, help = "set latency for GTL logic in BX, default is '{DEFAULT_GTL_LATENCY}'".format(**locals()))
 parser.add_argument('--size', default = DEFAULT_SIZE, metavar = '<n>', type = int, help = "number of BX to be compared, default is '{DEFAULT_INPUT_DELAY}'".format(**locals()))
 parser.add_argument('--align-to', default = None, help = "overwrite link alignment eg. 38,5 (bx, cycle)")
+parser.add_argument('--algo-bx-mask', default = None, metavar = '<file>', help = "load algorithm BX mask from file")
 parser.add_argument('--capture-buffers', action = 'store_true')
 parser.add_argument('--configure-amc13', action = 'store_true')
 parser.add_argument('--run-unittests', action = 'store_true')
@@ -84,7 +85,10 @@ clear(args.device, "gt_mp7_frame.spymem2_algos")
 clear(args.device, "gt_mp7_frame.spymem2_finor")
 
 # Setup GTL algorithm masks.
-run_routine("enable_algo_bx_mem", args.device)
+if args.algo_bx_mask:
+    run_routine("load_bx_masks", args.device, args.algo_bx_mask)
+else:
+    run_routine("enable_algo_bx_mem", args.device)
 
 # Start spy
 configure(args.device, TDF.ROOT_DIR + "/etc/config/gt_mp7/cfg-140/mp7-spy.cfg")
