@@ -25,7 +25,7 @@ l1tm_uuid = read(args.device, "gt_mp7_gtlfdl.read_versions.l1tm_uuid", translate
 l1tm_compiler = read(args.device, "gt_mp7_gtlfdl.read_versions.l1tm_compiler_version", translate = True)
 gtl = read(args.device, "gt_mp7_gtlfdl.read_versions.gtl_fw_version", translate = True)
 fdl = read(args.device, "gt_mp7_gtlfdl.read_versions.fdl_fw_version", translate = True)
-build = read(args.device, "gt_mp7_frame.module_info.build_version", translate = True)
+#build = read(args.device, "gt_mp7_frame.module_info.build_version", translate = True)
 
 print "Device info for", args.device, "..."
 print "   MP7 firmware version :", fwrev_a, fwrev_b, fwrev_c
@@ -39,4 +39,4 @@ print "              l1tm uuid :", l1tm_uuid
 print "  l1tm compiler version :", l1tm_compiler
 print "   gtl firmware version :", gtl
 print "   fdl firmware version :", fdl
-print "   ugt fw build version :", build
+#print "   ugt fw build version :", build
