@@ -36,9 +36,9 @@ if args.dryrun:
     print "*** running in dryrun mode: does not apply any changes to uSD cards"
 
 # Regular expression defining the tarball filename.
-# eg. 'tdf_(1.0.0)_(xe)-2015-01-01-T00-00-00.tar.gz'
+# eg. 'tdf_v(1000)_(xe)-2015-01-01-T00-00-00.tar.gz'
 regex_filename = re.compile(
-    'tdf_(\d+\.\d+\.\d+)_([0-9a-zA-Z]+)\-20\d\d-\d\d-\d\d-[-T]\d\d-\d\d-\d\d.tar.gz')
+    'tdf_v([0-9a-f]{4})_([0-9a-zA-Z]+)\-20\d\d-\d\d-\d\d-[-T]\d\d-\d\d-\d\d.tar.gz')
 
 result = regex_filename.match(os.path.basename(args.filename))
 if not result:
@@ -64,7 +64,7 @@ for tarinfo in tar:
     if tarinfo.isreg():
         print tarinfo.name
         if tarinfo.name.endswith('.bit'):
-            reference = 'tdf_{version}_{boardtype}/build/tdf_{version}_{boardtype}.bit'.format(**locals())
+            reference = 'tdf_{boardtype}_v{version}/build/tdf_{boardtype}_v{version}.bit'.format(**locals())
             if tarinfo.name != reference:
                 raise RuntimeError("Invalid filename for bitfile: `{tarinfo.name}'".format(**locals()))
             bitfile = tarinfo.name
