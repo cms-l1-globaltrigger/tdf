@@ -13,6 +13,7 @@ DEFAULT_GTL_LATENCY = 6
 DEFAULT_SIZE = 170
 DEFAULT_RX_LINKS = '0-15'
 DEFAULT_TX_LINKS = '0-3'
+DEFAULT_CAP = 0
 
 def result_area():
     from datetime import datetime
@@ -35,6 +36,7 @@ parser.add_argument('--capture-buffers', action = 'store_true')
 parser.add_argument('--configure-amc13', action = 'store_true')
 parser.add_argument('--run-unittests', action = 'store_true')
 parser.add_argument('-o', '--output-dir', default = result_area(), help = "name of output directory")
+parser.add_argument('--cap', default = DEFAULT_CAP, metavar = '<n>', type = int, help = "delay in BX for capturing the tx buffer output, default is '{DEFAULT_CAP}'".format(**locals()))
 args = parser.parse_args(TDF_ARGS)
 
 args.pattern = os.path.abspath(args.pattern)
@@ -134,5 +136,5 @@ if args.pattern not in (':counter', ':zero'):
                 break
 
 # Dumping TX buffer content
-mp7butler("buffers", args.device, "captureTx", "--enablelinks",  args.tx_links)
+mp7butler("buffers", args.device, "captureTx", "--enablelinks",  args.tx_links, "--cap", args.cap)
 mp7butler("capture", args.device, "--enablelinks", args.tx_links, "--outputpath", "tx_buffer_dump")
