@@ -3,10 +3,10 @@
 # Copyright 2013-2014 Bernhard Arnold <bernahrd.arnold@cern.ch>
 #                     Johannes Wittmann <johannes.wittmann@cern.ch>
 #
-# Repository path   : $HeadURL: svn://heros.hephy.oeaw.ac.at/GlobalTriggerUpgrade/software/tdf/trunk/tdf/extcond/images.py $
-# Last committed    : $Revision: 3820 $
-# Last changed by   : $Author: arnold $
-# Last changed date : $Date: 2015-04-15 11:45:58 +0200 (Wed, 15 Apr 2015) $
+# Repository path   : $HeadURL: svn://heros.hephy.oeaw.ac.at/GlobalTriggerUpgrade/software/tdf/branches/tdf_mp7fw_1_4_1/lib/tdf/extcond/images.py $
+# Last committed    : $Revision: 4020 $
+# Last changed by   : $Author: wittmann $
+# Last changed date : $Date: 2015-06-02 17:09:00 +0200 (Die, 02 Jun 2015) $
 #
 
 """ExtCond specific memory images.
@@ -27,7 +27,7 @@ from tdf.core.binutils import (
 import json
 import sys
 
-__version__ = '$Revision: 3820 $'
+__version__ = '$Revision: 4020 $'
 
 # Blocksize of 32 bit simulation and spy memories.
 MEMORY_BLOCKSIZE = 4096
@@ -51,3 +51,22 @@ class ExtCondMemoryImage(ColumnMemoryImage):
 
     def __str__(self):
         return '\n'.join(format(value, '016x') for value in self.extconds())
+
+    def compare(self, image, offset = 0, size = TDF.ORBIT_LENGTH, outfile = sys.stdout):
+        assert isinstance(image, ExtCondMemoryImage), "can only compare two memory images of same type"
+        errors = []
+        a = self.extconds(offset)
+        b = image.extconds()
+        for bx in range(size):
+            value_a = a[bx]
+            value_b = b[bx]
+            if value_a != value_b:
+                errors.append("Data missmatch in BX {bx} with offset {offset}\ntarget: 0x{value_a:016x}\nsource: 0x{value_b:016x}".format(**locals()))
+        if errors:
+            errors.append("Found {0} data mismatches by comparing a range of {1} BX with offset {2}".format(len(errors), size, offset))
+            outfile.write("\n".join(errors))
+            outfile.write("\n")
+        else:
+            outfile.write("Success. No external condition data errors.\n")
+        outfile.flush()
+        return len(errors)
