@@ -60,15 +60,15 @@ if args.run_unittests:
 
 # Setup for loopback or cable mode.
 if args.loopback:
-    mp7butler("mgts", args.device, "--loopback", "--enablelinks", args.rx_links, "--align-to", args.align_to or "8,5")
+    mp7butler("mgts", args.device, "--loopback", "--e", args.rx_links, "--align-to", args.align_to or "8,5")
 else:
-    mp7butler("mgts", args.device, "--enablelinks", args.rx_links, "--align-to", args.align_to or "38,5")
+    mp7butler("mgts", args.device, "--e", args.rx_links, "--align-to", args.align_to or "38,5")
 
 data_filename = TDF_NAME + "_in.dat" # Returns "tagged" filename tdf_simple_buffer_loopback_in.dat
 buffgen(args.pattern, board = args.device, outfile = data_filename)
 
 if args.loopback:
-    mp7butler("buffers", args.device, "loopPlay", "--enablelinks", args.rx_links, "--inject", "file://{data_filename}".format(**locals()))
+    mp7butler("buffers", args.device, "loopPlay", "--e", args.rx_links, "--inject", "file://{data_filename}".format(**locals()))
 else:
     mp7butler("buffers", args.device, "loopPlay")
 
@@ -136,5 +136,5 @@ if args.pattern not in (':counter', ':zero'):
                 break
 
 # Dumping TX buffer content
-mp7butler("buffers", args.device, "captureTx", "--enablelinks",  args.tx_links, "--cap", args.cap)
-mp7butler("capture", args.device, "--enablelinks", args.tx_links, "--outputpath", "tx_buffer_dump")
+mp7butler("buffers", args.device, "captureTx", "--e",  args.tx_links, "--cap", args.cap)
+mp7butler("capture", args.device, "--e", args.tx_links, "--outputpath", "tx_buffer_dump")

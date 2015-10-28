@@ -68,7 +68,7 @@ if args.run_unittests:
 #buffgen(args.pattern, board = args.device, outfile = data_filename)
 data_filename = args.pattern
 
-mp7butler("buffers", args.device, "algoPlay", "--enablelinks", args.rx_links, "--inject", "file://{data_filename}".format(**locals()))
+mp7butler("buffers", args.device, "algoPlay", "--e", args.rx_links, "--inject", "file://{data_filename}".format(**locals()))
 
 if args.capture_buffers:
     mp7butler("buffers", args.device, "captureRxTxStb")   # buffer setting
@@ -134,5 +134,5 @@ if args.comp_pattern:
                 break
 
 # Dumping TX buffer content
-mp7butler("buffers", args.device, "captureTx", "--enablelinks",  args.tx_links, "--cap", args.cap)
-mp7butler("capture", args.device, "--enablelinks", args.tx_links, "--outputpath", "tx_buffer_dump")
+mp7butler("buffers", args.device, "captureTx", "--e",  args.tx_links, "--cap", args.cap)
+mp7butler("capture", args.device, "--e", args.tx_links, "--outputpath", "tx_buffer_dump")

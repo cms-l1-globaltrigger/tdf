@@ -64,8 +64,9 @@ for tarinfo in tar:
     if tarinfo.isreg():
         print tarinfo.name
         if tarinfo.name.endswith('.bit'):
-            reference = 'tdf_{boardtype}_v{version}/build/tdf_{boardtype}_v{version}.bit'.format(**locals())
-            if tarinfo.name != reference:
+            reference1 = 'tdf_{boardtype}_v{version}/build/tdf_{boardtype}_v{version}.bit'.format(**locals())
+            reference2 = 'tdf_v{version}_{boardtype}/build/tdf_mp7_{boardtype}_v{version}.bit'.format(**locals())
+            if (tarinfo.name != reference1) and (tarinfo.name != reference2):
                 raise RuntimeError("Invalid filename for bitfile: `{tarinfo.name}'".format(**locals()))
             bitfile = tarinfo.name
 
