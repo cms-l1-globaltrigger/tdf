@@ -15,6 +15,9 @@ DEFAULT_RX_LINKS = '0-15'
 DEFAULT_TX_LINKS = '16-24'
 DEFAULT_CAP = 0
 DEFAULT_HW_DELAY = 0
+DEFAULT_ALGO_LATENCY = 44
+DEFAULT_MASTER_LATENCY = 49
+
 
 def result_area():
     from datetime import datetime
@@ -36,6 +39,8 @@ parser.add_argument('--align-to', default = None, help = "overwrite link alignme
 parser.add_argument('--algo-bx-mask', default = None, metavar = '<file>', help = "load algorithm BX mask from file")
 parser.add_argument('--capture-buffers', action = 'store_true')
 parser.add_argument('--configure-amc13', action = 'store_true')
+parser.add_argument('--algo-latency', default = DEFAULT_ALGO_LATENCY, metavar = '<n>', type = int, help = "algo latency in frames (240MHz cycles), default is '{DEFAULT_ALGO_LATENCY}'".format(**locals()))
+parser.add_argument('--master-latency', default = DEFAULT_MASTER_LATENCY, metavar = '<n>', type = int, help = "master latency in frames (240MHz cycles), default is '{DEFAULT_MASTER_LATENCY}'".format(**locals()))
 parser.add_argument('--run-unittests', action = 'store_true')
 parser.add_argument('-o', '--output-dir', default = result_area(), help = "name of output directory")
 parser.add_argument('--cap', default = DEFAULT_CAP, metavar = '<n>', type = int, help = "delay in BX for capturing the tx buffer output, default is '{DEFAULT_CAP}'".format(**locals()))
@@ -102,7 +107,7 @@ if args.hw_delay:
     write(args.device, "gt_mp7_frame.rb.dm.delay_ext_con", args.hw_delay)
     
     
-mp7butler("easylatency", args.device, "--rx", args.rx_links, "--tx", args.tx_links, "--algoLatency", "44", "--masterLatency", "49")
+mp7butler("easylatency", args.device, "--rx", args.rx_links, "--tx", args.tx_links, "--algoLatency", args.algo_latency, "--masterLatency", args.master_Latency)
 mp7butler("rosetup", args.device, "--bxoffset", "2")
 mp7butler("romenu", args.device, "/nfshome0/ugtdev/software/mp7sw_v1_8_4/mp7/tests/python/daq/simple.py", "menuUGTA")
 
