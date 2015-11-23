@@ -73,7 +73,7 @@ if args.loopback:
 
 if args.loopback:
     mp7butler("buffers", args.device, "loopPlay", "--e", args.rx_links, "--inject", "file://{data_filename}".format(**locals()))
-else:
+#else:
     #mp7butler("buffers", args.device, "loopPlay")
 
 if args.capture_buffers:
