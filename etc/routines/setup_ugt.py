@@ -74,6 +74,8 @@ else:
     else:
         mp7butler("mgts", args.device, "--e", args.rx_links)
         
+mp7butler("buffers", args.device, "algoPlay", "-e", "0-3",   "--inject", "generate://empty") #to mask all the other inputs
+        
 # Setup for loopback or cable mode.
 if args.loopback:
     data_filename = TDF_NAME + "_in.dat" # Returns "tagged" filename tdf_simple_buffer_loopback_in.dat
