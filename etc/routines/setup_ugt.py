@@ -100,6 +100,11 @@ if args.hw_delay:
     write(args.device, "gt_mp7_frame.rb.dm.delay_etm", args.hw_delay)
     write(args.device, "gt_mp7_frame.rb.dm.delay_htm", args.hw_delay)
     write(args.device, "gt_mp7_frame.rb.dm.delay_ext_con", args.hw_delay)
+    
+    
+mp7butler("easylatency", args.device, "--rx", args.rx_links, "--tx", args.tx_links, "--algoLatency", "44", "--masterLatency", "49")
+mp7butler("rosetup", args.device, "--bxoffset", "2")
+mp7butler("romenu", args.device, "/nfshome0/ugtdev/software/mp7sw_v1_8_4/mp7/tests/python/daq/simple.py", "menuUGTA")
 
 # Clear the memories.
 #clear(args.device, "gt_mp7_frame.simspymem")
