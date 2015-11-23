@@ -48,10 +48,10 @@ args = parser.parse_args(TDF_ARGS)
 
 args.pattern = os.path.abspath(args.pattern)
 
-if not os.path.isdir(args.output_dir):
-    print "creating result area directory:", args.output_dir
-    os.makedirs(args.output_dir)
-    os.chdir(args.output_dir)
+#if not os.path.isdir(args.output_dir):
+    #print "creating result area directory:", args.output_dir
+    #os.makedirs(args.output_dir)
+    #os.chdir(args.output_dir)
 
 ### Enable clocks on AMC13
 if args.configure_amc13:
@@ -61,9 +61,9 @@ if args.configure_amc13:
 mp7butler("reset", args.device, "--clksrc", args.clksrc)
 
 # Run unittests to RESET and verify integrity.
-if args.run_unittests:
-    os.makedirs(args.output_dir)
-    os.chdir(args.output_dir)
+#if args.run_unittests:
+    #os.makedirs(args.output_dir)
+    #os.chdir(args.output_dir)
 
 # Setup for loopback or cable mode.
 if args.loopback:
