@@ -64,7 +64,7 @@ if args.run_unittests:
 if args.loopback:
     mp7butler("mgts", args.device, "--loopback", "--e", args.rx_links, "--align-to", args.align_to or "8,5")
 else:
-    if args.align:
+    if args.align_to:
         mp7butler("mgts", args.device, "--e", args.rx_links, "--align-to", args.align_to or "38,5")
     else:
         mp7butler("mgts", args.device, "--e", args.rx_links)
