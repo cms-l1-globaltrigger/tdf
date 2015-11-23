@@ -79,8 +79,8 @@ if args.loopback:
     data_filename = TDF_NAME + "_in.dat" # Returns "tagged" filename tdf_simple_buffer_loopback_in.dat
     buffgen(args.pattern, board = args.device, outfile = data_filename)
 
-if args.loopback:
-    mp7butler("buffers", args.device, "loopPlay", "--e", args.rx_links, "--inject", "file://{data_filename}".format(**locals()))
+#if args.loopback:
+    #mp7butler("buffers", args.device, "loopPlay", "--e", args.rx_links, "--inject", "file://{data_filename}".format(**locals()))
 #else:
     #mp7butler("buffers", args.device, "loopPlay")
 
@@ -167,6 +167,6 @@ if args.loopback:
                 break
 
 # Dumping TX buffer content
-if args.loopback:
-    mp7butler("buffers", args.device, "captureTx", "--e",  args.tx_links, "--cap", args.cap)
-    mp7butler("capture", args.device, "--e", args.tx_links, "--outputpath", "tx_buffer_dump")
+#if args.loopback:
+#    mp7butler("buffers", args.device, "captureTx", "--e",  args.tx_links, "--cap", args.cap)
+#    mp7butler("capture", args.device, "--e", args.tx_links, "--outputpath", "tx_buffer_dump")
