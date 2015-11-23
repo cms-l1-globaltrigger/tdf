@@ -19,6 +19,7 @@ DEFAULT_ALGO_LATENCY = 44
 DEFAULT_MASTER_LATENCY = 187
 
 
+
 def result_area():
     from datetime import datetime
     dirname = "{0}_{1}".format(TDF_NAME, datetime.strftime(datetime.now(), "%Y-%m-%dT%H-%M-%S"))
