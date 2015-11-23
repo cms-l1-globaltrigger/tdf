@@ -64,8 +64,11 @@ if args.run_unittests:
 if args.loopback:
     mp7butler("mgts", args.device, "--loopback", "--e", args.rx_links, "--align-to", args.align_to or "8,5")
 else:
-    mp7butler("mgts", args.device, "--e", args.rx_links, "--align-to", args.align_to or "38,5")
-
+    if args.align:
+        mp7butler("mgts", args.device, "--e", args.rx_links, "--align-to", args.align_to or "38,5")
+    else:
+        mp7butler("mgts", args.device, "--e", args.rx_links)
+        
 # Setup for loopback or cable mode.
 if args.loopback:
     data_filename = TDF_NAME + "_in.dat" # Returns "tagged" filename tdf_simple_buffer_loopback_in.dat
