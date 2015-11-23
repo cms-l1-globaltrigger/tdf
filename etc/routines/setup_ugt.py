@@ -22,7 +22,7 @@ def result_area():
     return dirname
 
 parser = argparse.ArgumentParser()
-parser.add_argument('device', default = 'gt_mp7.1' help = "device defined in connections file")
+parser.add_argument('device', default = 'gt_mp7.1', help = "device defined in connections file")
 parser.add_argument('--loopback', action = 'store_true', help = "run internal loopback mode (without cable)")
 parser.add_argument('--pattern', default = ':counter', metavar = '<source>', help = "source test vector to be loaded into the TX buffers (or ':counter' for generic counter, default)")
 parser.add_argument('--delay', default = DEFAULT_INPUT_DELAY, metavar = '<n>', type = int, help = "delay in BX for incomming data in spy memory, default is '{DEFAULT_INPUT_DELAY}'".format(**locals()))
