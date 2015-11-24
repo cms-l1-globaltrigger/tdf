@@ -148,6 +148,11 @@ if args.configure_amc13:
 # Reset link's logic
 mp7butler("reset", args.device, "--clksrc", args.clksrc)
 
+# Wait for Layer2/Layer2 etc to be configured.
+print ''
+raw_input('Configure layer2. If layer2 is configured, press Return to continue!')
+print ''
+
 # Run unittests to RESET and verify integrity.
 #if args.run_unittests:
     #os.makedirs(args.output_dir)
@@ -201,6 +206,11 @@ else:
 mp7butler("easylatency", args.device, "--rx", args.rx_links, "--tx", args.tx_links, "--algoLatency", args.algo_latency, "--masterLatency", args.master_latency)
 mp7butler("rosetup", args.device, "--bxoffset", "2")
 mp7butler("romenu", args.device, "/nfshome0/ugtdev/software/mp7sw_v1_8_4/mp7/tests/python/daq/simple.py", "menuUGTA")
+
+# Wait for the run to be started.
+print ''
+raw_input('Now start the run. Then press Return to continue!')
+print ''
 
 # Configure AMC13 and start run.
 if args.configure_amc13:
