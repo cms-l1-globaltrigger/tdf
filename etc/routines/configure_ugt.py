@@ -58,7 +58,7 @@ parser.add_argument('--run-unittests', action = 'store_true')
 parser.add_argument('--algo-latency', default = DEFAULT_ALGO_LATENCY, metavar = '<n>', type = int, help = "algo latency in frames (240MHz cycles), default is '{DEFAULT_ALGO_LATENCY}'".format(**locals()))
 parser.add_argument('--master-latency', default = DEFAULT_MASTER_LATENCY, metavar = '<n>', type = int, help = "master latency in frames (240MHz cycles), default is '{DEFAULT_MASTER_LATENCY}'".format(**locals()))
 parser.add_argument('--fedID', type=int, default=DEFAULT_FED_ID, help="Enter your FED ID. Default is '{DEFAULT_FED_ID}'".format(**locals()))
-parser.add_argument('--slot', type=int, default=DEFAULT_SLOT, help="Slot to activate in crate. Default is '{DEFAULT_SLOT}'.format(**locals()))
+parser.add_argument('--slot', type=int, default=DEFAULT_SLOT, help="Slot to activate in crate. Default is '{DEFAULT_SLOT}'".format(**locals()))
 parser.add_argument('--BCNoffset', type=int, default=(0xdec-23), help='Bunch crossing to expect BC0 in.')
 parser.add_argument('--enableSlink', default='True', action='store_true', help='Flag to enable the Slink to DAQ.')
 parser.add_argument('--connections_file_amc13', type=str, default='/nfshome0/ugtdev/software/connections_amc13_1.xml', help='URI to connections file.')
@@ -129,7 +129,7 @@ if args.configure_amc13:
     state = "Undefined"
 
     # Sanitise the connection string
-    conns = opts.connections_file.split(';')
+    conns = args.connections_file_amc13.split(';')
     for i,c in enumerate(conns):
         if re.match('^\w+://.*', c) is None:
             conns[i] = 'file://'+c
@@ -150,7 +150,7 @@ mp7butler("reset", args.device, "--clksrc", args.clksrc)
 
 # Wait for Layer2/Layer2 etc to be configured.
 print ''
-raw_input('Configure layer2. If layer2 is configured, press Return to continue!')
+raw_input('Please configure now layer2. If layer2 is configured, press Return to continue!')
 print ''
 
 # Run unittests to RESET and verify integrity.
@@ -165,7 +165,7 @@ else:
     if args.align_to:
         mp7butler("mgts", args.device, "--e", args.rx_links, "--align-to", args.align_to)
     else:
-        mp7butler("mgts", args.device, "--e", args.rx_links, "--align-to", "3531.5")
+        mp7butler("mgts", args.device, "--e", args.rx_links, "--align-to", "3531,5")
         
 mp7butler("buffers", args.device, "algoPlay", "-e", "0-3",   "--inject", "generate://empty") #to mask all the uGMT inputs
 mp7butler("buffers", args.device, "algoPlay", "-e", "12-15",   "--inject", "generate://empty") #to mask all the AMC502 inputs
