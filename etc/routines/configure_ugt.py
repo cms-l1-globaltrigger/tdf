@@ -87,14 +87,14 @@ def configureTTC(amc13, state):
 
 def configure(amc13, state):
     if state == "Halted":
-        if opts.enableSlink == True:
+        if args.enableSlink == True:
             print "Enabling Slink."
             enableSlink = 1
         else:
             print "Slink disabled."
             enableSlink = 0
-        print "Using " + str(opts.BCNoffset) + " as BCNoffset."
-        amc13.configure([opts.slot], opts.fedID, enableSlink, bcnOffset=opts.BCNoffset)
+        print "Using " + str(args.BCNoffset) + " as BCNoffset."
+        amc13.configure([args.slot], args.fedID, enableSlink, bcnOffset=args.BCNoffset)
         return "Configured"
     else:
         print "Error: Board not halted. Reset it first."
