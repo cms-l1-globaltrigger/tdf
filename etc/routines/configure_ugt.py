@@ -229,7 +229,7 @@ mp7butler("romenu", args.device, args.readout_menu, "menuUGTA")
 
 # Configure AMC13 and start run.
 if args.configure_amc13:
-    state = reset(amc13)
+    #state = reset(amc13)
     #state = configureTTC(amc13, state)
     state = configure(amc13, state)
     state = start(amc13, state)
