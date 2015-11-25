@@ -69,6 +69,10 @@ args = parser.parse_args(TDF_ARGS)
 
 args.pattern = os.path.abspath(args.pattern)
 
+global slot = args.slot
+global fedID = args.fedID
+global BCNoffset = args.BCNoffset
+global EnableSlink =args.enableSlink
 
 def status(amc13, state):
     print "Current state according to script: " + state
@@ -87,14 +91,14 @@ def configureTTC(amc13, state):
 
 def configure(amc13, state):
     if state == "Halted":
-        if args.enableSlink == True:
+        if EnableSlink == True:
             print "Enabling Slink."
             enableSlink = 1
         else:
             print "Slink disabled."
             enableSlink = 0
-        print "Using " + str(args.BCNoffset) + " as BCNoffset."
-        amc13.configure([args.slot], args.fedID, enableSlink, bcnOffset=args.BCNoffset)
+        print "Using " + str(BCNoffset) + " as BCNoffset."
+        amc13.configure([slot], fedID, enableSlink, bcnOffset=BCNoffset)
         return "Configured"
     else:
         print "Error: Board not halted. Reset it first."
