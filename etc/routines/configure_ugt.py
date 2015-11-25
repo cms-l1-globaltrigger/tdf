@@ -61,7 +61,8 @@ parser.add_argument('--fedID', type=int, default=DEFAULT_FED_ID, help="Enter you
 parser.add_argument('--slot', type=int, default=DEFAULT_SLOT, help="Slot to activate in crate. Default is '{DEFAULT_SLOT}'".format(**locals()))
 parser.add_argument('--BCNoffset', type=int, default=(0xdec-23), help='Bunch crossing to expect BC0 in.')
 parser.add_argument('--enableSlink', default='True', action='store_true', help='Flag to enable the Slink to DAQ.')
-parser.add_argument('--connections_file_amc13', type=str, default='/nfshome0/ugtdev/software/connections_amc13_1.xml', help='URI to connections file.')
+parser.add_argument('--connections-file-amc13', type=str, default='/nfshome0/ugtdev/software/connections_amc13_1.xml', help='URI to connections file.')
+parser.add_argument('--readout-menu', type=str, default='/nfshome0/ugtdev/software/mp7sw_v1_8_4/mp7/tests/python/daq/simple.py', help='URI toreadout menu file.')
 #parser.add_argument('-o', '--output-dir', default = result_area(), help = "name of output directory")
 parser.add_argument('--cap', default = DEFAULT_CAP, metavar = '<n>', type = int, help = "delay in BX for capturing the tx buffer output, default is '{DEFAULT_CAP}'".format(**locals()))
 args = parser.parse_args(TDF_ARGS)
@@ -205,7 +206,7 @@ else:
     
 mp7butler("easylatency", args.device, "--rx", args.rx_links, "--tx", args.tx_links, "--algoLatency", args.algo_latency, "--masterLatency", args.master_latency)
 mp7butler("rosetup", args.device, "--bxoffset", "2")
-mp7butler("romenu", args.device, "/nfshome0/ugtdev/software/mp7sw_v1_8_4/mp7/tests/python/daq/simple.py", "menuUGTA")
+mp7butler("romenu", args.device, args.readout_menu, "menuUGTA")
 
 # Wait for the run to be started.
 print ''
