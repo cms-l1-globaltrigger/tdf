@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<connections>
+  <connection id="T1" uri="ipbusudp-2.0://amc-s1e04-32-13-t1.cms:50001" address_table="file:///cmsnfshome0/nfshome0/ugtts/software/amc13_v1_1_4/amc13/etc/amc13/AMC13XG_T1.xml" />
+  <connection id="T2" uri="ipbusudp-2.0://amc-s1e04-32-13-t2.cms:50001" address_table="file:///cmsnfshome0/nfshome0/ugtts/software/tdf/etc/uhal/AMC13XG_T2.xml" />
+</connections>
