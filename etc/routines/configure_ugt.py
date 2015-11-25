@@ -53,7 +53,7 @@ parser.add_argument('--size', default = DEFAULT_SIZE, metavar = '<n>', type = in
 parser.add_argument('--align-to', default = None, help = "overwrite link alignment eg. 38,5 (bx, cycle)")
 parser.add_argument('--algo-bx-mask', default = None, metavar = '<file>', help = "load algorithm BX mask from file")
 parser.add_argument('--capture-buffers', action = 'store_true')
-parser.add_argument('--configure-amc13', action = 'store_true')
+parser.add_argument('--configure-amc13' action = 'store_true')
 parser.add_argument('--run-unittests', action = 'store_true')
 parser.add_argument('--algo-latency', default = DEFAULT_ALGO_LATENCY, metavar = '<n>', type = int, help = "algo latency in frames (240MHz cycles), default is '{DEFAULT_ALGO_LATENCY}'".format(**locals()))
 parser.add_argument('--master-latency', default = DEFAULT_MASTER_LATENCY, metavar = '<n>', type = int, help = "master latency in frames (240MHz cycles), default is '{DEFAULT_MASTER_LATENCY}'".format(**locals()))
@@ -226,7 +226,7 @@ if args.configure_amc13:
     state = configure(amc13, state)
     state = start(amc13, state)
     print''
-    print 'Configuring complete...'
+    print 'Configure complete...'
     print ''
     
 # Dump the memories.
