@@ -69,10 +69,12 @@ args = parser.parse_args(TDF_ARGS)
 
 args.pattern = os.path.abspath(args.pattern)
 
-global slot = args.slot
-global fedID = args.fedID
-global BCNoffset = args.BCNoffset
-global EnableSlink =args.enableSlink
+global slot, fedID, BCNoffset, EnableSlink
+
+slot = args.slot
+fedID = args.fedID
+BCNoffset = args.BCNoffset
+EnableSlink = args.enableSlink
 
 def status(amc13, state):
     print "Current state according to script: " + state
