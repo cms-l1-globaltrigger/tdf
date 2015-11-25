@@ -62,6 +62,7 @@ parser.add_argument('--slot', type=int, default=DEFAULT_SLOT, help="Slot to acti
 parser.add_argument('--BCNoffset', type=int, default=(0xdec-23), help='Bunch crossing to expect BC0 in.')
 parser.add_argument('--enableSlink', action='store_true', help='Flag to enable the Slink to DAQ.')
 parser.add_argument('--configure-tcds', action = 'store_true')
+parser.add_argument('--spy', action = 'store_true')
 parser.add_argument('--connections-file-amc13', type=str, default='/nfshome0/ugtts/software/tdf/etc/uhal/connections-amc13-p5.xml', help='URI to connections file.')
 parser.add_argument('--readout-menu', type=str, default='/nfshome0/ugtts/software/mp7sw_v1_8_4/mp7/tests/python/daq/simple.py', help='URI toreadout menu file.')
 #parser.add_argument('-o', '--output-dir', default = result_area(), help = "name of output directory")
@@ -235,6 +236,8 @@ if args.configure_amc13:
     print''
     print 'Configure complete...'
     print ''
+    if args.spy:
+        spy(amc13, state)
     
 # Dump the memories.
 #dump(args.device, "gt_mp7_frame.simspymem", outfile = TDF_NAME + "_simspymem.dat")
