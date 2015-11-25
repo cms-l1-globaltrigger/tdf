@@ -93,7 +93,7 @@ def configureTTC(amc13, state):
 
 def configure(amc13, state):
     if state == "Halted":
-        if EnableSlink:
+        if EnableSlink == True:
             print "Enabling Slink."
             enableSlink = 1
         else:
@@ -225,7 +225,10 @@ if args.configure_amc13:
     #state = configureTTC(amc13, state)
     state = configure(amc13, state)
     state = start(amc13, state)
-
+    print''
+    print 'Configuring complete...'
+    print ''
+    
 # Dump the memories.
 #dump(args.device, "gt_mp7_frame.simspymem", outfile = TDF_NAME + "_simspymem.dat")
 #algo_dump = dump(args.device, "gt_mp7_frame.spymem2_algos", outfile = TDF_NAME + "_spymem2_algos.dat")
