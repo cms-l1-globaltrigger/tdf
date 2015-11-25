@@ -61,6 +61,7 @@ parser.add_argument('--fedID', type=int, default=DEFAULT_FED_ID, help="Enter you
 parser.add_argument('--slot', type=int, default=DEFAULT_SLOT, help="Slot to activate in crate. Default is '{DEFAULT_SLOT}'".format(**locals()))
 parser.add_argument('--BCNoffset', type=int, default=(0xdec-23), help='Bunch crossing to expect BC0 in.')
 parser.add_argument('--enableSlink', action='store_true', help='Flag to enable the Slink to DAQ.')
+parser.add_argument('--configure-tcds', action = 'store_true')
 parser.add_argument('--connections-file-amc13', type=str, default='/nfshome0/ugtts/software/tdf/etc/uhal/connections-amc13-p5.xml', help='URI to connections file.')
 parser.add_argument('--readout-menu', type=str, default='/nfshome0/ugtts/software/mp7sw_v1_8_4/mp7/tests/python/daq/simple.py', help='URI toreadout menu file.')
 #parser.add_argument('-o', '--output-dir', default = result_area(), help = "name of output directory")
@@ -131,6 +132,12 @@ def spy(amc13, state):
     #print "creating result area directory:", args.output_dir
     #os.makedirs(args.output_dir)
     #os.chdir(args.output_dir)
+    
+if args.configure_tcds:       
+    print''
+    print'Setup TCDS...'
+    os.system("python /nfshome0/ugtts/software/tcds/setup-tcds.py")
+    print''
 
 if args.configure_amc13:    
     state = "Undefined"
@@ -215,9 +222,9 @@ mp7butler("rosetup", args.device, "--bxoffset", "2")
 mp7butler("romenu", args.device, args.readout_menu, "menuUGTA")
 
 # Wait for the run to be started.
-print ''
-raw_input('Now start the run. Then press Return to continue!')
-print ''
+#print ''
+#raw_input('Now start the run. Then press Return to continue!')
+#print ''
 
 # Configure AMC13 and start run.
 if args.configure_amc13:
