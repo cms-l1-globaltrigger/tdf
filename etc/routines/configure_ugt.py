@@ -222,7 +222,7 @@ if args.algo_bx_mask:
 else:
     run_routine("enable_algo_bx_mem", args.device)
     
-mp7butler("easylatency", args.device, "--rx", args.rx_links, "--tx", args.tx_links, "--algoLatency", args.algo_latency, "--masterLatency", args.master_latency)
+mp7butler("easylatency", args.device, "--rx", "0-15", "--tx", args.tx_links, "--algoLatency", args.algo_latency, "--masterLatency", args.master_latency)
 mp7butler("rosetup", args.device, "--bxoffset", "2")
 mp7butler("romenu", args.device, args.readout_menu, "menuUGTA")
 
