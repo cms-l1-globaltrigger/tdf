@@ -1,6 +1,6 @@
 # Tx_buffer function test
-# for MP7 firmware >= 1.6.0
-# BA 2015-05-27 adaptions for esums commissioning
+# for MP7 firmware >= 1.8.4
+# Script sets up the uGT MP7 in run mode for global run
 
 from tdf.extern import argparse
 from tdf.core.testvector import TestVector
@@ -50,21 +50,22 @@ parser.add_argument('--rx-links', '--links', default = DEFAULT_RX_LINKS, metavar
 parser.add_argument('--tx-links', default = DEFAULT_TX_LINKS, metavar = '<n-m>', help = "TX links to be configured, default is '{DEFAULT_TX_LINKS}'".format(**locals()))
 parser.add_argument('--gtl-latency', default = DEFAULT_GTL_LATENCY, metavar = '<n>', type = int, help = "set latency for GTL logic in BX, default is '{DEFAULT_GTL_LATENCY}'".format(**locals()))
 parser.add_argument('--size', default = DEFAULT_SIZE, metavar = '<n>', type = int, help = "number of BX to be compared, default is '{DEFAULT_INPUT_DELAY}'".format(**locals()))
-parser.add_argument('--align-to', default = None, help = "overwrite link alignment eg. 38,5 (bx, cycle)")
+parser.add_argument('--align-to', default = None, metavar = '<n,m>', help = "overwrite link alignment eg. 38,5 (bx, cycle)")
 parser.add_argument('--algo-bx-mask', default = None, metavar = '<file>', help = "load algorithm BX mask from file")
-parser.add_argument('--capture-buffers', action = 'store_true')
-parser.add_argument('--configure-amc13', action = 'store_true')
-parser.add_argument('--run-unittests', action = 'store_true')
+#parser.add_argument('--capture-buffers', action = 'store_true')
+parser.add_argument('--configure-amc13', action = 'store_true', help = "Configures the AMC13, first sets TTS busy and after configuring uGT to ready.")
+#parser.add_argument('--run-unittests', action = 'store_true')
 parser.add_argument('--algo-latency', default = DEFAULT_ALGO_LATENCY, metavar = '<n>', type = int, help = "algo latency in frames (240MHz cycles), default is '{DEFAULT_ALGO_LATENCY}'".format(**locals()))
 parser.add_argument('--master-latency', default = DEFAULT_MASTER_LATENCY, metavar = '<n>', type = int, help = "master latency in frames (240MHz cycles), default is '{DEFAULT_MASTER_LATENCY}'".format(**locals()))
-parser.add_argument('--fedID', type=int, default=DEFAULT_FED_ID, help="Enter your FED ID. Default is '{DEFAULT_FED_ID}'".format(**locals()))
-parser.add_argument('--slot', type=int, default=DEFAULT_SLOT, help="Slot to activate in crate. Default is '{DEFAULT_SLOT}'".format(**locals()))
-parser.add_argument('--BCNoffset', type=int, default=(0xdec-23), help='Bunch crossing to expect BC0 in.')
+parser.add_argument('--fedID', type=int, default=DEFAULT_FED_ID, metavar = '<n>', help="Enter your FED ID. Default is '{DEFAULT_FED_ID}'".format(**locals()))
+parser.add_argument('--slot', type=int, default=DEFAULT_SLOT, metavar = '<n>', help="Slot to activate in crate. Default is '{DEFAULT_SLOT}'".format(**locals()))
+parser.add_argument('--BCNoffset', type=int, default=(0xdec-23), metavar = '<n>', help='Bunch crossing to expect BC0 in.')
 parser.add_argument('--enableSlink', action='store_true', help='Flag to enable the Slink to DAQ.')
-parser.add_argument('--configure-tcds', action = 'store_true')
-parser.add_argument('--spy', action = 'store_true')
-parser.add_argument('--connections-file-amc13', type=str, default='/nfshome0/ugtts/software/tdf/etc/uhal/connections-amc13-p5.xml', help='URI to connections file.')
-parser.add_argument('--readout-menu', type=str, default='/nfshome0/ugtts/software/mp7sw_v1_8_4/mp7/tests/python/daq/simple.py', help='URI toreadout menu file.')
+parser.add_argument('--configure-tcds', action = 'store_true', help = "Configures the TCDS (pi,iCi) for cpm at the beginning.")
+parser.add_argument('--spy', action = 'store_true', help = "Activates the spy function of the AMC13.")
+parser.add_argument('--connections-file-amc13', type=str, default='/nfshome0/ugtts/software/tdf/etc/uhal/connections-amc13-p5.xml', metavar = '<file>', help='path to amc13 connection file.')
+parser.add_argument('--readout-menu', type=str, default='/nfshome0/ugtts/software/mp7sw_v1_8_5_pre1/mp7/tests/python/daq/simple.py', metavar = '<file>',help='path to readout menu file.')
+parser.add_argument('--fwversion', type=str, default='gt_mp7_xe_v103a_module_0.bit', metavar = '<sdcard file>', help='firmware version which is loaded before the run.')
 #parser.add_argument('-o', '--output-dir', default = result_area(), help = "name of output directory")
 parser.add_argument('--cap', default = DEFAULT_CAP, metavar = '<n>', type = int, help = "delay in BX for capturing the tx buffer output, default is '{DEFAULT_CAP}'".format(**locals()))
 args = parser.parse_args(TDF_ARGS)
@@ -159,6 +160,9 @@ if args.configure_amc13:
         
     # Reset AMC13 and set to 'Halted'
     state = reset(amc13)
+
+# Reconfigure uGT FPGA
+mp7butler("rebootfpga", args.device, args.fwversion)
 
 # Reset link's logic
 mp7butler("reset", args.device, "--clksrc", args.clksrc)
