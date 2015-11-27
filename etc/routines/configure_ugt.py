@@ -65,7 +65,7 @@ parser.add_argument('--configure-tcds', action = 'store_true', help = "Configure
 parser.add_argument('--spy', action = 'store_true', help = "Activates the spy function of the AMC13.")
 parser.add_argument('--connections-file-amc13', type=str, default='/nfshome0/ugtts/software/tdf/etc/uhal/connections-amc13-p5.xml', metavar = '<file>', help='path to amc13 connection file.')
 parser.add_argument('--readout-menu', type=str, default='/nfshome0/ugtts/software/mp7sw_v1_8_5_pre1/mp7/tests/python/daq/simple.py', metavar = '<file>',help='path to readout menu file.')
-parser.add_argument('--fwversion', type=str, default='gt_mp7_xe_v103a_module_0.bit', metavar = '<sdcard file>', help='firmware version which is loaded before the run.')
+parser.add_argument('--fwversion', type=str, default='gt_mp7_xe_v103b_module_0.bit', metavar = '<sdcard file>', help='firmware version which is loaded before the run.')
 #parser.add_argument('-o', '--output-dir', default = result_area(), help = "name of output directory")
 parser.add_argument('--cap', default = DEFAULT_CAP, metavar = '<n>', type = int, help = "delay in BX for capturing the tx buffer output, default is '{DEFAULT_CAP}'".format(**locals()))
 args = parser.parse_args(TDF_ARGS)
@@ -187,7 +187,7 @@ else:
         mp7butler("mgts", args.device, "--e", args.rx_links, "--align-to", "3531,5")
         
 mp7butler("buffers", args.device, "algoPlay", "-e", "0-3",   "--inject", "generate://empty") #to mask all the uGMT inputs
-mp7butler("buffers", args.device, "algoPlay", "-e", "12-15",   "--inject", "generate://empty") #to mask all the AMC502 inputs
+mp7butler("buffers", args.device, "algoPlay", "-e", "11-15",   "--inject", "generate://empty") #to mask all the AMC502 inputs
  
 # Setup for loopback or cable mode.
 if args.loopback:
@@ -222,7 +222,7 @@ if args.algo_bx_mask:
 else:
     run_routine("enable_algo_bx_mem", args.device)
     
-mp7butler("easylatency", args.device, "--rx", "0-15", "--tx", args.tx_links, "--algoLatency", args.algo_latency, "--masterLatency", args.master_latency)
+mp7butler("easylatency", args.device, "--rx", "4-10", "--tx", args.tx_links, "--algoLatency", args.algo_latency, "--masterLatency", args.master_latency)
 mp7butler("rosetup", args.device, "--bxoffset", "2")
 mp7butler("romenu", args.device, args.readout_menu, "menuUGTA")
 
