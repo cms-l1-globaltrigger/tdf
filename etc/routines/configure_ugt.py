@@ -32,7 +32,7 @@ DEFAULT_HW_DELAY = 0
 DEFAULT_FED_ID = 1404
 DEFAULT_SLOT = 1
 DEFAULT_ALGO_LATENCY = 44
-DEFAULT_MASTER_LATENCY = 187
+DEFAULT_MASTER_LATENCY = 169
 
 def result_area():
     from datetime import datetime
@@ -184,9 +184,11 @@ else:
     if args.align_to:
         mp7butler("mgts", args.device, "--e", args.rx_links, "--align-to", args.align_to)
     else:
-        mp7butler("mgts", args.device, "--e", args.rx_links, "--align-to", "3531,5")
+        #mp7butler("mgts", args.device, "--e", args.rx_links, "--align-to", "3531,5")
+        mp7butler("mgts", args.device, "--e", "0-3", "--align-to", "3558,5")
+        mp7butler("mgts", args.device, "--e", "4-10", "--align-to", "3534,5")
         
-mp7butler("buffers", args.device, "algoPlay", "-e", "0-3",   "--inject", "generate://empty") #to mask all the uGMT inputs
+#mp7butler("buffers", args.device, "algoPlay", "-e", "0-3",   "--inject", "generate://empty") #to mask all the uGMT inputs
 mp7butler("buffers", args.device, "algoPlay", "-e", "11-15",   "--inject", "generate://empty") #to mask all the AMC502 inputs
  
 # Setup for loopback or cable mode.
@@ -222,7 +224,7 @@ if args.algo_bx_mask:
 else:
     run_routine("enable_algo_bx_mem", args.device)
     
-mp7butler("easylatency", args.device, "--rx", "4-10", "--tx", args.tx_links, "--algoLatency", args.algo_latency, "--masterLatency", args.master_latency)
+mp7butler("easylatency", args.device, "--rx", "0-10", "--tx", args.tx_links, "--algoLatency", args.algo_latency, "--masterLatency", args.master_latency)
 mp7butler("rosetup", args.device, "--bxoffset", "2")
 mp7butler("romenu", args.device, args.readout_menu, "menuUGTA")
 
