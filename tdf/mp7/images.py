@@ -441,6 +441,62 @@ class FinorMemoryImage(ColumnMemoryImage):
     def __str__(self):
         return '\n'.join(TDF.FINOR.hexstr(value) for value in self.finors())
 
+class MasksMemoryImage(ColumnMemoryImage):
+    """Memory for FINRO and veto masks."""
+
+    def __init__(self):
+        super(MasksMemoryImage, self).__init__(MEMORY_BLOCKSIZE * 1, MEMORY_BLOCKSIZE)
+
+    def finor_masks(self, offset = 0):
+        values = [value & 0x1 for value in self.merged()[:TDF.ORBIT_LENGTH]]
+        return values[offset:] + values[:offset]
+
+    def veto_masks(self, offset = 0):
+        values = [(value >> 1) & 0x1 for value in self.merged()[:TDF.ORBIT_LENGTH]]
+        return values[offset:] + values[:offset]
+
+    def readMasksFile(self, fs):
+        """Read FINOR/veto mask from file.
+
+        Reads following file format:
+
+          veto_masks: 0, 2, 8, 16-128
+          finor_masks: 8, 32, 64-76
+        """
+        # TODO rewrite
+        masks = {}
+        for line in fs:
+            name, index_ = line.strip().split(':')
+            index_ = [index.strip() for index in index_.split(',')]
+            indices = []
+            for index in index_:
+                try:
+                    indices.append(int(index))
+                except ValueError:
+                    try:
+                        b, e = index.strip().split('-')
+                        b, e = int(b), int(e)
+                        for i in range(b, e + 1):
+                            indices.append(i)
+                    except:
+                        raise RuntimeError("error reading FINOR/veto mask file...")
+            masks[name] = indices
+        # initialize default values
+        values = [0x1] * TDF.ORBIT_LENGTH # veto=0, finor=1
+        try:
+            for index in masks['veto_masks']:
+                values[index] = values[i] | 0x2
+            for index in masks['finor_masks']:
+                values[index] = values[i] & ~0x1
+        except KeyError, e:
+            raise RuntimeError("missing key in masks file: {e}".format(**locals()))
+        self.inject(values, 0, TDF.MASKS.dwords)
+
+    def __str__(self):
+        finor_masks = self.finor_masks()
+        veto_masks = self.veto_masks()
+        return '\n'.join(["{0} {1}".format(veto_masks[i], finor_masks[i]) for i in range(len(finor_masks))])
+
 class AlgoBxMemoryImage(AlgorithmMemoryImage):
     """Memory for algorithm BX masks."""
 
@@ -452,7 +508,12 @@ class AlgoBxMemoryImage(AlgorithmMemoryImage):
         self.clear(bitmask(TDF.DATA_WIDTH) if enabled else 0x0)
 
     def readBxMaskFile(self, fs):
-        """Read algorithm mask from file."""
+        """Read algorithm mask from file.
+
+        Reads following file format:
+
+        <algo_index>: [<index>|<from>-<to>, ...]
+        """
         # TODO rewrite
         masks = {}
         for line in fs:
@@ -472,7 +533,7 @@ class AlgoBxMemoryImage(AlgorithmMemoryImage):
                     except:
                         raise RuntimeError("error reading algorithm mask file...")
             masks[algorithm] = bxs
-        # inverted algorithm map
+        # initialize with inverted algorithm map
         values = [0] * TDF.ORBIT_LENGTH
         for algorithm, bxs in masks.items():
             for bx in bxs:

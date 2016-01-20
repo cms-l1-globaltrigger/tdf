@@ -159,36 +159,39 @@ class TDF(TDFCORE):
     """Orbit time in seconds."""
 
     MUON = DataSpecification(**OBJECTS.muon.__dict__)
-    """Muon object specification, returns an object of type :class:`DataSpecification`."""
+    """Muon object specification."""
 
     EG = DataSpecification(**OBJECTS.eg.__dict__)
-    """e/gamma object specification, returns an object of type :class:`DataSpecification`."""
+    """e/gamma object specification."""
 
     TAU = DataSpecification(**OBJECTS.tau.__dict__)
-    """Tau object specification, returns an object of type :class:`DataSpecification`."""
+    """Tau object specification."""
 
     JET = DataSpecification(**OBJECTS.jet.__dict__)
-    """Jet object specification, returns an object of type :class:`DataSpecification`."""
+    """Jet object specification."""
 
     ETT = DataSpecification(**OBJECTS.ett.__dict__)
-    """ETT specification, returns an object of type :class:`DataSpecification`."""
+    """ETT specification."""
 
     HT = DataSpecification(**OBJECTS.ht.__dict__)
-    """HT specification, returns an object of type :class:`DataSpecification`."""
+    """HT specification."""
 
     ETM = DataSpecification(**OBJECTS.etm.__dict__)
-    """ETM specification, returns an object of type :class:`DataSpecification`."""
+    """ETM specification."""
 
     HTM = DataSpecification(**OBJECTS.htm.__dict__)
-    """HTM specification, returns an object of type :class:`DataSpecification`."""
+    """HTM specification."""
 
     EXTCOND = DataSpecification(1, 256)
-    """External conditions specification, returns an object of type :class:`DataSpecification`."""
+    """External conditions specification."""
 
     ALGORITHM = DataSpecification(1, 512)
-    """Algorithm data specification, returns an object of type :class:`DataSpecification`."""
+    """Algorithm data specification."""
 
     FINOR = DataSpecification(1, 1)
-    """FINOR data specification, returns an object of type :class:`DataSpecification`."""
+    """FINOR data specification."""
+
+    MASKS = DataSpecification(1, 2, {'veto_mask': {'msb':1, 'lsb':1}, 'finor_mask': {'msb':0, 'lsb':0}, })
+    """FINOR and veto data specification."""
 
     def __init__(self): raise NotImplementedError()
