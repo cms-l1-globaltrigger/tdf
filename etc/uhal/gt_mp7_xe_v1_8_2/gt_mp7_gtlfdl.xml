@@ -4,15 +4,11 @@
 
 	<node id="rate_cnt_before_prescaler" address="0x00010000" mode="incremental" size="512" permission="r"/>
 	<node id="prescale_factor" address="0x00010200" mode="incremental" size="512" permission="rw"/>
-	<node id="masks" address="0x00010400" mode="incremental" size="512" permission="rw"/>
-
-	<!-- HB 2015-08-31: added "Prescale factor set index register" - currently used 8 LSBs -->
-	<node id="prescale_factor_set_index" address="0x00091880" permission="rw" parameters="type=parent">
-		<node id="value"      address="0x00000000" mask="0x000000ff" permission="rw" parameters="type=hex"/>
-	</node>
+	<node id="masks" address="0x00010400" mode="incremental" size="512" permission="rw" parameters="class=MasksMemoryImage"/>
 
 	<node id="control" address="0x00091888" permission="rw" parameters="type=parent">
-<!-- control_reg currently not used -->
+<!--        <node id="reset_algo_bx_mem"   address="0x00000000" mask="0x0000ff00" permission="rw"/>-->
+		<node id="en_algo_bx_mem"   address="0x00000000" mask="0x00000002" permission="rw"/> <!-- Control register bit 1 => enable input (enb) algo-bx-memory port B -->
 	</node>
 
 	<node id="read_versions" address="0x000918C0" permission="r" parameters="type=parent">
@@ -34,10 +30,5 @@
 			<node id="minor"      address="0x00000000" mask="0x0000ff00" permission="r" parameters="type=number"/>
 			<node id="rev"        address="0x00000000" mask="0x000000ff" permission="r" parameters="type=number"/>
 		</node>
-	</node>
-	
-	<!-- HB 2015-08-31: added "Command pulses register" - currently used for -->
-	<node id="command_pulses" address="0x00091900" permission="rw" parameters="type=parent">
-		<node id="request_update_factor_pulse"      address="0x00000000" mask="0x00000001" permission="rw" description="Sets the request signal for updating pre-scale factors high"/>
 	</node>
 </node>

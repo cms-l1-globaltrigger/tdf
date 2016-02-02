@@ -35,6 +35,7 @@ parser.add_argument('--gtl-latency', default = DEFAULT_GTL_LATENCY, metavar = '<
 parser.add_argument('--size', default = DEFAULT_SIZE, metavar = '<n>', type = int, help = "number of BX to be compared, default is '{DEFAULT_INPUT_DELAY}'".format(**locals()))
 parser.add_argument('--align-to', default = None, help = "overwrite link alignment eg. 38,5 (bx, cycle)")
 parser.add_argument('--algo-bx-mask', default = None, metavar = '<file>', help = "load algorithm BX mask from file")
+parser.add_argument('--finor-veto-masks', default = None, metavar = '<file>', help = "load finor veto masks from file")
 parser.add_argument('--ttc-bc0-bx', default = DEFAULT_TTC_BC0_BX, metavar = '<n>', type = int, help = "TTC_BC0_BX value, default is '{DEFAULT_TTC_BC0_BX}'".format(**locals()))
 parser.add_argument('--capture-buffers', action = 'store_true')
 parser.add_argument('--configure-amc13', action = 'store_true')
@@ -107,8 +108,12 @@ if args.algo_bx_mask:
 else:
     run_routine("enable_algo_bx_mem", args.device)
 
-## HB 2016-01-19: bcres_delay for FDL (= "--delay" + 1 [bcres sync.] + 25 [3564-3539 from mp7_ttc_decl.vhd] + 1 [mem input] + 1 ?)
-write(args.device, "gt_mp7_frame.rb.dm.delay_bcres_fdl", args.delay+1+3564-args.ttc_bc0_bx+1+1)
+# Setup finor/veto masks.
+if args.finor_veto_masks:
+    run_routine("load_finor_veto_masks", args.device, args.finor_veto_masks)
+
+## HB 2016-01-19: bcres_delay for FDL (= 25 [3564-3539 from mp7_ttc_decl.vhd] + 1 [bcres sync.] + "--delay" + 1 [algo-bx-mem output] + 1 [algo spy mem input])
+write(args.device, "gt_mp7_frame.rb.dm.delay_bcres_fdl", 3564-args.ttc_bc0_bx + 1 + args.delay + 1 + 1)
 
 ## HB 2016-01-19: test for finor and veto masks
 #write(args.device, "gt_mp7_gtlfdl.masks", 0)
