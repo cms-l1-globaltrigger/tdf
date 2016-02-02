@@ -4,7 +4,7 @@
 
 	<node id="rate_cnt_before_prescaler" address="0x00010000" mode="incremental" size="512" permission="r"/>
 	<node id="prescale_factor" address="0x00010200" mode="incremental" size="512" permission="rw"/>
-	<node id="masks" address="0x00010400" mode="incremental" size="512" permission="rw"/>
+	<node id="masks" address="0x00010400" mode="incremental" size="512" permission="rw" parameters="class=MasksMemoryImage"/>
 
 	<node id="control" address="0x00091888" permission="rw" parameters="type=parent">
 <!--        <node id="reset_algo_bx_mem"   address="0x00000000" mask="0x0000ff00" permission="rw"/>-->
