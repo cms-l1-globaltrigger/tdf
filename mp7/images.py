@@ -32,6 +32,8 @@ __version__ = '$Revision: 3982 $'
 
 # Blocksize of 32 bit simulation and spy memories.
 MEMORY_BLOCKSIZE = 4096
+## HB 2016-02-02: updated code for correct memeory size
+FINOR_VETO_MASKS_BLOCKSIZE = 512
 
 class SimSpyMemoryImage(ColumnMemoryImage):
     """Simulation/spy memory image."""
@@ -450,14 +452,20 @@ class MasksMemoryImage(ColumnMemoryImage):
     """Memory for FINRO and veto masks."""
 
     def __init__(self):
-        super(MasksMemoryImage, self).__init__(MEMORY_BLOCKSIZE * 1, MEMORY_BLOCKSIZE)
+## HB 2016-02-02: updated code for correct memeory size
+        #super(MasksMemoryImage, self).__init__(MEMORY_BLOCKSIZE * 1, MEMORY_BLOCKSIZE)
+        super(MasksMemoryImage, self).__init__(FINOR_VETO_MASKS_BLOCKSIZE * 1, FINOR_VETO_MASKS_BLOCKSIZE)
 
     def finor_masks(self, offset = 0):
-        values = [value & 0x1 for value in self.merged()[:TDF.ORBIT_LENGTH]]
+## HB 2016-02-02: updated code for correct memeory size
+        #values = [value & 0x1 for value in self.merged()[:MEMORY_BLOCKSIZE]]
+        values = [value & 0x1 for value in self.merged()[:FINOR_VETO_MASKS_BLOCKSIZE]]
         return values[offset:] + values[:offset]
 
     def veto_masks(self, offset = 0):
-        values = [(value >> 1) & 0x1 for value in self.merged()[:TDF.ORBIT_LENGTH]]
+## HB 2016-02-02: updated code for correct memeory size
+        #values = [(value >> 1) & 0x1 for value in self.merged()[:MEMORY_BLOCKSIZE]]
+        values = [(value >> 1) & 0x1 for value in self.merged()[:FINOR_VETO_MASKS_BLOCKSIZE]]
         return values[offset:] + values[:offset]
 
     def readMasksFile(self, fs):
@@ -487,14 +495,21 @@ class MasksMemoryImage(ColumnMemoryImage):
                         raise RuntimeError("error reading FINOR/veto mask file...")
             masks[name] = indices
         # initialize default values
-        values = [0x1] * TDF.ORBIT_LENGTH # veto=0, finor=1
+## HB 2016-02-02: updated code for correct memeory size
+        #values = [0x1] * MEMORY_BLOCKSIZE # veto=0, finor=1
+        values = [0x1] * FINOR_VETO_MASKS_BLOCKSIZE # veto=0, finor=1
         try:
             for index in masks['veto_masks']:
-                values[index] = values[i] | 0x2
+## HB 2016-02-02: updated code, because of errors during execution
+                #values[index] = values[i] | 0x2
+                values[index] = values[index] | 0x2
             for index in masks['finor_masks']:
-                values[index] = values[i] & ~0x1
+                #values[index] = values[i] & ~0x1
+                values[index] = values[index] & ~0x1
         except KeyError, e:
             raise RuntimeError("missing key in masks file: {e}".format(**locals()))
+        #print "values of finor-veto-masks registers (local index): [algo(0) .. algo(511)]"
+        #print values
         self.inject(values, 0, TDF.MASKS.dwords)
 
     def __str__(self):
