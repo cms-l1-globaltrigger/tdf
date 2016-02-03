@@ -3,8 +3,10 @@
 	<node id="algo_bx_mem"  address="0x00000000" mode="incremental" size="65536" permission="rw" parameters="class=AlgoBxMemoryImage"/>
 
 	<node id="rate_cnt_before_prescaler" address="0x00010000" mode="incremental" size="512" permission="r"/>
-	<node id="prescale_factor" address="0x00010200" mode="incremental" size="512" permission="rw"/>
+	<node id="prescale_factor" address="0x00010200" mode="incremental" size="512" permission="rw" parameters="class=PreScaleFactorsImage"/>
 	<node id="masks" address="0x00010400" mode="incremental" size="512" permission="rw" parameters="class=MasksMemoryImage"/>
+
+	<node id="prescale_factor_set_index" address="0x00091880" permission="rw" parameters="type=parent"/>
 
 	<node id="control" address="0x00091888" permission="rw" parameters="type=parent">
 <!--        <node id="reset_algo_bx_mem"   address="0x00000000" mask="0x0000ff00" permission="rw"/>-->
@@ -30,5 +32,8 @@
 			<node id="minor"      address="0x00000000" mask="0x0000ff00" permission="r" parameters="type=number"/>
 			<node id="rev"        address="0x00000000" mask="0x000000ff" permission="r" parameters="type=number"/>
 		</node>
+	</node>
+	<node id="command_pulses" address="0x00091900" permission="w" parameters="type=parent">
+		<node id="request_update_factor_pulse" address="0x00000000" mask="0x00000001" permission="w"/>
 	</node>
 </node>
