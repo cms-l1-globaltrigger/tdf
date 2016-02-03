@@ -34,6 +34,7 @@ __version__ = '$Revision: 3982 $'
 MEMORY_BLOCKSIZE = 4096
 ## HB 2016-02-02: updated code for correct memeory size
 FINOR_VETO_MASKS_BLOCKSIZE = 512
+PRESCALE_FACTORS_BLOCKSIZE = 512
 
 class SimSpyMemoryImage(ColumnMemoryImage):
     """Simulation/spy memory image."""
@@ -468,6 +469,10 @@ class MasksMemoryImage(ColumnMemoryImage):
         values = [(value >> 1) & 0x1 for value in self.merged()[:FINOR_VETO_MASKS_BLOCKSIZE]]
         return values[offset:] + values[:offset]
 
+    def setDefault(self):
+        values = [0x1] * FINOR_VETO_MASKS_BLOCKSIZE # veto=0, finor=1
+        self.inject(values, 0, TDF.MASKS.dwords)
+
     def readMasksFile(self, fs):
         """Read FINOR/veto mask from file.
 
@@ -516,6 +521,27 @@ class MasksMemoryImage(ColumnMemoryImage):
         finor_masks = self.finor_masks()
         veto_masks = self.veto_masks()
         return '\n'.join(["{0} {1}".format(veto_masks[i], finor_masks[i]) for i in range(len(finor_masks))])
+
+class PreScaleFactorsImage(ColumnMemoryImage):
+    """Memory for algorithm BX masks."""
+
+    def __init__(self):
+        super(PreScaleFactorsImage, self).__init__(PRESCALE_FACTORS_BLOCKSIZE * 1, PRESCALE_FACTORS_BLOCKSIZE)
+
+    def readPreScaleFactorsFile(self, fs):
+        factors_array = {}
+        for line in fs:
+            algorithm, factors = line.strip().split(':')
+	    algorithm = int(algorithm)
+	    factors = int(factors)
+            factors_array[algorithm] = factors
+        # initialize with inverted algorithm map
+        values = [1] * PRESCALE_FACTORS_BLOCKSIZE
+        for algorithm, factors in factors_array.items():
+	    values[algorithm] = factors
+        #print "values:"
+        #print values
+        self.inject(values, 0, TDF.MASKS.dwords)
 
 class AlgoBxMemoryImage(AlgorithmMemoryImage):
     """Memory for algorithm BX masks."""
