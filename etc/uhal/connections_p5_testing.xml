@@ -19,6 +19,9 @@
     <!-- FINOR slot -->
     <connection id="finor_amc502.7" uri="chtcp-2.0://bridge-s1e04-32:10203?target=amc-s1e04-32-07:50001" address_table="file://finor_amc502/top.xml" />
 
+    <!-- Testing slots -->
+    <connection id="testing_amc502.8" uri="chtcp-2.0://bridge-s1e04-32:10203?target=amc-s1e04-32-08:50001" address_table="file://extcond_mp7_1_4_0/mp7_infra.xml" />
+
     <!-- AMC13 -->
     <connection id="T1" uri="chtcp-2.0://bridge-s1e04-32:10203?target=amc-s1e04-32-13-t1:50001" address_table="file:///opt/cactus/etc/amc13/AMC13XG_T1.xml" />
     <connection id="T2" uri="chtcp-2.0://bridge-s1e04-32:10203?target=amc-s1e04-32-13-t2:50001" address_table="file:///opt/cactus/etc/amc13/AMC13XG_T2.xml" />
