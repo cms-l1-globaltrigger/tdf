@@ -17,13 +17,12 @@ import sys, os, random
 #  Constants
 # -----------------------------------------------------------------------------
 
-DEFAULT_SOURCE = 'extcond_amc502.9'
+DEFAULT_SOURCE = 'testing_amc502.8'
 DEFAULT_TARGET = 'extcond_amc502.12'
 DEFAULT_CONNECTOR = 0
 DEFAULT_PATTERN = ':counter'
-DEFAULT_INPUT_DELAY = 11
-DEFAULT_GTL_LATENCY = 6
-DEFAULT_LINKS = '0-15'
+DEFAULT_INPUT_DELAY = 2 
+DEFAULT_SIZE = 3564
 MODEL = 'r1'
 
 # -----------------------------------------------------------------------------
@@ -44,51 +43,43 @@ patterns = [
 #  Parsing arguments
 # -----------------------------------------------------------------------------
 parser = argparse.ArgumentParser()
-parser.add_argument('--source', default = DEFAULT_SOURCE, help = "source device name, default is `extcond_amc502.9'")
+parser.add_argument('--source', default = DEFAULT_SOURCE, help = "source device name, default is `testing_amc502.8'")
 parser.add_argument('--target', default = DEFAULT_TARGET, help = "target device name, default is `extcond_amc502.12'")
 parser.add_argument('-c', '--connector', default = DEFAULT_CONNECTOR, type = int, choices=(0, 1), help = "target device connector (0 or 1), default is 0")
 parser.add_argument('--pattern', default = DEFAULT_PATTERN, help = "pattern file or :counter, :random pattern, default is `:counter'")
-parser.add_argument('--links', default = DEFAULT_LINKS, help = "number of links to be configured")
+parser.add_argument('--size', default = DEFAULT_SIZE, type = int, help = "Lines to compare")
 parser.add_argument('-d', '--delay', default = DEFAULT_INPUT_DELAY, type = int, help = "input delay")
-parser.add_argument('--gtl-latency', default = DEFAULT_GTL_LATENCY, metavar = '<n>', type = int, help = "set latency for GTL logic (for analysis only)")
 parser.add_argument('--bcres-delay', metavar = '<n>', type = binutils.integer, help = "overwrite BC_RES delay applied by configuration files")
-parser.add_argument('--size', default = TDF.ORBIT_LENGTH, type = int, help = "number of BX to be compared")
 args = parser.parse_args(TDF_ARGS)
-
-# -----------------------------------------------------------------------------
-#  Enable clocks on AMC13
-# -----------------------------------------------------------------------------
-configure("amc13_k7.13", os.path.join(TDF.ROOT_DIR, "etc/config/amc13xg/default_k7.cfg"))
-
-# -----------------------------------------------------------------------------
-#  Check if the correct FW was loaded
-# -----------------------------------------------------------------------------
-source_major = read(args.source, "user.module_info.major")
-source_minor = read(args.source, "user.module_info.minor")
-source_rev = read(args.source, "user.module_info.rev")
-
-if (source_major >= 1) and (source_minor >= 2) and (source_rev >= 9):
-    TDF_INFO('Correct FW version found in {args.source}: {source_major}.{source_minor}.{source_rev}'.format(**locals()))
-else:
-    raise RuntimeError('Wrong FW version in {args.source}: {source_major}.{source_minor}.{source_rev}'.format(**locals()))
 
 # -----------------------------------------------------------------------------
 #  Reset device to use external clock
 # -----------------------------------------------------------------------------
-mp7butler("reset", args.target, "--clksrc", "external") #, "-m", MODEL)
+mp7butler("reset", args.source, "--clksrc", "external", "-m", MODEL)
+mp7butler("reset", args.target, "--clksrc", "external", "-m", MODEL)
 
 # -----------------------------------------------------------------------------
 #  Run unittests to RESET and verify integrity.
 # -----------------------------------------------------------------------------
+run_unittest(args.source, "clk40_locked")
+run_unittest(args.source, "bc0_locked")
 run_unittest(args.target, "clk40_locked")
 run_unittest(args.target, "bc0_locked")
 # ev. check FW version of one or both cards??
+
+# -----------------------------------------------------------------------------
+#  Setup AMC502 logic
+# -----------------------------------------------------------------------------
+configure(args.source, os.path.join(TDF.ROOT_DIR, "etc/config/testing_amc502/reset.cfg"))
+configure(args.source, os.path.join(TDF.ROOT_DIR, "etc/config/testing_amc502/delay-manager-values.cfg"))
+configure(args.target, os.path.join(TDF.ROOT_DIR, "etc/config/extcond_amc502/reset.cfg"))
+configure(args.target, os.path.join(TDF.ROOT_DIR, "etc/config/extcond_amc502/delay-manager-values.cfg"))
 
 results = []
 
 for name, pattern in patterns:
 
-    pattern_image = dump(args.source, "user.dpmem0")
+    pattern_image = dump(args.source, "payload.simmem")
 
     for i, value in enumerate(pattern):
         pattern_image.data[i] = value
@@ -97,14 +88,8 @@ for name, pattern in patterns:
     #  Setup sending device, load pattern and start transmission
     # -----------------------------------------------------------------------------
     #load(args.source, "user.dpmem0", args.pattern) # load a pattern into the SIM MEM
-    blockwrite(args.source, "user.dpmem0", pattern_image.serialize())
-    write(args.source, 'user.testpoint.tfmc_signal', 0x08) # set the TFMC output mux to SIM MEM
-
-    # -----------------------------------------------------------------------------
-    #  Setup AMC502 logic
-    # -----------------------------------------------------------------------------
-    configure(args.target, os.path.join(TDF.ROOT_DIR, "etc/config/extcond_amc502/reset.cfg"))
-    configure(args.target, os.path.join(TDF.ROOT_DIR, "etc/config/extcond_amc502/delay-manager-values.cfg"))
+    blockwrite(args.source, "payload.simmem", pattern_image.serialize())
+    write(args.source, 'payload.module_info.data_mux', 0x1) # set the TFMC output mux to SIM MEM
 
     # Overwrite BC_res delay on demand.
     #if args.bcres_delay is not None:
@@ -119,7 +104,7 @@ for name, pattern in patterns:
     # -----------------------------------------------------------------------------
     #  Dump test pattern data
     # -----------------------------------------------------------------------------
-    source_data = dump(args.source, "user.dpmem0")
+    source_data = dump(args.source, "payload.simmem")
     temp_data = ExtCondMemoryImage()
 
     if args.connector is 0:
