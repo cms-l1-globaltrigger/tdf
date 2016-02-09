@@ -3,37 +3,28 @@
 
 <connections>
     <!-- GT slots -->
-    <!-- slot 1 with 1_6_0 -->
-    <!--<connection id="gt_mp7.1" uri="chtcp-2.0://localhost:10203?target=amc-gtlab-01.vie:50001" address_table="file://gt_mp7_1_6_0_xe/mp7xe_infra.xml" />-->
-    <!-- slot 1 with 1_8_0_pre3 -->
-   <!-- <connection id="gt_mp7.1" uri="chtcp-2.0://localhost:10203?target=amc-gtlab-01.vie:50001" address_table="file://gt_mp7_xe_v1_8_0/mp7xe_infra.xml" />-->  
-<!-- slot 1 with 1_8_2 -->
-    <connection id="gt_mp7.1" uri="chtcp-2.0://localhost:10203?target=amc-gtlab-01.vie:50001" address_table="file://gt_mp7_xe_v1_8_2/mp7xe_infra.xml" />  
-    <connection id="gt_mp7.2" uri="chtcp-2.0://localhost:10203?target=amc-gtlab-02.vie:50001" address_table="file://gt_mp7_1_4_0/mp7_infra.xml" />
-    <connection id="gt_mp7.3" uri="chtcp-2.0://localhost:10203?target=amc-gtlab-03.vie:50001" address_table="file://gt_mp7_1_4_0/mp7_infra.xml" /> -->
-    <connection id="gt_mp7.4" uri="chtcp-2.0://localhost:10203?target=amc-gtlab-04.vie:50001" address_table="file://gt_mp7_1_4_0_xe/mp7xe_infra.xml" />
-    <connection id="gt_mp7.5" uri="chtcp-2.0://localhost:10203?target=amc-gtlab-05.vie:50001" address_table="file://gt_mp7_1_4_0_xe/mp7xe_infra.xml" />
-    <!--<connection id="gt_mp7.6" uri="chtcp-2.0://localhost:10203?target=amc-gtlab-06.vie:50001" address_table="file://gt_mp7_1_4_0_xe/mp7xe_infra.xml" /> -->
-
-    <!-- GMT slot -->
-    <connection id="gmt_mp7.7" uri="chtcp-2.0://localhost:10203?target=amc-gtlab-07.vie:50001" address_table="file://gt_mp7_1_4_0/mp7_infra.xml" />
+    <connection id="gt_mp7.1" uri="chtcp-2.0://localhost:10203?target=amc-gtlab-01.vie:50001" address_table="file://mp7xe_v1_8_3/mp7xe_infra.xml" />
+    <connection id="gt_mp7.2" uri="chtcp-2.0://localhost:10203?target=amc-gtlab-02.vie:50001" address_table="file://mp7xe_v1_8_3/mp7_infra.xml" />
+    <connection id="gt_mp7.3" uri="chtcp-2.0://localhost:10203?target=amc-gtlab-03.vie:50001" address_table="file://mp7xe_v1_8_3/mp7_infra.xml" /> -->
+    <connection id="gt_mp7.4" uri="chtcp-2.0://localhost:10203?target=amc-gtlab-04.vie:50001" address_table="file://mp7xe_v1_8_3/mp7xe_infra.xml" />
+    <connection id="gt_mp7.5" uri="chtcp-2.0://localhost:10203?target=amc-gtlab-05.vie:50001" address_table="file://mp7xe_v1_8_3/mp7xe_infra.xml" />
+    <connection id="gt_mp7.6" uri="chtcp-2.0://localhost:10203?target=amc-gtlab-06.vie:50001" address_table="file://mp7xe_v1_8_3/mp7xe_infra.xml" />
 
     <!-- TDF slot -->
-    <connection id="tdf_mp7.6" uri="chtcp-2.0://localhost:10203?target=amc-gtlab-06.vie:50001" address_table="file://tdf_mp7_1_4_0_xe/mp7xe_infra.xml" />
-
-    <!-- ExtCond slots -->
-    <connection id="extcond_amc502.9" uri="chtcp-2.0://localhost:10203?target=amc-gtlab-09.vie:50001" address_table="file://gt_mp7_1_4_0/mp7_infra.xml" />
-    <connection id="extcond_amc502.10" uri="chtcp-2.0://localhost:10203?target=amc-gtlab-10.vie:50001" address_table="file://gt_mp7_1_4_0/mp7_infra.xml" />
-    <connection id="extcond_amc502.11" uri="chtcp-2.0://localhost:10203?target=amc-gtlab-11.vie:50001" address_table="file://gt_mp7_1_4_0/mp7_infra.xml" />
+    <connection id="tdf_mp7.6" uri="chtcp-2.0://localhost:10203?target=amc-gtlab-06.vie:50001" address_table="file://tdf_mp7_1_8_2_xe/mp7xe_infra.xml" />
 
     <!-- FINOR slot -->
-    <connection id="finor_amc502.12" uri="chtcp-2.0://localhost:10203?target=amc-gtlab-12.vie:50001" address_table="file://gt_mp7_1_4_0/mp7_infra.xml" />
+    <connection id="finor_amc502.7" uri="chtcp-2.0://localhost:10203?target=amc-gtlab-07.vie:50001" address_table="file://finor_mp7_1_4_0/mp7_infra.xml" />
 
-    <!-- AMC13 
-    <connection id="amc13_s6.13" uri="chtcp-2.0://localhost:10203?target=192.168.1.86:50001" address_table="file://amc13xg/AMC13_AddressTable_S6.xml" />
-    <connection id="amc13_k7.13" uri="chtcp-2.0://localhost:10203?target=192.168.1.87:50001" address_table="file://amc13xg/AMC13_AddressTable_K7.xml" />
-    -->
-    
-    <connection id="amc13_s6.13" uri="chtcp-2.0://localhost:10203?target=192.168.1.86:50001" address_table="file://amc13xg/AMC13XG_T2.xml" />
-    <connection id="amc13_k7.13" uri="chtcp-2.0://localhost:10203?target=192.168.1.87:50001" address_table="file://amc13xg/AMC13XG_T1.xml" />
+    <!-- test slot -->
+    <connection id="test_amc502.8" uri="chtcp-2.0://localhost:10203?target=amc-gtlab-08.vie:50001" address_table="file://extcond_mp7_1_4_0/mp7_infra.xml" />
+
+    <!-- ExtCond slots -->
+    <connection id="extcond_amc502.9" uri="chtcp-2.0://localhost:10203?target=amc-gtlab-09.vie:50001" address_table="file://extcond_mp7_1_4_0/mp7_infra.xml" />
+    <connection id="extcond_amc502.10" uri="chtcp-2.0://localhost:10203?target=amc-gtlab-10.vie:50001" address_table="file://extcond_mp7_1_4_0/mp7_infra.xml" />
+    <connection id="extcond_amc502.11" uri="chtcp-2.0://localhost:10203?target=amc-gtlab-11.vie:50001" address_table="file://extcond_mp7_1_4_0/mp7_infra.xml" />
+    <connection id="extcond_amc502.12" uri="chtcp-2.0://localhost:10203?target=amc-gtlab-12.vie:50001" address_table="file://extcond_mp7_1_4_0/mp7_infra.xml" />
+
+    <connection id="T2" uri="chtcp-2.0://localhost:10203?target=192.168.1.86:50001" address_table="file://${CACTUS_ROOT}/etc/amc13/AMC13XG_T2.xml" />
+    <connection id="T1" uri="chtcp-2.0://localhost:10203?target=192.168.1.87:50001" address_table="file://${CACTUS_ROOT}/etc/amc13/AMC13XG_T1.xml" />
 </connections>
