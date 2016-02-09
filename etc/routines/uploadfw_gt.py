@@ -118,7 +118,7 @@ for module, bitfile in enumerate(bitfiles):
             print
             print " => bit file `{filename}' does already exist, deleting...".format(**locals())
             if not args.dryrun:
-                mp7butler("deleteimage", device, filename)
+                mp7butler("deletefw", device, filename)
         else:
             message = "bit file `{filename}' does already exist. Use `--force' to overwrite.".format(**locals())
             raise RuntimeError(message)
