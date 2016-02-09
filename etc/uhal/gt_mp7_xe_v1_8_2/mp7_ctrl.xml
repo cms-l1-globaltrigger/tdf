@@ -14,7 +14,7 @@
 			<node id="n_region" mask="0xfc00000"/>
 			<node id="clock_ratio" mask="0xf0000000"/>
 		</node>
-		<node id="algorev" address="0x3"/>		
+		<node id="algorev" address="0x3"/>
 	</node>
 	<node id="csr" address="0x4" description="ctrl/stat register" fwinfo="endpoint;width=1">
 		<node id="ctrl" address="0x0">
