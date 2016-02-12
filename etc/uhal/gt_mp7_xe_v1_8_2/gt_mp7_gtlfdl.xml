@@ -36,4 +36,5 @@
 	<node id="command_pulses" address="0x00091900" permission="w" parameters="type=parent">
 		<node id="request_update_factor_pulse" address="0x00000000" mask="0x00000001" permission="w"/>
 	</node>
+	<node id="rate_cnt_finor" address="0x00091980" permission="r" parameters="type=parent"/>
 </node>
