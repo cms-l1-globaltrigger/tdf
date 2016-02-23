@@ -3,7 +3,12 @@
 	<node id="algo_bx_mem"  address="0x00000000" mode="incremental" size="65536" permission="rw" parameters="class=AlgoBxMemoryImage"/>
 	<node id="rate_cnt_before_prescaler" address="0x00010000" mode="incremental" size="512" permission="r"/>
 	<node id="prescale_factor" address="0x00010200" mode="incremental" size="512" permission="rw" parameters="class=PreScaleFactorsImage"/>
-	<node id="masks" address="0x00010400" mode="incremental" size="512" permission="rw" parameters="class=MasksMemoryImage"/>
+<!--HB 2016-02-23: "rate_cnt_after_prescaler" for monitoring only new in fdl v0.0.19 -->
+	<node id="rate_cnt_after_prescaler" address="0x00010400" mode="incremental" size="512" permission="r"/>
+<!--HB 2016-02-23: "rate_cnt_post_dead_time" and "l1a_latency_delay" new in fdl v0.0.17 address new in fdl v0.0.19 -->
+	<node id="rate_cnt_post_dead_time" address="0x00010600" mode="incremental" size="512" permission="r"/>
+<!--HB 2016-02-23: "masks" address new in fdl v0.0.19 -->
+	<node id="masks" address="0x00010800" mode="incremental" size="512" permission="rw" parameters="class=MasksMemoryImage"/>
 	<node id="prescale_factor_set_index" address="0x00091880" permission="rw" parameters="type=parent"/>
 <!--HB 2016-02-17: "control" register not used in fdl v0.0.15 -->
 <!--	<node id="control" address="0x00091888" permission="rw" parameters="type=parent">
@@ -33,7 +38,8 @@
 	</node>
 <!--HB 2016-02-17: "rate_cnt_finor" new in fdl v0.0.16 -->
 	<node id="rate_cnt_finor" address="0x00091980" permission="r" parameters="type=parent"/>
-<!--HB 2016-02-17: "rate_cnt_post_dead_time" and "l1a_latency_delay" new in fdl v0.0.17 -->
-	<node id="rate_cnt_post_dead_time" address="0x00092000" mode="incremental" size="512" permission="r"/>
+<!--HB 2016-02-17: "l1a_latency_delay" new in fdl v0.0.17 (used for rate_cnt_post_dead_time) -->
 	<node id="l1a_latency_delay" address="0x00092200" permission="rw" parameters="type=parent"/>
+<!--HB 2016-02-22: "rate_cnt_post_dead_time" and "l1a_latency_delay" new in fdl v0.0.18 -->
+	<node id="rate_cnt_l1a" address="0x00093000" permission="r" parameters="type=parent"/>
 </node>
