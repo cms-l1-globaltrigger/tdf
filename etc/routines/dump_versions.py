@@ -27,16 +27,18 @@ gtl = read(args.device, "gt_mp7_gtlfdl.read_versions.gtl_fw_version", translate 
 fdl = read(args.device, "gt_mp7_gtlfdl.read_versions.fdl_fw_version", translate = True)
 build = read(args.device, "gt_mp7_frame.module_info.build_version", translate = True)
 
+print ""
 print "Device info for", args.device, "..."
-print "   MP7 firmware version :", fwrev_a, fwrev_b, fwrev_c
-print "           GT variation :", fwrev_design
-print "              timestamp :", timestamp
-print "               hostname :", hostname
-print "               username :", username
-print "payload (frame) version :", frame
-print "              l1tm name :", l1tm_name
-print "              l1tm uuid :", l1tm_uuid
-print "  l1tm compiler version :", l1tm_compiler
-print "   gtl firmware version :", gtl
-print "   fdl firmware version :", fdl
-print "   ugt fw build version :", build
+print ""
+print "               l1tm name :", l1tm_name
+print "               l1tm uuid :", l1tm_uuid
+print "   VHDL producer version :", l1tm_compiler
+print "   timestamp (synthesis) :", timestamp
+print "                hostname :", hostname
+print "                username :", username
+print "    uGT fw build version :", build
+print "    MP7 firmware version :", str(fwrev_a)+"."+str(fwrev_b)+"."+str(fwrev_c)
+print "      MP7 board revision :", fwrev_design
+print " payload (frame) version :", frame
+print "    gtl firmware version :", gtl
+print "    fdl firmware version :", fdl
