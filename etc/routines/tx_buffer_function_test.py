@@ -150,11 +150,15 @@ if args.pattern not in (':counter', ':zero'):
         for i in range(len(lines)):
             if lines[i].strip() == "=========== Summary of results ==========":
                 print lines[i].strip()
-                print "bit\tL1A/tv\tL1A/hw\tresult\tname\t(tv=testvector, hw=hardware readout)"
+# HB 2016-02-25: removed "name", because "name" was removed from "testvector log files" (not clear why and who did it! Probably emulator people)
+                #print "bit\tL1A/tv\tL1A/hw\tresult\tname\t(tv=testvector, hw=hardware readout)"
+                print "bit\tL1A/tv\tL1A/hw\tresult\t(tv=testvector, hw=hardware readout)"
                 for line in lines[i:]:
-                    result = re.match("^\s+(\d+)\s+(\d+)\s+(L1_[a-zA-Z0-9_]+)", line)
+                    #result = re.match("^\s+(\d+)\s+(\d+)\s+(L1_[a-zA-Z0-9_]+)", line)
+                    result = re.match("^\s+(\d+)\s+(\d+)", line)
                     if result:
-                        bit, l1a, name = result.groups()
+                        #bit, l1a, name = result.groups()
+                        bit, l1a = result.groups()
                         index = int(bit)
                         l1a_hw = 0
                         for algorithm in algo_dump.algorithms()[delay_all:delay_all+args.size]:
@@ -163,7 +167,7 @@ if args.pattern not in (':counter', ':zero'):
                         for algorithm in tv.algorithms()[:args.size]:
                             l1a_tv += (algorithm >> index) & 0x1
                         result = "OK" if l1a_tv == l1a_hw else "ERROR"
-                        print "{bit}\t{l1a_tv}\t{l1a_hw}\t{result}\t{name}".format(**locals())
+                        print "{bit}\t{l1a_tv}\t{l1a_hw}\t{result}".format(**locals())
                 break
 
 # Dumping TX buffer content
