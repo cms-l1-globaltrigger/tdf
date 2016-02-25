@@ -8,7 +8,7 @@ MAX_ALGORITHMS = 512
 
 parser = argparse.ArgumentParser()
 parser.add_argument('device')
-parser.add_argument('--limit', type=int, help="limit number of displayed algorithms (default {0})".format(MAX_ALGORITHMS))
+parser.add_argument('--limit', type=int, default=MAX_ALGORITHMS, help="limit number of displayed algorithms (default {0})".format(MAX_ALGORITHMS))
 args = parser.parse_args(TDF_ARGS)
 
 rateCntBeforePrescaler = blockread(args.device, "gt_mp7_gtlfdl.rate_cnt_before_prescaler")
