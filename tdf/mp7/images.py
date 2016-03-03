@@ -369,16 +369,23 @@ class AlgorithmMemoryImage(ColumnMemoryImage):
             value_a = a[bx]
             value_b = b[bx]
             if value_a != value_b:
-                bits_a_binstr = TDF.ALGORITHM.binstr(value_a)[::-1]
-                bits_b_binstr = TDF.ALGORITHM.binstr(value_b)[::-1]
-                bits_a = [n for n, bit in enumerate(bits_a_binstr) if bit == '1']
-                bits_b = [n for n, bit in enumerate(bits_b_binstr) if bit == '1']
+                a_binstr = TDF.ALGORITHM.binstr(value_a)[::-1]
+                b_binstr = TDF.ALGORITHM.binstr(value_b)[::-1]
+                diff = []
+                for i in range(min(len(a_binstr), len(b_binstr))):
+                    if a_binstr[i] != b_binstr[i]:
+                        diff.append(dict(pos=i, a=a_binstr[i], b=b_binstr[i]))
+                bits_a = [n for n, bit in enumerate(a_binstr) if bit == '1']
+                bits_b = [n for n, bit in enumerate(b_binstr) if bit == '1']
                 bits_a_str = ",".join([str(n) for n in bits_a]) or "none"
                 bits_b_str = ",".join([str(n) for n in bits_b]) or "none"
-                bits_diff_str = ",".join([str(i) for i in range(len(bits_a_binstr)) if bits_a_binstr[i] != bits_a_binstr[i]]) or "none"
+                bits_diff_str = ",".join([str(item['pos']) for item in diff]) or "none"
                 value_a_hex = TDF.ALGORITHM.hexstr(value_a)
                 value_b_hex = TDF.ALGORITHM.hexstr(value_b)
-                errors.append("Algorithm missmatch in BX {bx} with offset {offset}\nmem: 0x{value_a_hex} : {bits_a_str}\nref: 0x{value_b_hex} : {bits_b_str}\ndiff: {bits_diff_str}".format(**locals()))
+                errors.append(("Algorithm missmatch in BX {bx} with offset {offset}\n"
+                               "mem: 0x{value_a_hex} : {bits_a_str}\n"
+                               "ref: 0x{value_b_hex} : {bits_b_str}\n"
+                               "diff: {bits_diff_str}").format(**locals()))
         if errors:
             errors.append("Found {0} algorithm mismatches by comparing a range of {1} BX with offset {2}".format(len(errors), size, offset))
             outfile.write("\n".join(errors))
