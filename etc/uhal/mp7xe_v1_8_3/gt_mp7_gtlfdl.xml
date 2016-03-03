@@ -42,4 +42,6 @@
 	<node id="l1a_latency_delay" address="0x00092200" permission="rw" parameters="type=parent"/>
 <!--HB 2016-02-22: "rate_cnt_post_dead_time" and "l1a_latency_delay" new in fdl v0.0.18 -->
 	<node id="rate_cnt_l1a" address="0x00093000" permission="r" parameters="type=parent"/>
+<!--HB 2016-03-03: "rate_cnt_veto" new in fdl v0.0.21 -->
+	<node id="rate_cnt_veto" address="0x00094000" permission="r" parameters="type=parent"/>
 </node>
