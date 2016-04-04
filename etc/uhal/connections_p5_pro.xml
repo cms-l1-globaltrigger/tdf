@@ -3,21 +3,21 @@
 
 <connections>
     <!-- GT slots -->
-    <connection id="gt_mp7.1" uri="chtcp-2.0://bridge-s1e04-32:10203?target=amc-s1e04-32-01:50001" address_table="file://mp7xe_v1_8_3/mp7xe_infra.xml" />
-    <connection id="gt_mp7.2" uri="chtcp-2.0://bridge-s1e04-32:10203?target=amc-s1e04-32-02:50001" address_table="file://mp7xe_v1_8_3/mp7xe_infra.xml" />
-    <connection id="gt_mp7.3" uri="chtcp-2.0://bridge-s1e04-32:10203?target=amc-s1e04-32-03:50001" address_table="file://mp7xe_v1_8_3/mp7xe_infra.xml" />
-    <connection id="gt_mp7.4" uri="chtcp-2.0://bridge-s1e04-32:10203?target=amc-s1e04-32-04:50001" address_table="file://mp7xe_v1_8_3/mp7xe_infra.xml" />
-    <connection id="gt_mp7.5" uri="chtcp-2.0://bridge-s1e04-32:10203?target=amc-s1e04-32-05:50001" address_table="file://mp7xe_v1_8_3/mp7xe_infra.xml" />
+    <connection id="gt_mp7.1" uri="chtcp-2.0://bridge-s1e04-32:10203?target=amc-s1e04-32-01:50001" address_table="file://mp7xe_v2_0_0/mp7xe_infra.xml" />
+    <connection id="gt_mp7.2" uri="chtcp-2.0://bridge-s1e04-32:10203?target=amc-s1e04-32-02:50001" address_table="file://mp7xe_v2_0_0/mp7xe_infra.xml" />
+    <connection id="gt_mp7.3" uri="chtcp-2.0://bridge-s1e04-32:10203?target=amc-s1e04-32-03:50001" address_table="file://mp7xe_v2_0_0/mp7xe_infra.xml" />
+    <connection id="gt_mp7.4" uri="chtcp-2.0://bridge-s1e04-32:10203?target=amc-s1e04-32-04:50001" address_table="file://mp7xe_v2_0_0/mp7xe_infra.xml" />
+    <connection id="gt_mp7.5" uri="chtcp-2.0://bridge-s1e04-32:10203?target=amc-s1e04-32-05:50001" address_table="file://mp7xe_v2_0_0/mp7xe_infra.xml" />
     <connection id="gt_mp7.6" uri="chtcp-2.0://bridge-s1e04-32:10203?target=amc-s1e04-32-06:50001" address_table="file://gt_mp7_1_6_0_r1/mp7_infra.xml" />
 
     <!-- ExtCond slots -->
-    <connection id="extcond_amc502.9" uri="chtcp-2.0://bridge-s1e04-32:10203?target=amc-s1e04-32-09:50001" address_table="file://extcond_mp7_1_4_0/mp7_infra.xml" />
-    <connection id="extcond_amc502.10" uri="chtcp-2.0://bridge-s1e04-32:10203?target=amc-s1e04-32-10:50001" address_table="file://extcond_mp7_1_4_0/mp7_infra.xml" />
-    <connection id="extcond_amc502.11" uri="chtcp-2.0://bridge-s1e04-32:10203?target=amc-s1e04-32-11:50001" address_table="file://extcond_mp7_1_4_0/mp7_infra.xml" />
-    <connection id="extcond_amc502.12" uri="chtcp-2.0://bridge-s1e04-32:10203?target=amc-s1e04-32-12:50001" address_table="file://extcond_mp7_1_4_0/mp7_infra.xml" />
+    <connection id="extcond_amc502.9" uri="chtcp-2.0://bridge-s1e04-32:10203?target=amc-s1e04-32-09:50001" address_table="file://extcond_amc502/mp7xe_infra.xml" />
+    <connection id="extcond_amc502.10" uri="chtcp-2.0://bridge-s1e04-32:10203?target=amc-s1e04-32-10:50001" address_table="file://extcond_amc502/mp7xe_infra.xml" />
+    <connection id="extcond_amc502.11" uri="chtcp-2.0://bridge-s1e04-32:10203?target=amc-s1e04-32-11:50001" address_table="file://extcond_amc502/mp7xe_infra.xml" />
+    <connection id="extcond_amc502.12" uri="chtcp-2.0://bridge-s1e04-32:10203?target=amc-s1e04-32-12:50001" address_table="file://extcond_amc502/mp7xe_infra.xml" />
 
     <!-- FINOR slot -->
-    <connection id="finor_amc502.7" uri="chtcp-2.0://bridge-s1e04-32:10203?target=amc-s1e04-32-07:50001" address_table="file://finor_amc502/top.xml" />
+    <connection id="finor_amc502.7" uri="chtcp-2.0://bridge-s1e04-32:10203?target=amc-s1e04-32-07:50001" address_table="file://finor_amc502/mp7xe_infra.xml" />
 
     <!-- AMC13 -->
     <connection id="T1" uri="chtcp-2.0://bridge-s1e04-32:10203?target=amc-s1e04-32-13-t1:50001" address_table="file:///opt/cactus/etc/amc13/AMC13XG_T1.xml" />
