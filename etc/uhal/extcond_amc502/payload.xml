@@ -185,7 +185,7 @@
         <node id="phase_shift_63" address="0x3f" mask="0x0000000f" description="Phase Shift Register for ExtCond #63"/>
     </node>
     <node id="phase_cntr_read_pulse" address="0xA0" mask="0x00000002" description="Pulse reg for Phase Shift Counter read"/>
-    <node id="phase_counter_regs"   address="0x100" description="Phase Counter Registers">
+    <node id="phase_counter_regs"   address="0x180" description="Phase Counter Registers">
         <node id="phase_counter_lo_00" address="0x00" mask="0xffffffff" description="Phase Counter Register for ExtCond #00: Phase 0, 1, 2, 3"/>
         <node id="phase_counter_hi_00" address="0x01" mask="0x0000ffff" description="Phase Counter Register for ExtCond #00: Phase 4, 5"/>
         <node id="phase_counter_lo_01" address="0x02" mask="0xffffffff" description="Phase Counter Register for ExtCond #01: Phase 0, 1, 2, 3"/>
