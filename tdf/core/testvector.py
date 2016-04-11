@@ -198,6 +198,28 @@ class TestVector(object):
     def finor(self):
         return self._finor
 
+    def __len__(self):
+        return len(self.finor())
+
+    def __str__(self):
+        rows = []
+        for i in range(len(self)):
+            cols = []
+            cols.append('{i:04d}'.format(i=i))
+            cols.extend(TDF.MUON.hexstr(values[i]) for values in self.muons())
+            cols.extend(TDF.EG.hexstr(values[i]) for values in self.egs())
+            cols.extend(TDF.JET.hexstr(values[i]) for values in self.jets())
+            cols.extend(TDF.TAU.hexstr(values[i]) for values in self.taus())
+            cols.append(TDF.ETT.hexstr(self.ett()[i]))
+            cols.append(TDF.HT.hexstr(self.ht()[i]))
+            cols.append(TDF.ETM.hexstr(self.etm()[i]))
+            cols.append(TDF.HTM.hexstr(self.htm()[i]))
+            cols.append(TDF.EXTCOND.hexstr(self.extconds()[i]))
+            cols.append(TDF.ALGORITHM.hexstr(self.algorithms()[i]))
+            cols.append(TDF.FINOR.hexstr(self.finor()[i]))
+            rows.append(' '.join(cols))
+        return '\n'.join(rows)
+
 class TestVectorReader(FileReader):
     """Global trigger test vector file reader. It derives from class FileReader.
 
