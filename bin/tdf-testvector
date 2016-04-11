@@ -94,8 +94,9 @@ def main():
         print " menu_uuid:", tv.menu_uuid
         print "Number of BX data:", event_count
 
-        if event_count != int(tv.events):
-            raise RuntimeError("events count mismatch: header={tv.events} count={event_count}")
+        if tv.events:
+            if event_count != int(tv.events):
+                raise RuntimeError("events count mismatch: header={tv.events} count={event_count}")
 
         return TDF.EXIT_SUCCESS
 
