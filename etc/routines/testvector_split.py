@@ -42,7 +42,7 @@ for module, algorithms in modules.iteritems():
         # Calculate algorithms mask
         mask = 0x0
         for algorithm in algorithms:
-            mask |= (1 << algorithm.module_index)
+            mask |= (1 << algorithm.index)
         TDF_INFO("applying algorithm mask", TDF.ALGORITHM.hexstr(mask))
         # Write masked output to file
         for bx, algorithms in enumerate(module_tv._algorithms):
