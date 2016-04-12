@@ -43,11 +43,6 @@ parser.add_argument('--align-to', default = '0,5', help = "BX and sub BX for ali
 args = parser.parse_args(TDF_ARGS)
 
 # -----------------------------------------------------------------------------
-#  Enable clocks on AMC13
-# -----------------------------------------------------------------------------
-configure("amc13_k7.13", os.path.join(TDF.ROOT_DIR, "etc/config/amc13xg/default_k7.cfg"))
-
-# -----------------------------------------------------------------------------
 #  Reset devices to use external clock
 # -----------------------------------------------------------------------------
 mp7butler("reset", args.source, "--clksrc", "external")

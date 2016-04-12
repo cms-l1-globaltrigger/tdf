@@ -39,7 +39,6 @@ parser.add_argument('--finor-veto-masks', default = None, metavar = '<file>', he
 parser.add_argument('--prescale-factors', default = None, metavar = '<file>', help = "load prescale factors from file")
 parser.add_argument('--ttc-bc0-bx', default = DEFAULT_TTC_BC0_BX, metavar = '<n>', type = int, help = "TTC_BC0_BX value, default is '{DEFAULT_TTC_BC0_BX}'".format(**locals()))
 parser.add_argument('--capture-buffers', action = 'store_true')
-parser.add_argument('--configure-amc13', action = 'store_true')
 parser.add_argument('--run-unittests', action = 'store_true')
 parser.add_argument('-o', '--output-dir', default = result_area(), help = "name of output directory")
 parser.add_argument('--cap', default = DEFAULT_CAP, metavar = '<n>', type = int, help = "delay in BX for capturing the tx buffer output, default is '{DEFAULT_CAP}'".format(**locals()))
@@ -51,10 +50,6 @@ if not os.path.isdir(args.output_dir):
     print "creating result area directory:", args.output_dir
     os.makedirs(args.output_dir)
     os.chdir(args.output_dir)
-
-### Enable clocks on AMC13
-if args.configure_amc13:
-    configure("amc13_k7.13", os.path.join(TDF.ROOT_DIR, "etc/config/amc13xg/default_k7.cfg"))
 
 # Reset link's logic
 mp7butler("reset", args.device, "--clksrc", args.clksrc)

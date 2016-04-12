@@ -31,7 +31,6 @@ parser.add_argument('--gtl-latency', default = DEFAULT_GTL_LATENCY, metavar = '<
 parser.add_argument('--size', default = DEFAULT_SIZE, metavar = '<n>', type = int, help = "number of BX to be compared, default is '{DEFAULT_SIZE}'".format(**locals()))
 parser.add_argument('--algo-bx-mask', default = None, metavar = '<file>', help = "load algorithm BX mask from file")
 parser.add_argument('--capture-buffers', action = 'store_true')
-parser.add_argument('--configure-amc13', action = 'store_true')
 parser.add_argument('--run-unittests', action = 'store_true')
 parser.add_argument('-o', '--output-dir', default = result_area(), help = "name of output directory")
 parser.add_argument('--comp-pattern', default = None, metavar = '<source>', help = "source test vector to compare the results")
@@ -45,10 +44,6 @@ if not os.path.isdir(args.output_dir):
     print "creating result area directory:", args.output_dir
     os.makedirs(args.output_dir)
     os.chdir(args.output_dir)
-
-### Enable clocks on AMC13
-if args.configure_amc13:
-    configure("amc13_k7.13", os.path.join(TDF.ROOT_DIR, "etc/config/amc13xg/default_k7.cfg"))
 
 # Reset link's logic
 mp7butler("reset", args.device, "--clksrc", args.clksrc)
