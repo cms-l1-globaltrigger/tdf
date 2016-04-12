@@ -3,10 +3,10 @@
 # Copyright 2013-2014 Bernhard Arnold <bernahrd.arnold@cern.ch>
 #                     Johannes Wittmann <johannes.wittmann@cern.ch>
 #
-# Repository path   : $HeadURL: svn://heros.hephy.oeaw.ac.at/GlobalTriggerUpgrade/software/tdf/trunk/tdf/core/settings.py $
-# Last committed    : $Revision: 3782 $
-# Last changed by   : $Author: arnold $
-# Last changed date : $Date: 2015-02-24 19:02:44 +0100 (Tue, 24 Feb 2015) $
+# Repository path   : $HeadURL$
+# Last committed    : $Revision$
+# Last changed by   : $Author$
+# Last changed date : $Date$
 #
 
 """This module provides a set constants and settings used by various modules of
@@ -28,7 +28,7 @@ from tdf.core import binutils
 from tdf import __version__ as TDF_VERSION
 
 __all__ = [ 'TDF', '__doc__', '__version__', ]
-__version__ = '$Revision: 3782 $'
+__version__ = '$Revision$'
 
 # uHAL constants.
 UHAL_DATA_WIDTH = 32

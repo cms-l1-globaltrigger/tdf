@@ -3,10 +3,10 @@
 # Copyright 2013-2014 Bernhard Arnold <bernahrd.arnold@cern.ch>
 #                     Johannes Wittmann <johannes.wittmann@cern.ch>
 #
-# Repository path   : $HeadURL: svn://heros.hephy.oeaw.ac.at/GlobalTriggerUpgrade/software/tdf/trunk/tdf/core/binutils.py $
-# Last committed    : $Revision: 3790 $
-# Last changed by   : $Author: arnold $
-# Last changed date : $Date: 2015-02-26 12:37:22 +0100 (Thu, 26 Feb 2015) $
+# Repository path   : $HeadURL$
+# Last committed    : $Revision$
+# Last changed by   : $Author$
+# Last changed date : $Date$
 #
 
 """This module provides binary manipulation util classes and functions."""
@@ -17,7 +17,7 @@ import uuid
 __all__ = [ 'bitmask', 'charcount', 'requires', 'bitsplit', 'bitjoin',
     'hexencode', 'hexdecode', 'uuidencode', 'uuiddecode',
     'BitVector', 'BitStream', 'BitStreamReader', '__doc__', '__version__' ]
-__version__ = '$Revision: 3790 $'
+__version__ = '$Revision$'
 
 def bitmask(n):
     """Calculates bitmask for *n* bits.

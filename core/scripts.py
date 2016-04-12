@@ -3,10 +3,10 @@
 #
 # Copyright 2013-2014 Bernhard Arnold <bernahrd.arnold@cern.ch>
 #
-# Repository path   : $HeadURL: svn://heros.hephy.oeaw.ac.at/GlobalTriggerUpgrade/software/tdf/trunk/lib/tdf/core/api.py $
-# Last committed    : $Revision: 3752 $
-# Last changed by   : $Author: arnold $
-# Last changed date : $Date: 2015-02-13 16:36:26 +0100 (Fri, 13 Feb 2015) $
+# Repository path   : $HeadURL$
+# Last committed    : $Revision$
+# Last changed by   : $Author$
+# Last changed date : $Date$
 #
 
 """ code review required
