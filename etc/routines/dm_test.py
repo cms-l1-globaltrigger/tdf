@@ -126,9 +126,6 @@ def mask_list(values, mask):
 #  Setup buffers
 # -----------------------------------------------------------------------------
 
-# Enable clocks on AMC13
-configure("amc13_k7.13", os.path.join(TDF.ROOT_DIR, "etc/config/amc13xg/default_k7.cfg"))
-
 # Reset board.
 mp7butler("reset", args.device, "--clksrc", "external", "-m", args.model)
 

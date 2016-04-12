@@ -39,7 +39,6 @@ parser.add_argument('--size', default = DEFAULT_SIZE, metavar = '<n>', type = in
 parser.add_argument('--align-to', default = None, help = "overwrite link alignment eg. 38,5 (bx, cycle)")
 parser.add_argument('--algo-bx-mask', default = None, metavar = '<file>', help = "load algorithm BX mask from file")
 parser.add_argument('--capture-buffers', action = 'store_true')
-parser.add_argument('--configure-amc13', action = 'store_true')
 parser.add_argument('--algo-latency', default = DEFAULT_ALGO_LATENCY, metavar = '<n>', type = int, help = "algo latency in frames (240MHz cycles), default is '{DEFAULT_ALGO_LATENCY}'".format(**locals()))
 parser.add_argument('--master-latency', default = DEFAULT_MASTER_LATENCY, metavar = '<n>', type = int, help = "master latency in frames (240MHz cycles), default is '{DEFAULT_MASTER_LATENCY}'".format(**locals()))
 parser.add_argument('--run-unittests', action = 'store_true')
@@ -48,15 +47,6 @@ parser.add_argument('--cap', default = DEFAULT_CAP, metavar = '<n>', type = int,
 args = parser.parse_args(TDF_ARGS)
 
 args.pattern = os.path.abspath(args.pattern)
-
-#if not os.path.isdir(args.output_dir):
-    #print "creating result area directory:", args.output_dir
-    #os.makedirs(args.output_dir)
-    #os.chdir(args.output_dir)
-
-### Enable clocks on AMC13
-if args.configure_amc13:
-    configure("amc13_k7.13", os.path.join(TDF.ROOT_DIR, "etc/config/amc13xg/default_k7.cfg"))
 
 # Reset link's logic
 mp7butler("reset", args.device, "--clksrc", args.clksrc)
@@ -74,9 +64,9 @@ else:
         mp7butler("mgts", args.device, "--e", args.rx_links, "--align-to", args.align_to or "38,5")
     else:
         mp7butler("mgts", args.device, "--e", args.rx_links)
-        
+
 mp7butler("buffers", args.device, "algoPlay", "-e", "0-3",   "--inject", "generate://empty") #to mask all the other inputs
-        
+
 # Setup for loopback or cable mode.
 if args.loopback:
     data_filename = TDF_NAME + "_in.dat" # Returns "tagged" filename tdf_simple_buffer_loopback_in.dat
@@ -108,8 +98,8 @@ if args.hw_delay:
     write(args.device, "gt_mp7_frame.rb.dm.delay_etm", args.hw_delay)
     write(args.device, "gt_mp7_frame.rb.dm.delay_htm", args.hw_delay)
     write(args.device, "gt_mp7_frame.rb.dm.delay_ext_con", args.hw_delay)
-    
-    
+
+
 mp7butler("easylatency", args.device, "--rx", args.rx_links, "--tx", args.tx_links, "--algoLatency", args.algo_latency, "--masterLatency", args.master_latency)
 mp7butler("rosetup", args.device, "--bxoffset", "2")
 mp7butler("romenu", args.device, "/nfshome0/ugtdev/software/mp7sw_v1_8_4/mp7/tests/python/daq/simple.py", "menuUGTA")
