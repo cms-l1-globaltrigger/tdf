@@ -3,10 +3,10 @@
 # Copyright 2013-2016 Bernhard Arnold <bernahrd.arnold@cern.ch>
 #                     Johannes Wittmann <johannes.wittmann@cern.ch>
 #
-# Repository path   : $HeadURL: $
-# Last committed    : $Revision: $
-# Last changed by   : $Author: $
-# Last changed date : $Date: $
+# Repository path   : $HeadURL$
+# Last committed    : $Revision$
+# Last changed by   : $Author$
+# Last changed date : $Date$
 #
 
 """This module provides a very basic XML menu reader making use of lmxl etree.
@@ -18,7 +18,7 @@ from lxml import etree
 from settings import TDF
 
 __all__ = [ 'XmlMenu', '__doc__', '__version__' ]
-__version__ = '$Revision: $'
+__version__ = '$Revision$'
 
 def fast_iter(context, func, *args, **kwargs):
     """

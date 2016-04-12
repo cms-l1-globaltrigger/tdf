@@ -3,10 +3,10 @@
 # Copyright 2013-2014 Bernhard Arnold <bernahrd.arnold@cern.ch>
 #                     Johannes Wittmann <johannes.wittmann@cern.ch>
 #
-# Repository path   : $HeadURL: svn://heros.hephy.oeaw.ac.at/GlobalTriggerUpgrade/software/tdf/trunk/tdf/core/cfgreader.py $
-# Last committed    : $Revision: 3736 $
-# Last changed by   : $Author: arnold $
-# Last changed date : $Date: 2015-02-12 11:07:35 +0100 (Thu, 12 Feb 2015) $
+# Repository path   : $HeadURL$
+# Last committed    : $Revision$
+# Last changed by   : $Author$
+# Last changed date : $Date$
 #
 
 """
@@ -25,7 +25,7 @@ Empty lines and lines beginning with #, ! or * (comments) are ignored.
 """
 
 __all__ = ['ConfigFileReader', '__doc__', '__version__', ]
-__version__ = '$Revision: 3736 $'
+__version__ = '$Revision$'
 
 class ConfigFileReader(object):
     """Configuration file reader. Throws runtime errors.

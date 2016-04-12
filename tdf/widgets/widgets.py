@@ -3,16 +3,16 @@
 # Copyright 2013-2014 Bernhard Arnold <bernahrd.arnold@cern.ch>
 #                     Johannes Wittmann <johannes.wittmann@cern.ch>
 #
-# Repository path   : $HeadURL: svn://heros.hephy.oeaw.ac.at/GlobalTriggerUpgrade/software/tdf/trunk/tdf/widgets/widgets.py $
-# Last committed    : $Revision: 3178 $
-# Last changed by   : $Author: arnold $
-# Last changed date : $Date: 2014-09-11 17:24:16 +0200 (Thu, 11 Sep 2014) $
+# Repository path   : $HeadURL$
+# Last committed    : $Revision$
+# Last changed by   : $Author$
+# Last changed date : $Date$
 #
 
 """Collection of common used widgets.
 """
 
-__version__ = '$Revision: 3178 $'
+__version__ = '$Revision$'
 
 from PyQt4 import QtCore, QtGui
 

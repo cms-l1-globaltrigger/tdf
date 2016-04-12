@@ -3,10 +3,10 @@
 # Copyright 2013-2014 Bernhard Arnold <bernahrd.arnold@cern.ch>
 #                     Johannes Wittmann <johannes.wittmann@cern.ch>
 #
-# Repository path   : $HeadURL: svn://heros.hephy.oeaw.ac.at/GlobalTriggerUpgrade/software/tdf/trunk/lib/tdf/widgets/control.py $
-# Last committed    : $Revision: 3775 $
-# Last changed by   : $Author: arnold $
-# Last changed date : $Date: 2015-02-19 16:29:18 +0100 (Thu, 19 Feb 2015) $
+# Repository path   : $HeadURL$
+# Last committed    : $Revision$
+# Last changed by   : $Author$
+# Last changed date : $Date$
 #
 
 """TDF Memory Dump Analyzer
@@ -26,12 +26,11 @@ from tdf.core.settings import TDF
 from tdf.core.images import *
 from tdf.mp7.images import *
 
+__version__ = '$Revision$'
+
 # -----------------------------------------------------------------------------
 #  Constants.
 # -----------------------------------------------------------------------------
-
-__version__ = "0.0.4"
-"""Application release version."""
 
 PatternResyncGap = '505050bc'
 """Objects containing this pattern are considered to be masked by a gap."""

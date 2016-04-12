@@ -3,10 +3,10 @@
 # Copyright 2013-2014 Bernhard Arnold <bernahrd.arnold@cern.ch>
 #                     Johannes Wittmann <johannes.wittmann@cern.ch>
 #
-# Repository path   : $HeadURL: svn://heros.hephy.oeaw.ac.at/GlobalTriggerUpgrade/software/tdf/branches/tdf_mp7fw_1_4_1/lib/tdf/extcond/images.py $
-# Last committed    : $Revision: 4020 $
-# Last changed by   : $Author: wittmann $
-# Last changed date : $Date: 2015-06-02 17:09:00 +0200 (Die, 02 Jun 2015) $
+# Repository path   : $HeadURL$
+# Last committed    : $Revision$
+# Last changed by   : $Author$
+# Last changed date : $Date$
 #
 
 """ExtCond specific memory images.
@@ -27,7 +27,7 @@ from tdf.core.binutils import (
 import json
 import sys
 
-__version__ = '$Revision: 4020 $'
+__version__ = '$Revision$'
 
 # Blocksize of 32 bit simulation and spy memories.
 MEMORY_BLOCKSIZE = 4096
