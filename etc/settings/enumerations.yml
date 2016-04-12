@@ -1,6 +1,12 @@
 #
 # Enumeratons used by item translator.
 #
+# Synopsis
+# ========
+# <label>:
+#   <name>: <value>
+#   ...
+#
 
 module_type:
   UNDEFINED: 0x0

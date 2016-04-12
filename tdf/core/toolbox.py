@@ -9,22 +9,14 @@
 # Last changed date : $Date$
 #
 
-"""
-#NOTE clean up
+"""Utility functions.
 """
 
-from tdf.core import TDF
-import uhal
-from tdf.extern import yaml
+from collections import namedtuple
 import os
-from tdf.core.types import *
 
 #
 # Functions
-#
-
-#
-# Prototypes
 #
 
 def slot_number(device):
@@ -38,52 +30,13 @@ def device_type(device):
 def sort_devices(devices):
     return sorted(devices, key = lambda device: slot_number(device))
 
-STATES = enum('UNKNOWN_DEVICE', 'DEVICE_PRESENT', 'DEVICE_NOT_CONFIGURED', 'DEVICE_NOT_PRESENT')
-
-def cratescan(tdf):
-
-    chk_present = 'chk_present'
-    chk_configured = 'chk_configured'
-
-    class DeviceState(object):
-        def __init__(self, device, state):
-            self._device = device
-            self._state = state
-        @property
-        def device(self): return self._device
-        @property
-        def state(self): return self._state
-        @property
-        def state_str(self): return STATES.reverse_mapping[self.state]
-        @property
-        def slot(self): return slot_number(self.device)
-        @property
-        def type(self): return device_type(self.device)
-
-    config = yaml.load(open(os.path.join(TDF.SETTINGS_DIR, 'cratescan.yml')).read())
-
-    states = []
-
-    for device in sort_devices(tdf.connectionManager.getDevices()):
-        state = STATES.UNKNOWN_DEVICE
-        for device_type_ in config.keys():
-            if device_type(device) == device_type_:
-                if chk_present in config.get(device_type_):
-                    try:
-                        tdf.read(device, config.get(device_type_).get(chk_present))
-                        state = STATES.DEVICE_PRESENT
-                        if chk_configured in config.get(device_type_):
-                            try:
-                                tdf.read(device, config.get(device_type_).get(chk_configured))
-                            except uhal._core.exception:
-                                state = STATES.DEVICE_NOT_CONFIGURED
-                    except uhal._core.exception:
-                        state = STATES.DEVICE_NOT_PRESENT
-                break
-        states.append(DeviceState(device, state))
-    return states
-
-#print "Crate scan..."
-#for state in states:
-    #str_state = STATES.reverse_mapping[state.state]
-    #print "device={state.device:<18} slot={state.slot:<3} type={state.type:<15} state={str_state:<21} ({state.state})".format(**locals())
+def to_namedtuple(d, classname='struct'):
+    """Convert a dict into a namedtuple.
+    http://stackoverflow.com/questions/35898270/trying-to-make-a-dict-behave-like-a-clean-class-method-structure
+    """
+    if not isinstance(d, dict):
+        raise ValueError("Can only convert dicts into namedtuple")
+    for k,v in d.iteritems():
+        if isinstance(v, dict):
+            d[k] = to_namedtuple(v)
+    return namedtuple(classname, d.keys())(**d)

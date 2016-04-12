@@ -22,7 +22,7 @@ Example
 """
 
 import os
-from tdf.core.types import struct
+from tdf.core.toolbox import to_namedtuple
 from tdf.extern import yaml
 from tdf.core import binutils
 from tdf import __version__ as TDF_VERSION
@@ -97,7 +97,7 @@ class DataSpecification(object):
         data = dict([(k, (v.msb, v.lsb)) for k, v in self._coding.__dict__.items()])
         return binutils.bitdecode(value, data)
 
-class TDFCORE:
+class TDFCore:
     """Constants for TDF software."""
 
     VERSION = TDF_VERSION
@@ -143,11 +143,11 @@ class TDFCORE:
 
     def __init__(self): raise NotImplementedError()
 
-# Ugly
-OBJECTS = struct(**yaml.load(open(os.path.join(TDFCORE.SETTINGS_DIR, 'objects.yml')).read()))
-
-class TDF(TDFCORE):
+class TDF(TDFCore):
     """Constants for TDF software."""
+
+    # Ugly
+    OBJECTS = to_namedtuple(yaml.load(open(os.path.join(TDFCore.SETTINGS_DIR, 'objects.yml')).read()))
 
     ORBIT_LENGTH = 3564
     """LHC orbit length in bunch crossings."""
@@ -158,28 +158,28 @@ class TDF(TDFCORE):
     ORBIT_SEC = ORBIT_LENGTH * BX_SEC
     """Orbit time in seconds."""
 
-    MUON = DataSpecification(**OBJECTS.muon.__dict__)
+    MUON = DataSpecification(**OBJECTS.muon._asdict())
     """Muon object specification."""
 
-    EG = DataSpecification(**OBJECTS.eg.__dict__)
+    EG = DataSpecification(**OBJECTS.eg._asdict())
     """e/gamma object specification."""
 
-    TAU = DataSpecification(**OBJECTS.tau.__dict__)
+    TAU = DataSpecification(**OBJECTS.tau._asdict())
     """Tau object specification."""
 
-    JET = DataSpecification(**OBJECTS.jet.__dict__)
+    JET = DataSpecification(**OBJECTS.jet._asdict())
     """Jet object specification."""
 
-    ETT = DataSpecification(**OBJECTS.ett.__dict__)
+    ETT = DataSpecification(**OBJECTS.ett._asdict())
     """ETT specification."""
 
-    HT = DataSpecification(**OBJECTS.ht.__dict__)
+    HT = DataSpecification(**OBJECTS.ht._asdict())
     """HT specification."""
 
-    ETM = DataSpecification(**OBJECTS.etm.__dict__)
+    ETM = DataSpecification(**OBJECTS.etm._asdict())
     """ETM specification."""
 
-    HTM = DataSpecification(**OBJECTS.htm.__dict__)
+    HTM = DataSpecification(**OBJECTS.htm._asdict())
     """HTM specification."""
 
     EXTCOND = DataSpecification(1, 256)
