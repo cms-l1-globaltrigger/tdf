@@ -2,10 +2,10 @@
 #
 # Copyright 2013-2015 Bernhard Arnold <bernahrd.arnold@cern.ch>
 #
-# Repository path   : $HeadURL: svn://heros.hephy.oeaw.ac.at/GlobalTriggerUpgrade/software/tdf/trunk/tdf/mp7/unpacker.py $
-# Last committed    : $Revision: 3751 $
-# Last changed by   : $Author: arnold $
-# Last changed date : $Date: 2015-02-13 15:13:07 +0100 (Fri, 13 Feb 2015) $
+# Repository path   : $HeadURL$
+# Last committed    : $Revision$
+# Last changed by   : $Author$
+# Last changed date : $Date$
 #
 
 """
@@ -46,7 +46,7 @@ from tdf.core.unpacker import RecordSection
 from datetime import datetime
 import re, sys
 
-__version__ = '$Revision: 3751 $'
+__version__ = '$Revision$'
 
 TTY_WIDTH = 128
 TTY_HR_CHAR = '-'

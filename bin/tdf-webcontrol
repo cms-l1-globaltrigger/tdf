@@ -31,7 +31,7 @@ def scansd(device, model):
     # Create temporary file in memory.
     tmp = tempfile.SpooledTemporaryFile()
     # Capture stdout from butler (should contain list of bitfiles).
-    api.mp7butler("scansd", device, "-m", model, stdout = tmp)
+    api.mp7butler("scansd", device, stdout = tmp)
     # Set file pointer to begin of temporary file.
     tmp.seek(0)
     # Read content of temporary file.

@@ -3,10 +3,10 @@
 #
 # Copyright 2013-2015 Bernhard Arnold <bernhard.arnold@cern.ch>
 #
-# Repository path   : $HeadURL: svn://heros.hephy.oeaw.ac.at/GlobalTriggerUpgrade/software/tdf/trunk/tdf/core/translator.py $
-# Last committed    : $Revision: 3775 $
-# Last changed by   : $Author: arnold $
-# Last changed date : $Date: 2015-02-19 16:29:18 +0100 (Thu, 19 Feb 2015) $
+# Repository path   : $HeadURL$
+# Last committed    : $Revision$
+# Last changed by   : $Author$
+# Last changed date : $Date$
 #
 
 """This module contains classes for translating values to formatted strings
@@ -24,7 +24,7 @@ import datetime
 import os
 
 __all__ = ['ItemTranslator', 'OptItemTranslator', '__doc__', '__version__', ]
-__version__ = '$Revision: 3775 $'
+__version__ = '$Revision$'
 
 ENUMS_FILENAME = os.path.join(TDF.SETTINGS_DIR, 'enumerations.yml')
 

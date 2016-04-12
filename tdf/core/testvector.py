@@ -3,10 +3,10 @@
 # Copyright 2013-2014 Bernhard Arnold <bernahrd.arnold@cern.ch>
 #                     Johannes Wittmann <johannes.wittmann@cern.ch>
 #
-# Repository path   : $HeadURL: svn://heros.hephy.oeaw.ac.at/GlobalTriggerUpgrade/software/tdf/trunk/tdf/core/testvector.py $
-# Last committed    : $Revision: 3529 $
-# Last changed by   : $Author: arnold $
-# Last changed date : $Date: 2014-12-11 11:54:08 +0100 (Thu, 11 Dec 2014) $
+# Repository path   : $HeadURL$
+# Last committed    : $Revision$
+# Last changed by   : $Author$
+# Last changed date : $Date$
 #
 
 """This module provides a test vector reader class for Global Trigger input data
@@ -57,7 +57,7 @@ from binutils import charcount
 from settings import TDF
 
 __all__ = [ 'TestVector', 'TestVectorReader', '__doc__', '__version__' ]
-__version__ = '$Revision: 3529 $'
+__version__ = '$Revision$'
 
 class TestVector(object):
     """
@@ -208,8 +208,8 @@ class TestVector(object):
             cols.append('{i:04d}'.format(i=i))
             cols.extend(TDF.MUON.hexstr(values[i]) for values in self.muons())
             cols.extend(TDF.EG.hexstr(values[i]) for values in self.egs())
-            cols.extend(TDF.JET.hexstr(values[i]) for values in self.jets())
             cols.extend(TDF.TAU.hexstr(values[i]) for values in self.taus())
+            cols.extend(TDF.JET.hexstr(values[i]) for values in self.jets())
             cols.append(TDF.ETT.hexstr(self.ett()[i]))
             cols.append(TDF.HT.hexstr(self.ht()[i]))
             cols.append(TDF.ETM.hexstr(self.etm()[i]))

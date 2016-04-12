@@ -3,10 +3,10 @@
 # Copyright 2013-2014 Bernhard Arnold <bernahrd.arnold@cern.ch>
 #                     Johannes Wittmann <johannes.wittmann@cern.ch>
 #
-# Repository path   : $HeadURL: svn://heros.hephy.oeaw.ac.at/GlobalTriggerUpgrade/software/tdf/trunk/lib/tdf/mp7/images.py $
-# Last committed    : $Revision: 3138 $
-# Last changed by   : $Author: arnold $
-# Last changed date : $Date: 2014-09-04 12:05:01 +0200 (Thu, 04 Sep 2014) $
+# Repository path   : $HeadURL$
+# Last committed    : $Revision$
+# Last changed by   : $Author$
+# Last changed date : $Date$
 #
 
 """Buffer generator class for tx/rx buffer patterns.

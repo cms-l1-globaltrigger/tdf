@@ -3,10 +3,10 @@
 #
 # Copyright 2013-2014 Bernhard Arnold <bernahrd.arnold@cern.ch>
 #
-# Repository path   : $HeadURL: svn://heros.hephy.oeaw.ac.at/GlobalTriggerUpgrade/software/tdf/trunk/tdf/core/core.py $
-# Last committed    : $Revision: 4010 $
-# Last changed by   : $Author: arnold $
-# Last changed date : $Date: 2015-05-28 16:50:01 +0200 (Thu, 28 May 2015) $
+# Repository path   : $HeadURL$
+# Last committed    : $Revision$
+# Last changed by   : $Author$
+# Last changed date : $Date$
 #
 
 """
@@ -36,7 +36,7 @@ from tdf.core.scripts import ScriptRunner
 from tdf.core.logger import *
 
 __all__ = ['TDFCore', '__doc__', '__version__', ]
-__version__ = '$Revision: 4010 $'
+__version__ = '$Revision$'
 
 MP7_EXECUTABLE = 'mp7butler.py'
 """Executable name for the MP7 butler software."""
