@@ -126,6 +126,39 @@ class ColumnMemoryImage(GenericMemoryImage):
     def columns(self):
         return self.size // self.blocksize
 
+    @property
+    def rows(self):
+        return self.size // (self.size // self.blocksize)
+
+    def value(self, col, row):
+        """Returns a word value located by column and row."""
+        return self._data[col * self.rows + row]
+
+    def setValue(self, col, row, value):
+        """Set a word value located by column and row."""
+        self._data[col * self.rows + row] = value
+
+    def test(self, n, row):
+        """Tests a single bit by its poition *n* (mapped over all columns) and
+        row. For example, an image with four columns of an 32 bit data type
+        represents a valid range of bit positions from 0 up to 127."""
+        col = n / TDF.DATA_WIDTH
+        return self.value(col, row) & (1 << (n - (col * TDF.DATA_WIDTH)))
+
+    def set(self, n, row, value):
+        """Set/Clear a single bit by its poition *n* (mapped over all columns) and
+        row. For example, an image with four columns of an 32 bit data type
+        represents a valid range of bit positions from 0 up to 127."""
+        bitwidth = 32
+        col = n / bitwidth
+        offset = col * bitwidth
+        buffer = self.value(col, row)
+        if value:
+            buffer |= (1 << (n - offset))
+        else:
+            buffer &= ~(1 << (n - offset))
+        self.setValue(col, row, buffer)
+
     def extract(self, column, count = 1):
         """Extract values spanning over multiple columns."""
         assert column + count - 1 < self.columns, "extract: invalid column slice"
