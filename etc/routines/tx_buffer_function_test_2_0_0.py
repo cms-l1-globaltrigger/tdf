@@ -8,7 +8,7 @@ import os, re
 import time
 import datetime
 
-DEFAULT_INPUT_DELAY = 11
+DEFAULT_INPUT_DELAY = 9
 DEFAULT_GTL_LATENCY = 6
 DEFAULT_SIZE = 170
 DEFAULT_RX_LINKS = '0-15'
@@ -170,5 +170,5 @@ if args.pattern not in (':counter', ':zero'):
                 break
 
 # Dumping TX buffer content
-mp7butler("buffers", args.device, "captureTx", "--e",  args.tx_links, "--cap", args.cap)
-mp7butler("capture", args.device, "--e", args.tx_links, "--outputpath", "tx_buffer_dump")
+# mp7butler("buffers", args.device, "captureTx", "--e",  args.tx_links, "--cap", args.cap)
+# mp7butler("capture", args.device, "--e", args.tx_links, "--outputpath", "tx_buffer_dump")
