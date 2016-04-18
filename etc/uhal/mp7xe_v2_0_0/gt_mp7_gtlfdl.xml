@@ -32,6 +32,10 @@
 			<node id="minor"      address="0x00000000" mask="0x0000ff00" permission="r" parameters="type=number"/>
 			<node id="rev"        address="0x00000000" mask="0x000000ff" permission="r" parameters="type=number"/>
 		</node>
+		<node id="l1tm_fw_uuid" address="0x00000027" mode="incremental" size="4" permission="r" parameters="type=uuid"/>
+		<node id="svn_revision_number" address="0x0000002B" permission="r" parameters="type=number"/>
+		<node id="l1tm_uuid_hash" address="0x0000002C" permission="r" parameters="type=number"/>
+		<node id="l1tm_fw_uuid_hash" address="0x0000002D" permission="r" parameters="type=number"/>
 	</node>
 	<node id="command_pulses" address="0x00091900" permission="w" parameters="type=parent">
 		<node id="request_update_factor_pulse" address="0x00000000" mask="0x00000001" permission="w"/>
