@@ -140,8 +140,8 @@ class Buffgen(object):
                 # Object mapping.
                 #
                 mapped_values = [
-                    [0,                   0,                   0,                   0,                   tv.eg(0)[i], tv.eg(6)[i],  tv.jet(0)[i], tv.jet(6)[i],  tv.tau(0)[i], tv.tau(6)[i], tv.ett()[i], 0, extconds[0], extconds[1], extconds[2], extconds[3], ],
-                    [0,                   0,                   0,                   0,                   tv.eg(1)[i], tv.eg(7)[i],  tv.jet(1)[i], tv.jet(7)[i],  tv.tau(1)[i], tv.tau(7)[i], tv.ht()[i],  0, extconds[4], extconds[5], extconds[6], extconds[7], ],
+                    [0,                   0,                   0,                   0,                   tv.eg(0)[i], tv.eg(6)[i],  tv.jet(0)[i], tv.jet(6)[i],  tv.tau(0)[i], tv.tau(6)[i], tv.ett()[i], 0, extconds[0], extconds[2], extconds[4], extconds[6], ],
+                    [0,                   0,                   0,                   0,                   tv.eg(1)[i], tv.eg(7)[i],  tv.jet(1)[i], tv.jet(7)[i],  tv.tau(1)[i], tv.tau(7)[i], tv.ht()[i],  0, extconds[1], extconds[3], extconds[5], extconds[7], ],
                     [low(tv.muon(0)[i]),  low(tv.muon(2)[i]),  low(tv.muon(4)[i]),  low(tv.muon(6)[i]),  tv.eg(2)[i], tv.eg(8)[i],  tv.jet(2)[i], tv.jet(8)[i],  tv.tau(2)[i], 0,            tv.etm()[i], 0, 0,           0,           0,           0,           ],
                     [high(tv.muon(0)[i]), high(tv.muon(2)[i]), high(tv.muon(4)[i]), high(tv.muon(6)[i]), tv.eg(3)[i], tv.eg(9)[i],  tv.jet(3)[i], tv.jet(9)[i],  tv.tau(3)[i], 0,            tv.htm()[i], 0, 0,           0,           0,           0,           ],
                     [low(tv.muon(1)[i]),  low(tv.muon(3)[i]),  low(tv.muon(5)[i]),  low(tv.muon(7)[i]),  tv.eg(4)[i], tv.eg(10)[i], tv.jet(4)[i], tv.jet(10)[i], tv.tau(4)[i], 0,            0,           0, 0,           0,           0,           0,           ],
