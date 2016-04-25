@@ -71,7 +71,7 @@ class ScriptRunner(BaseScriptRunner):
         }
         global_vars.update(self.core_api)
         try:
-            execfile(filename, global_vars, {})
+            execfile(filename, global_vars)
         except AssertionError, message:
             state = "[\033[31mFAILED\033[0m]"
             self.report.append("{base_msg:<50} {state}".format(**locals()))
@@ -107,7 +107,7 @@ class ScriptRunner(BaseScriptRunner):
         }
         global_vars.update(self.core_api)
         try:
-            execfile(filename, global_vars, {})
+            execfile(filename, global_vars)
         except:
             self.success = False
             self.recursion_depth -= 1
