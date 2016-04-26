@@ -25,16 +25,18 @@ TDF_WARNING("note: hit CTRL + C to exit routine")
 
 previous_ls = read_lumi_counter(args.device)
 rate_cnt_before_prescaler = blockread(args.device, "gt_mp7_gtlfdl.rate_cnt_before_prescaler")
-print "| LumiSegNr | rate_before_prescale |"
-print "| {0:>9} | {1:>20} |".format(previous_ls, rate_cnt_before_prescaler[args.index])
+err_det = read(args.device, "gt_mp7_frame.rb.tcm_status.err_det")
+print "| LumiSegNr | rate_before_prescale | algo | err_det |"
+print "| {0:>9} | {1:>20} | {2:>4} | {3:>7} |".format(previous_ls, rate_cnt_before_prescaler[args.index], args.index, err_det)
 
 try:
     while True:
         current_ls = read_lumi_counter(args.device)
         if previous_ls != current_ls:
             rate_cnt_before_prescaler = blockread(args.device, "gt_mp7_gtlfdl.rate_cnt_before_prescaler")
-            print "| LumiSegNr | rate_before_prescale |"
-            print "| {0:>9} | {1:>20} |".format(current_ls, rate_cnt_before_prescaler[args.index])
+            err_det = read(args.device, "gt_mp7_frame.rb.tcm_status.err_det")
+	    print "| LumiSegNr | rate_before_prescale | algo | err_det |"
+	    print "| {0:>9} | {1:>20} | {2:>4} | {3:>7} |".format(current_ls, rate_cnt_before_prescaler[args.index], args.index, err_det)
             previous_ls = current_ls
         # throttle monitoring rate
         time.sleep(args.i)
