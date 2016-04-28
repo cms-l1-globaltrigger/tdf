@@ -279,7 +279,8 @@ class TDFCore(object):
         #f.seek(0)
         #print f.read()
         stdout = kwargs.get('stdout', None)
-        subprocess.check_call(command, stdout = stdout)
+        stderr = kwargs.get('stderr', None)
+        subprocess.check_call(command, stdout=stdout, stderr=stderr)
 
     def unittest(self, device, test):
         """Execute a device specific unittest. Argument *device* is the ID of
