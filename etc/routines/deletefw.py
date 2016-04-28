@@ -26,7 +26,7 @@ def scansd(device):
 
 parser = argparse.ArgumentParser()
 parser.add_argument('device', help = "device defined in connections file")
-parser.add_argument('file', nargs="+", help = "bitfiles to delete from the SD card")
+parser.add_argument('file', nargs="+", help = "bitfiles to delete from the SD card. double check the filename, because the script will crash on missing files.")
 args = parser.parse_args(TDF_ARGS)
 
 device = args.device
