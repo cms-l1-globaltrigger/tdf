@@ -94,7 +94,7 @@ class DataSpecification(object):
         assert isinstance(value, int)
         if not self._coding:
             return {}
-        data = dict([(k, (v.msb, v.lsb)) for k, v in self._coding.__dict__.items()])
+        data = dict([(k, (v.msb, v.lsb)) for k, v in self._coding._asdict().items()])
         return binutils.bitdecode(value, data)
 
 class TDFCore:
