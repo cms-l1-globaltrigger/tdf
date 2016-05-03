@@ -14,8 +14,12 @@ This class can be used for diagnostic output of algorithm params in TDF routines
 """
 
 import sys
-from lxml import etree
 from settings import TDF
+
+try:
+    from lxml import etree
+except ImportError:
+    raise RuntimeError("package lxml is missing, run \"sudo yum install python-lxml\" to install it")
 
 __all__ = [ 'XmlMenu', '__doc__', '__version__' ]
 __version__ = '$Revision$'
