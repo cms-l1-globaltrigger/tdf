@@ -86,7 +86,6 @@ class TestVector(object):
             self.read(fs)
 
     def reset(self):
-        def mklist(): return [0 for _ in range(TDF.ORBIT_LENGTH)]
         self.name = None
         self.description = None
         self.datetime = None
@@ -94,17 +93,17 @@ class TestVector(object):
         self.menu_name = None
         self.menu_uuid = None
         # Initialize the object data containers.
-        self._muon = [mklist() for _ in range(TDF.MUON.count)]
-        self._eg  = [mklist() for _ in range(TDF.EG.count)]
-        self._tau = [mklist() for _ in range(TDF.TAU.count)]
-        self._jet = [mklist() for _ in range(TDF.JET.count)]
-        self._ett = mklist()
-        self._ht  = mklist()
-        self._etm = mklist()
-        self._htm = mklist()
-        self._extcond = mklist()
-        self._algorithms = mklist()
-        self._finor = mklist()
+        self._muon = [[] for _ in range(TDF.MUON.count)]
+        self._eg  = [[] for _ in range(TDF.EG.count)]
+        self._tau = [[] for _ in range(TDF.TAU.count)]
+        self._jet = [[] for _ in range(TDF.JET.count)]
+        self._ett = []
+        self._ht  = []
+        self._etm = []
+        self._htm = []
+        self._extcond = []
+        self._algorithms = []
+        self._finor = []
 
     def read(self, fp):
         self.reset()
