@@ -1,6 +1,5 @@
 # testvector_split.py
 # Split a testvector by information read from XML menu.
-from tdf.core.xmlmenu import XmlMenu
 from tdf.core.testvector import TestVector
 from tdf.core.xmlmenu import XmlMenu
 from tdf.extern import argparse
