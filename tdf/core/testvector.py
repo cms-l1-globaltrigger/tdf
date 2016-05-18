@@ -12,12 +12,12 @@
 """This module provides a test vector reader class for Global Trigger input data
 provided by the emulator.
 
-A test vector file is a whitespace separated CSV file with a single header line.
-The first column is a zero padded 4 characters width decimal value with a valid
-range from 0 to 3563. The following columns represent various input object data
-of different bit widths. All input object data are zero padded hex values of
-8, 16, 64 or 128 characters width. The last column is assigned to the FINOR as
-a single bit value. All hex characters (a-f) expected in lower case.
+A test vector file is a whitespace separated CSV file with an optional header
+line. The first column is a zero padded 4 characters width decimal value with a
+valid range from 0 to 3563. The following columns represent various input object
+data of different bit widths. All input object data are zero padded hex values
+of 8, 16, 64 or 128 characters width. The last column is assigned to the FINOR
+as a single bit value. All hex characters (a-f) expected in lower case.
 
 =========  ========  ==================================
 Column(s)  Format    Description
@@ -49,11 +49,20 @@ prefixed with an | (pipe) character.
   |menu_name: L1Menu_Sample
   |menu_uuid: d71af861-abaf-4ced-997c-3dfcba3fdcb6
 
+Masking algorithms
+------------------
+
+To mask a range of algorithms required at usign multiple modules.
+
+>>> tv = TestVector(fp)
+>>> tv.maskAlgorithms([0, 1, 2, 3, 4, 5, 6, 7, 42])
+>>> tv.serialize()
+
 """
 
 import sys
 from filereader import FileReader
-from binutils import charcount
+from binutils import charcount, bitsplit, bitjoin
 from settings import TDF
 
 __all__ = [ 'TestVector', 'TestVectorReader', '__doc__', '__version__' ]
@@ -77,6 +86,7 @@ class TestVector(object):
             self.read(fs)
 
     def reset(self):
+        def mklist(): return [0 for _ in range(TDF.ORBIT_LENGTH)]
         self.name = None
         self.description = None
         self.datetime = None
@@ -84,17 +94,17 @@ class TestVector(object):
         self.menu_name = None
         self.menu_uuid = None
         # Initialize the object data containers.
-        self._muon = [[] for _ in range(TDF.MUON.count)]
-        self._eg  = [[] for _ in range(TDF.EG.count)]
-        self._tau = [[] for _ in range(TDF.TAU.count)]
-        self._jet = [[] for _ in range(TDF.JET.count)]
-        self._ett = []
-        self._ht  = []
-        self._etm = []
-        self._htm = []
-        self._extcond = []
-        self._algorithms = []
-        self._finor = []
+        self._muon = [mklist() for _ in range(TDF.MUON.count)]
+        self._eg  = [mklist() for _ in range(TDF.EG.count)]
+        self._tau = [mklist() for _ in range(TDF.TAU.count)]
+        self._jet = [mklist() for _ in range(TDF.JET.count)]
+        self._ett = mklist()
+        self._ht  = mklist()
+        self._etm = mklist()
+        self._htm = mklist()
+        self._extcond = mklist()
+        self._algorithms = mklist()
+        self._finor = mklist()
 
     def read(self, fp):
         self.reset()
@@ -144,6 +154,22 @@ class TestVector(object):
                 key, value = meta[0].strip(), meta[1].strip()
                 if key in self.MetaDataItems:
                     setattr(self, key, value)
+
+    def updateFinor(self):
+        """Update FinOR according to the active algorithm bits."""
+        for bx in range(len(self)):
+            self._finor[bx] = int(bool(self._algorithms[bx]))
+
+    def maskAlgorithms(self, mask):
+        """Mask out algorithms that are not in argument *mask* and calculates
+        FinOR according to the updated algoritms.
+        """
+        # Calcualte bit mask
+        mask = bitjoin([1 if index in mask else 0 for index in range(TDF.ALGORITHM.width)], 1)
+        for bx in range(len(self)):
+            self._algorithms[bx] &= mask
+        # Update the FinOR
+        self.updateFinor()
 
     def muon(self, i):
         assert 0 <= i < TDF.MUON.count, "invalid muon index"
@@ -198,10 +224,8 @@ class TestVector(object):
     def finor(self):
         return self._finor
 
-    def __len__(self):
-        return len(self.finor())
-
-    def __str__(self):
+    def serialize(self):
+        """Serialize the test vector to string."""
         rows = []
         for i in range(len(self)):
             cols = []
@@ -219,6 +243,12 @@ class TestVector(object):
             cols.append(TDF.FINOR.hexstr(self.finor()[i]))
             rows.append(' '.join(cols))
         return '\n'.join(rows)
+
+    def __len__(self):
+        return len(self.finor())
+
+    def __str__(self):
+        return self.serialize()
 
 class TestVectorReader(FileReader):
     """Global trigger test vector file reader. It derives from class FileReader.

@@ -49,18 +49,21 @@ ett:
   count: 1
   width: 32
   coding:
+    mbt0hfp: { msb: 31, lsb: 28 }
     et: { msb: 11, lsb: 0 }
 
 ht:
   count: 1
   width: 32
   coding:
+    mbt0hfm: { msb: 31, lsb: 28 }
     et: { msb: 11, lsb: 0 }
 
 etm:
   count: 1
   width: 32
   coding:
+    mbt1hfp: { msb: 31, lsb: 28 }
     phi: { msb: 19, lsb: 12 }
     et: { msb: 11, lsb: 0 }
 
@@ -68,5 +71,6 @@ htm:
   count: 1
   width: 32
   coding:
+    mbt1hfm: { msb: 31, lsb: 28 }
     phi: { msb: 19, lsb: 12 }
     et: { msb: 11, lsb: 0 }
