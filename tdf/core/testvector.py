@@ -371,6 +371,28 @@ class SimSpyDump(object):
     def extconds(self):
         return self._extcond
 
+    def serialize(self):
+        rows = []
+        for i in range(len(self)):
+            cols = []
+            cols.extend(TDF.MUON.hexstr(values[i]) for values in self.muons())
+            cols.extend(TDF.EG.hexstr(values[i]) for values in self.egs())
+            cols.extend(TDF.TAU.hexstr(values[i]) for values in self.taus())
+            cols.extend(TDF.JET.hexstr(values[i]) for values in self.jets())
+            cols.append(TDF.ETT.hexstr(self.ett()[i]))
+            cols.append(TDF.HT.hexstr(self.ht()[i]))
+            cols.append(TDF.ETM.hexstr(self.etm()[i]))
+            cols.append(TDF.HTM.hexstr(self.htm()[i]))
+            cols.append(TDF.EXTCOND.hexstr(self.extconds()[i]))
+            rows.append(' '.join(cols))
+        return '\n'.join(rows)
+
+    def __len__(self):
+        return len(self.extconds())
+
+    def __str__(self):
+        return self.serialize()
+
 class SimSpyDumpReader(FileReader):
     """Global trigger sim/spy dump file reader. It derives from class FileReader.
 
@@ -424,6 +446,15 @@ class AlgorithmDump(object):
     def algorithms(self):
         return self._algorithms
 
+    def serialize(self):
+        return '\n'.join([TDF.ALGORITHM.hexstr(value) for value in self.algorithms()])
+
+    def __len__(self):
+        return len(self._algorithms)
+
+    def __str__(self):
+        return self.serialize()
+
 class AlgorithmDumpReader(FileReader):
     """Global trigger algorithm dump file reader. It derives from class FileReader.
 
@@ -468,6 +499,14 @@ class FinorDump(object):
     def finor(self):
         return self._finor
 
+    def serialize(self):
+        return '\n'.join([TDF.FINOR.hexstr(value) for value in self.finor()])
+
+    def __len__(self):
+        return len(self.finor())
+
+    def __str__(self):
+        return self.serialize()
 
 class FinorDumpReader(FileReader):
     """Global trigger FINOR dump file reader. It derives from class FileReader.
