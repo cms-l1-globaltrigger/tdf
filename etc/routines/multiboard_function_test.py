@@ -206,7 +206,7 @@ try:
 
     # Merge dumped algorithm results
     algodump_filename = "{TDF_NAME}_merged_spymem2_algos.dat".format(**globals())
-    TDF_INFO("merging dumped algorithms results to", finordump_filename)
+    TDF_INFO("merging dumped algorithms results to", algodump_filename)
     algorithmDump = AlgorithmDump()
     algorithmDump._algorithms = [0] * TDF.ORBIT_LENGTH
     for dump in algo_dumps.values():
