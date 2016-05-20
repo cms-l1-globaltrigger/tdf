@@ -150,224 +150,136 @@ def integer(value):
             return int(value, 10)
     return int(value)
 
-class BitVector(object):
-    """Simple bit vector implementation with bit slice extraction feature.
-
-    Usage example
-    -------------
-
-    >>> vector = BitVector(0xdeadbeef)
-    >>> hex(vector[31:16])
-    0xdead
-    >>> hex(vector[15:0])
-    0xbeef
-    >>> vector[0]
-    1
-
-    """
-    def __init__(self, value = 0):
-        """Attribute *value* must be an unsigned integer."""
-        self.__value__ = value
-
-    @property
-    def value(self):
-        """Returns the vectors integer value."""
-        return self.__value__
-
-    def __getitem__(self, index):
-        """Access bit slices like [n:m] or [n]"""
-        if isinstance(index, slice):
-            n, m = index.start, index.stop
-            if m >= n:
-                raise ValueError("bit vector slices must be calles in format [n:m] or [n]")
-            return (self.value >> m) & bitmask(n - m + 1)
-        if isinstance(index, int):
-            return (self.value >> index) & 1
-        raise TypeError("bit vector indices must be integers, not {0}".format(type(index)))
-
-class BitValue(BitVector):
-    """Value container for de/serialization.
-
-    Convenient serialization to map to memory layout and back from memory dump
-    to actual values using bitsplit() and bitjoin() functions.
-
-    TODO: to be merged with bit vector class.
-
-    >>> v = BitValue(64, 0xdead0000beef0000)
-    >>> v.serialize(16)
-    [0x0000, 0xbeef, 0x0000, 0xdead]
-    >>> v.deserialize([0xcafe, 0x0000], 16)
-    >>> v
-    0xcafe0000
-
-    """
-    def __init__(self, width, value = 0):
-        super(BitValue, self).__init__()
-        self.__width__ = width
-        self.__itridx__ = 0 # iterator
-        self.value = value # @value.setter
-    @property
-    def width(self):
-        return self.__width__
-    @property
-    def value(self):
-        """Returns the vectors integer value."""
-        return self.__value__
-    @value.setter
-    def value(self, value):
-        self.__value__ = value & bitmask(self.__width__)
-    def __iter__(self):
-        return self
-    def next(self):
-        if self.__itridx__ < self.__width__:
-            self.__itridx__ += 1
-            return self[self.__itridx__ - 1]
-        raise StopIteration()
-    def __int__(self):
-        return self.__value__
-    def __str__(self):
-        chars = charcount(self.__width__)
-        return '0x{self.__value__:0{chars}x}'.format(**locals())
-    def __repr__(self):
-        return self.__str__()
-    def serialize(self, n = 32):
-        """Attribute *n* is the bit width to split the content."""
-        return bitsplit(self.__value__, self.__width__ // n, n)
-    def deserialize(self, values, n = 32):
-        """Attribute *n* is the bit width of teh value list."""
-        self.value = bitjoin(values, n)
-
-class BitStream(object):
-    """Binary stream, reading from the right (lowest bit).
-
-    Usage example
-    -------------
-
-    >>> stream = BitStream(int("0000cafe0000babe", 16))
-    >>> hex(stream.read(16))
-    '0xbabe'
-    >>> stream.seek(32)
-    >>> hex(stream.read(16))
-    '0xcafe'
-
-
-    >>> stream = BitStream(0xad)
-    >>> [b for b in stream]
-    [1, 0, 1, 1, 0, 1, 0, 1]
-
-    """
-
-    def __init__(self, data = 0):
-        self._pos = 0
-        self._size = 0
-        self._data = 0
-
-    def read(self, n = None):
-        """Read *n* bits from stream and return them as integer value. If *n* is
-        not specifed or None, all bits are returned as a single integer.
-        """
-        if n is None:
-            return self.read(self._size - self._pos)
-        if (self._pos + n) > self._size:
-            return 0
-        value = int((self._data >> self._pos) & bitmask(n))
-        self._pos += n
-        return value
-
-    def seek(self, i):
-        """Seek to stream position."""
-        if i < 0: i = 0
-        elif i > self._size: i = self._size
-        self._pos = i
-
-    @property
-    def eof(self):
-        """Returns True if end of stream is reached."""
-        return self._pos >= self._size
-
-    @property
-    def pos(self):
-        return self._pos
-
+class BitField(object):
+    """Bit field representing a fixed sized integer."""
+    def __init__(self, width, value=None):
+        """Initialize bit field of *width* and optionaly initialize value."""
+        self.resize(width, (integer(value) or 0) & self.bitmask)
+    def set(self, value):
+        """Initialize bit field with value, will be masked by bit fields width."""
+        self.__value = integer(value) & self.bitmask
+    def resize(self, width, value=None):
+        """Resize the bit fields width. This will cut off bits if reduced in width."""
+        self.__width = width
+        self.set(int(self) if value is None else integer(value))
+    def bitsplit(self, width):
+        """Split bit field into multiple junks of *width*."""
+        return [BitField(width, value) for value in bitsplit(int(self), requires(self.width, width), width)]
+    # Integer operator implementations:
+    def __iadd__(a, b):
+        a.set(int(a) + int(b))
+        return a
+    def __radd__(a, b):
+        return BitField(a.width, int(b) + int(a))
+    def __add__(a, b):
+        return BitField(a.width, int(a) + int(b))
+    def __isub__(a, b):
+        a.set(int(a) - int(b))
+        return a
+    def __rsub__(a, b):
+        return BitField(a.width, int(b) - int(a))
+    def __sub__(a, b):
+        return BitField(a.width, int(a) - int(b))
+    def __imul__(a, b):
+        a.set(int(a) * int(b))
+        return a
+    def __rmul__(a, b):
+        return BitField(a.width, int(b) * int(a))
+    def __mul__(a, b):
+        return BitField(a.width, int(a) * int(b))
+    def __idiv__(a, b):
+        a.set(int(a) // int(b))
+        return a
+    def __rdiv__(a, b):
+        return BitField(a.width, int(b) // int(a))
+    def __div__(a, b):
+        return BitField(a.width, int(a) // int(b))
+    def __lshift__(a, b):
+        return BitField(a.width, int(a) << int(b))
+    def __rshift__(a, b):
+        return BitField(a.width, int(a) >> int(b))
+    def __invert__(a):
+        return BitField(a.width, ~int(a))
+    def __iand__(a, b):
+        a.set(int(a) & int(b))
+        return a
+    def __and__(a, b):
+        return BitField(a.width, int(a) & int(b))
+    def __ior__(a, b):
+        a.set(int(a) | int(b))
+        return a
+    def __or__(a, b):
+        return BitField(a.width, int(a) | int(b))
+    def __ixor__(a, b):
+        a.set(int(a) ^ int(b))
+        return a
+    def __xor__(a, b):
+        return BitField(a.width, int(a) ^ int(b))
+    def __lt__(a, b):
+        return int(a) < int(b)
+    def __gt__(a, b):
+        return int(a) > int(b)
+    def __le__(a, b):
+        return int(a) <= int(b)
+    def __ge__(a, b):
+        return int(a) >= int(b)
+    def __eq__(a, b):
+        return int(a) == int(b)
+    def __ne__(a, b):
+        return int(a) != int(b)
     def __len__(self):
-        return self._size
-
+        """Width of the bit field."""
+        return self.width
+    def __int__(self):
+        """Converts the bit field into a imutable integer."""
+        return self.__value & self.bitmask
     def __iter__(self):
-        return self
-
-    def next(self):
-        if not self.eof:
-            return self.read(1)
-        raise StopIterator()
-
-class BitStreamReader(BitStream):
-    """
-
-    Usage example
-    -------------
-
-    # sample.dat
-    # 0000cafe
-    # 0000babe
-    # ee000000
-
-    >>> stream = BitStreamReader(open("sample.dat"), 32)
-    >>> stream.lineno
-    1
-    >>> hex(stream.read(16))
-    '0xcafe'
-    >>> stream.pos
-    16
-    >>> stream.skip() # ignore the remaining bits of line 1
-    >>> stream.lineno
-    2
-    >>> stream.pos
-    32
-    >>> stream.read(16)
-    '0xbabe'
-    >>> stream.skip() # ignore the remaining bits of line 2
-    >>> stream.lineno
-    3
-    >>> stream.seek(stream.pos + 24)
-    >>> hex(stream.read(8))
-    '0xee'
-
-    """
-
-    def __init__(self, file, width, base = 16):
-        """Reads a bit stream from text file.
-
-        Attribute *file* requires an iteratable object, *width* is the width in
-        bits to read from each line, *base* is the integer base, default is 16
-        (hex).
-        """
-        super(BitStreamReader, self).__init__()
-        self._width = width
-        self._base = base
-        self.load(file)
-
-    def load(self, file):
-        """Load data from file. Attribute *file* requires be an interatable
-        object.
-        """
-        self._pos = 0
-        self._size = 0
-        self._data = 0
-        for i, line in enumerate(file):
-            value = int(line, self._base) & bitmask(self._width)
-            self._data |= value << (self._width * i)
-            self._size += self._width
-
+        """Returns iterator over bits of the bit field."""
+        value = int(self)
+        return iter([((value >> i) & 1) for i in range(self.width)])
+    def __str__(self):
+        return ''.join(('0x', self.hex))
+    def __repr__(self):
+        return ''.join(('0x', self.hex))
+    def __getitem__(self, index):
+        """Get bit slice of the bit field. Returns a bit filed."""
+        if isinstance(index, slice):
+            m, n = index.start, index.stop + 1
+            width = n - m
+            return BitField(width, (int(self) >> m) & bitmask(width))
+        return BitField(1, int(self) & (1 << index))
+    def __setitem__(self, index, value):
+        """Set bit slice of the bit field."""
+        if isinstance(index, slice):
+            m, n = index.start, index.stop + 1
+        else:
+            m, n = index, index + 1
+        width = n - m
+        mask = bitmask(width)
+        value = value & mask
+        self.__value &= ~(mask << m)
+        self.__value |= value << m
+    @property
+    def dec(self):
+        """Decimal string representation of the bit field."""
+        return "{value:d}".format(value=int(self))
+    @property
+    def bin(self):
+        """Binary string representation of the bit field."""
+        return "{value:0{chars}b}".format(value=int(self), chars=self.width)
+    @property
+    def hex(self):
+        """Hex string representation of the bit field."""
+        return "{value:0{chars}x}".format(value=int(self), chars=self.charcount)
     @property
     def width(self):
-        """Returns width in bits."""
-        return self._width
-
+        """Width of the bit field."""
+        return self.__width
     @property
-    def lineno(self):
-        """Returns line number of source file of current stream position."""
-        return (self._pos-1) / self._width + 2
-
-    def skip(self):
-        """Seek to the begin next line."""
-        self.read(self._width - (self._pos % self._width))
+    def bitmask(self):
+        """Bit mask representing the width of the bit field."""
+        return bitmask(self.width)
+    @property
+    def charcount(self):
+        """Number of hex characters reqired to represent bit field."""
+        return charcount(self.width)
