@@ -1,0 +1,14 @@
+tdf (2.5.0-0) extra; urgency=medium
+
+  * Added NOTICE level messages to tdf.core.logger
+  * Updated extern module tdf.extern.ansistrm to support NOTICE level messages
+  * Added function TDF_NOTICE to scripts engine
+
+ -- Bernhard Arnold <bernhard.arnold@cern.ch>  Mon, 30 May 2016 12:51:04 +0200
+
+tdf (2.4.1-0) extra; urgency=medium
+
+  * Added module tdf.core.xmlmenu providing facility class XmlMenu
+  * Cleaned up module tdf.core.binutils removing obsolete facility classes
+
+ -- Bernhard Arnold <bernhard.arnold@cern.ch>  Mon, 11 Apr 2016 06:12:04 +0200

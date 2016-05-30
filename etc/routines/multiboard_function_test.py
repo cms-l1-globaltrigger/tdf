@@ -33,11 +33,22 @@ device_mapping = {
 }
 
 def mkfilename(module, name, prefix=TDF_NAME):
-    """Returns prefixed filename with module index."""
+    """Returns prefixed absolute path and filename with contained module index.
+    The absoulute path is retrieved from current working directory.
+    Format: /<abs-path>/<prefix>_module_<module>_<name>
+
+    >>> mkfilename(module=1, name='foo.txt', prefix='bar')
+    '/home/user/bar_module_1_foo.txt'
+    """
     return os.path.join(os.getcwd(), "{prefix}_module_{module}_{name}".format(**locals()))
 
 def get_modules(menu):
-    """Returns dict of modules ids and assigned algorithm names."""
+    """Returns dict of modules ids with list of assigned algorithm names.
+
+    >>> menu = XmlMenu('sample.xml')
+    >>> get_modules(menu)
+    {0: ['L1_foo', ...], 1: ['L1_bar', ...], ... }
+    """
     modules = {}
     for algorithm in menu.algorithms:
         module_id = algorithm.module_id
@@ -47,18 +58,44 @@ def get_modules(menu):
     return modules
 
 def validate_uuid_menu(device, menu):
+    """Validates match of menu UUID. Raises a RuntimeError on mismatches."""
     uuid_menu = read(device, 'gt_mp7_gtlfdl.read_versions.l1tm_uuid', translate=True)
     if not menu.uuid_menu == uuid_menu:
         raise RuntimeError("menu UUID missmatch:\n" \
-            "xml      : {menu.uuid_menu}\n" \
-            "hardware : {uuid_menu}".format(**locals()))
+            "xml      : {menu.uuid_menu} : {menu.filename}\n" \
+            "hardware : {uuid_menu} : {device}".format(**locals()))
 
 def validate_uuid_firmware(device, menu):
+    """Validates match of firmware UUID. Raises a RuntimeError on mismatches."""
     uuid_firmware = read(device, 'gt_mp7_gtlfdl.read_versions.l1tm_fw_uuid', translate=True)
     if not menu.uuid_firmware == uuid_firmware:
         raise RuntimeError("firmware UUID missmatch:\n" \
-            "xml      : {menu.uuid_firmware}\n" \
-            "hardware : {uuid_firmware}".format(**locals()))
+            "xml      : {menu.uuid_firmware} : {menu.filename}\n" \
+            "hardware : {uuid_firmware} : {device}".format(**locals()))
+
+def merge_algorithm_dumps(dumps, filename):
+    """Merge algorithm dumps. Takes list of algorithm dump objects, writes
+    merged dump to filename."""
+    merged = AlgorithmDump()
+    merged._algorithms = [0] * TDF.ORBIT_LENGTH # Make sure to init
+    for dump in dumps:
+        algorithms = dump.algorithms()
+        for bx in range(len(algorithms)):
+            merged._algorithms[bx] |= algorithms[bx]
+    with open(filename, 'w') as fp:
+        fp.write(merged.serialize())
+
+def merge_finor_dumps(dumps, filename):
+    """Merge finor dumps. Takes list of FinOR dump objects, writes merged
+    dump to filename."""
+    merged = FinorDump()
+    merged._finor = [0] * TDF.ORBIT_LENGTH # Make sure to init
+    for dump in dumps:
+        finors = dump.finors()
+        for bx in range(len(finors)):
+            merged._finor[bx] |= finors[bx]
+    with open(filename, 'w') as fp:
+        fp.write(merged.serialize())
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--menu', metavar='<menu>', required=True, type=os.path.abspath, help="XML menu file")
@@ -106,7 +143,7 @@ for device in devices:
 
 
 temp_dir = tempfile.mkdtemp(prefix=TDF_NAME)
-TDF_WARNING("created temporary directory:", temp_dir)
+TDF_NOTICE("created temporary directory:", temp_dir)
 
 # Catch exceptions to be able to remove temp dir
 try:
@@ -207,26 +244,12 @@ try:
     # Merge dumped algorithm results
     algodump_filename = "{TDF_NAME}_merged_spymem2_algos.dat".format(**globals())
     TDF_INFO("merging dumped algorithms results to", algodump_filename)
-    algorithmDump = AlgorithmDump()
-    algorithmDump._algorithms = [0] * TDF.ORBIT_LENGTH
-    for dump in algo_dumps.values():
-        algorithms = dump.algorithms()
-        for bx in range(len(algorithms)):
-            algorithmDump._algorithms[bx] |= algorithms[bx]
-    with open(algodump_filename, 'w') as fp:
-        fp.write(algorithmDump.serialize())
+    merge_algorithm_dumps(algo_dumps.values(), algodump_filename)
 
     # Merge dumped FinOR results
     finordump_filename = "{TDF_NAME}_merged_spymem2_finor.dat".format(**globals())
     TDF_INFO("merging dumped FinOR results to", finordump_filename)
-    finorDump = FinorDump()
-    finorDump._finor = [0] * TDF.ORBIT_LENGTH
-    for dump in finor_dumps.values():
-        finors = dump.finors()
-        for bx in range(len(finors)):
-            finorDump._finor[bx] |= finors[bx]
-    with open(finordump_filename, 'w') as fp:
-        fp.write(finorDump.serialize())
+    merge_finor_dumps(finor_dumps.values(), finordump_filename)
 
     # Compare the dumps.
     basename = os.path.splitext(os.path.basename(args.testvector))[0]
@@ -251,13 +274,17 @@ try:
         for value in tv.algorithms():
             fired += (value >> algorithm.index) & 0x1
         print "| {algorithm.index:>3d} | {algorithm.name:<64} | {fired:>4d} |".format(**locals())
+    print "|-----|------------------------------------------------------------------|------|"
 
     # Remove temporary directory
-    if not args.keep:
-        TDF_WARNING("removing temporary directory:", temp_dir)
+    if args.keep:
+        TDF_NOTICE("kept temporary directory:", temp_dir)
+    else:
+        TDF_NOTICE("removing temporary directory:", temp_dir)
         shutil.rmtree(temp_dir)
 
 # Clean up on exception
 except:
+    TDF_NOTICE("removing temporary directory:", temp_dir)
     shutil.rmtree(temp_dir)
     raise
