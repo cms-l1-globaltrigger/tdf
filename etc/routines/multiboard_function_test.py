@@ -13,7 +13,7 @@ import sys, os, re
 import time
 import shutil
 
-DEFAULT_INPUT_DELAY = 8
+DEFAULT_INPUT_DELAY = 9
 DEFAULT_GTL_LATENCY = 6
 DEFAULT_SIZE = 170
 DEFAULT_RX_LINKS = '0-15'
@@ -122,7 +122,7 @@ try:
         if args.loopback:
             mp7butler("txmgts", device, "--loopback", "--e", args.rx_links, "--pattern", "std")
             mp7butler("rxmgts", device, "--e", args.rx_links)
-            mp7butler("rxalign", device, "--e", args.rx_links, "--to-bx", args.align_to or "8,4")
+            mp7butler("rxalign", device, "--e", args.rx_links, "--to-bx", args.align_to or "9,5")
         else:
             mp7butler("txmgts", device, "--e", args.rx_links)
             mp7butler("rxmgts", device, "--e", args.rx_links)
@@ -232,10 +232,10 @@ try:
     basename = os.path.splitext(os.path.basename(args.testvector))[0]
     tv_filename = "{basename}_module_{module}.txt".format(**locals())
     for module, device in enumerate(devices):
-        compare(device, "gt_mp7_frame.simspymem", mkfilename(module, "simspymem.dat"), tv_filename, offset=args.delay, size=args.size)
+        compare(device, "gt_mp7_frame.simspymem", mkfilename(module, "simspymem.dat"), args.testvector, offset=args.delay, size=args.size)
 
-    compare(device, "gt_mp7_frame.spymem2_algos", algodump_filename, tv_filename, offset=args.delay + args.gtl_latency, size=args.size)
-    compare(device, "gt_mp7_frame.spymem2_finor", finordump_filename, tv_filename, offset=args.delay + args.gtl_latency, size=args.size)
+    compare(devices[0], "gt_mp7_frame.spymem2_algos", algodump_filename, args.testvector, offset=args.delay + args.gtl_latency, size=args.size)
+    compare(devices[0], "gt_mp7_frame.spymem2_finor", finordump_filename, args.testvector, offset=args.delay + args.gtl_latency, size=args.size)
 
     TDF_INFO("reading testvector", args.testvector)
     tv = TestVector(args.testvector)
