@@ -47,6 +47,7 @@ class ScriptRunner(BaseScriptRunner):
             'mp7butler': api.mp7butler,
             'buffgen': api.buffgen,
             'TDF_INFO': logger.info,
+            'TDF_NOTICE': logger.notice,
             'TDF_WARNING': logger.warning,
             'TDF_ERROR': logger.error,
             'TDF_CRITICAL': logger.critical,
