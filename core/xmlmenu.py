@@ -13,7 +13,7 @@
 This class can be used for diagnostic output of algorithm params in TDF routines.
 """
 
-import sys
+import sys, os
 from settings import TDF
 
 try:
@@ -68,18 +68,28 @@ class AlgorithmContainer(list):
         return (filter(lambda algorithm: algorithm.name == name, self) or [None])[0]
 
 class XmlMenu(object):
-    """Container holding some information of the XML menu."""
+    """Container holding some information of the XML menu.
+    Menu attributes:
+    *filename* holds the filename the menu was read from
+    *name* is the menu's name
+    *uuid_menu* is the menu's UUID
+    *uuid_firmware* is the menu's firmware UUID (set by the VHDL producer)
+    *algorithms* holds an instance of type AlgorithmContainer permitting a
+    convenient access to the loaded algorithms.
+    """
 
-    def __init__(self, fs = None):
+    def __init__(self, filename = None):
+        self.filename = None
         self.name = None
         self.uuid_menu = None
         self.uuid_firmware = None
         self.algorithms = AlgorithmContainer()
-        if fs: self.read(fs)
+        if filename: self.read(filename)
 
     def read(self, filename):
+        self.filename = os.path.abspath(filename)
         self.algorithms = AlgorithmContainer()
-        with open(filename, 'rb') as fp:
+        with open(self.filename, 'rb') as fp:
             # Access static elements
             context = etree.parse(fp)
             self.name = context.xpath('name/text()')[0]

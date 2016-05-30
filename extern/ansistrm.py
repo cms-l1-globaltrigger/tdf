@@ -1,9 +1,16 @@
 #
 # Copyright (C) 2010-2012 Vinay Sajip. All rights reserved. Licensed under the new BSD license.
 #
+# Changelog:
+# BA 2016-05-30: added NOTICE logging level
+#
+
 import ctypes
 import logging
 import os
+
+# Extend by NOTICE level messages
+logging.addLevelName(25, 'NOTICE')
 
 class ColorizingStreamHandler(logging.StreamHandler):
     # color names to indices
@@ -23,7 +30,8 @@ class ColorizingStreamHandler(logging.StreamHandler):
         level_map = {
             logging.DEBUG: (None, 'blue', True),
             logging.INFO: (None, 'white', False),
-            logging.WARNING: (None, 'yellow', True),
+            logging.getLevelName('NOTICE'): (None, 'green', False),
+            logging.WARNING: (None, 'yellow', False),
             logging.ERROR: (None, 'red', True),
             logging.CRITICAL: ('red', 'white', True),
         }
@@ -31,6 +39,7 @@ class ColorizingStreamHandler(logging.StreamHandler):
         level_map = {
             logging.DEBUG: (None, 'cyan', False),
             logging.INFO: (None, 'blue', False),
+            logging.getLevelName('NOTICE'): (None, 'green', False),
             logging.WARNING: (None, 'yellow', False),
             logging.ERROR: (None, 'red', False),
             logging.CRITICAL: ('red', 'white', True),
@@ -137,6 +146,7 @@ def main():
     root.addHandler(ColorizingStreamHandler())
     logging.debug('DEBUG')
     logging.info('INFO')
+    logging.info('NOTICE')
     logging.warning('WARNING')
     logging.error('ERROR')
     logging.critical('CRITICAL')
