@@ -75,7 +75,7 @@ def validate_uuid_firmware(device, menu):
 
 def merge_algorithm_dumps(dumps, filename):
     """Merge algorithm dumps. Takes list of algorithm dump objects, writes
-    merged dump to filename."""
+    merged dump to filename. Returns merged dump instance."""
     merged = AlgorithmDump()
     merged._algorithms = [0] * TDF.ORBIT_LENGTH # Make sure to init
     for dump in dumps:
@@ -84,10 +84,11 @@ def merge_algorithm_dumps(dumps, filename):
             merged._algorithms[bx] |= algorithms[bx]
     with open(filename, 'w') as fp:
         fp.write(merged.serialize())
+    return merged
 
 def merge_finor_dumps(dumps, filename):
     """Merge finor dumps. Takes list of FinOR dump objects, writes merged
-    dump to filename."""
+    dump to filename. Returns merged dump instance."""
     merged = FinorDump()
     merged._finor = [0] * TDF.ORBIT_LENGTH # Make sure to init
     for dump in dumps:
@@ -96,6 +97,7 @@ def merge_finor_dumps(dumps, filename):
             merged._finor[bx] |= finors[bx]
     with open(filename, 'w') as fp:
         fp.write(merged.serialize())
+    return merged
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--menu', metavar='<menu>', required=True, type=os.path.abspath, help="XML menu file")
@@ -244,7 +246,7 @@ try:
     # Merge dumped algorithm results
     algodump_filename = "{TDF_NAME}_merged_spymem2_algos.dat".format(**globals())
     TDF_INFO("merging dumped algorithms results to", algodump_filename)
-    merge_algorithm_dumps(algo_dumps.values(), algodump_filename)
+    merged_algo_dump = merge_algorithm_dumps(algo_dumps.values(), algodump_filename)
 
     # Merge dumped FinOR results
     finordump_filename = "{TDF_NAME}_merged_spymem2_finor.dat".format(**globals())
@@ -266,15 +268,20 @@ try:
     # Print L1A statistics
     algorithms = sorted(menu.algorithms, key=lambda algorithm: algorithm.index)
 
-    print "|-----|------------------------------------------------------------------|------|"
-    print "| Idx | Name                                                             | L1As |"
-    print "|-----|------------------------------------------------------------------|------|"
+    print "|-----|------------------------------------------------------------------|--------|--------|--------|"
+    print "| Idx | Name                                                             | l1a.tv | l1a.hw | Result |"
+    print "|-----|------------------------------------------------------------------|--------|--------|--------|"
+    delay_all = args.delay + args.gtl_latency
     for algorithm in algorithms:
-        fired = 0
-        for value in tv.algorithms():
-            fired += (value >> algorithm.index) & 0x1
-        print "| {algorithm.index:>3d} | {algorithm.name:<64} | {fired:>4d} |".format(**locals())
-    print "|-----|------------------------------------------------------------------|------|"
+        l1a_tv = 0
+        for value in tv.algorithms()[:args.size]:
+            l1a_tv += (value >> algorithm.index) & 0x1
+        l1a_hw = 0
+        for value in merged_algo_dump.algorithms()[delay_all:delay_all+args.size]:
+            l1a_hw += (value >> algorithm.index) & 0x1
+        result = "OK" if l1a_tv == l1a_hw else "ERROR"
+        print "| {algorithm.index:>3d} | {algorithm.name:<64} |  {l1a_tv:>4d}  |  {l1a_hw:>4d}  | {result:<5}  |".format(**locals())
+    print "|-----|------------------------------------------------------------------|--------|--------|--------|"
 
     # Remove temporary directory
     if args.keep:
