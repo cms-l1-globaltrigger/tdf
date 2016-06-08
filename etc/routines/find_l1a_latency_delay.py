@@ -37,13 +37,16 @@ def wait_next_lumi(device):
     orbit_nr = tcm_orbit_nr(device)
     seconds = seconds_left(orbit_nr)
     print "waiting for next luminosity segment ({seconds} sec)...".format(**locals())
-    timeout = seconds
-    while timeout > 0.:
+    verbose_wait(seconds)
+    print
+
+def verbose_wait(seconds, step=1.0):
+    timeout = float(seconds)
+    while timeout >= 0.0:
         sys.stdout.write('.')
         sys.stdout.flush()
-        time.sleep(1.)
-        timeout =- 1.
-    print
+        time.sleep(step)
+        timeout = timeout - step
 
 parser = argparse.ArgumentParser()
 parser.add_argument('device')
