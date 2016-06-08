@@ -36,7 +36,7 @@ def seconds_left(orbit_nr):
 def wait_next_lumi(device):
     orbit_nr = tcm_orbit_nr(device)
     seconds = seconds_left(orbit_nr)
-    print "waiting for next luminosity segment ({seconds} sec)...".format(**locals())
+    print "waiting for next luminosity segment (in {seconds} sec)...".format(**locals()),
     verbose_wait(seconds)
     print
 
@@ -90,23 +90,31 @@ image.set(args.algorithm, args.bx, 1)
 blockwrite(args.device, "gt_mp7_gtlfdl.algo_bx_mem", image.serialize())
 
 lumiseg = tcm_luminosity_seg_nr(args.device)
-print " => current luminosity segment is:", lumiseg
+TDF_NOTICE("current luminosity segment is:", lumiseg)
+TDF_NOTICE("starting to increment l1a_latency_delay at next luminosity segment")
 wait_next_lumi(args.device)
 
 for delay in range(args.offset, 0xffff):
     print '-' * 80
     lumiseg = tcm_luminosity_seg_nr(args.device)
     write(args.device, 'gt_mp7_gtlfdl.l1a_latency_delay', delay)
-    TDF_NOTICE(" => algorithm:", args.algorithm, "| bx:", args.bx, "| l1a_latency_delay:", delay)
-    print " => current luminosity segment is:", lumiseg
+    TDF_NOTICE("algorithm         :", args.algorithm)
+    TDF_NOTICE("bx                :", args.bx)
+    TDF_NOTICE("l1a_latency_delay :", delay)
+    TDF_NOTICE("current lumi seg. :", lumiseg)
 
     wait_next_lumi(args.device)
+
+    lumiseg_new = tcm_luminosity_seg_nr(args.device)
 
     before_prescale_rate = blockread(args.device, 'gt_mp7_gtlfdl.rate_cnt_before_prescaler')
     after_prescale_rate = blockread(args.device, 'gt_mp7_gtlfdl.rate_cnt_after_prescaler')
     post_dead_time_rate = blockread(args.device, 'gt_mp7_gtlfdl.rate_cnt_post_dead_time')
 
-    print " => before prescaler rate counter:", before_prescale_rate[args.algorithm]
-    print " => after prescale rate counter:", after_prescale_rate[args.algorithm]
+    TDF_NOTICE("current lumi seg. :", lumiseg_new)
+    TDF_INFO(" => before prescaler rate counter:", before_prescale_rate[args.algorithm])
+    TDF_INFO(" => after prescale rate counter:", after_prescale_rate[args.algorithm])
     TDF_NOTICE(" => post dead time rate counter:", post_dead_time_rate[args.algorithm])
+    if post_dead_time_rate[args.algorithm]:
+        TDF_NOTICE("found rate with l1a_latency_delay of:", delay)
     print
