@@ -13,7 +13,9 @@ import sys, os, re
 import time
 import shutil
 
-DEFAULT_INPUT_DELAY = 9
+## HB 2016-06-07: changed DEFAULT_INPUT_DELAY with FW frame v0.0.38, because of additional delay for bcres_d in dm.vhd.
+#DEFAULT_INPUT_DELAY = 9
+DEFAULT_INPUT_DELAY = 8
 DEFAULT_GTL_LATENCY = 6
 DEFAULT_SIZE = 170
 DEFAULT_RX_LINKS = '0-15'
