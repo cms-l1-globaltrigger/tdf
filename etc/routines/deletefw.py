@@ -4,7 +4,7 @@ from tdf.extern import argparse
 import tarfile
 import tempfile
 import shutil
-import re, os
+import re, os, sys
 
 def scansd(device):
     """Read stdout results from butler command (bitfiles located on uSD).

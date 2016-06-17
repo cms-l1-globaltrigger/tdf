@@ -11,5 +11,5 @@
 	<node id="readout" module="file://mp7_readout.xml" address="0x100"/>
 	<node id="datapath" module="file://mp7_datapath.xml" address="0x1000"/>
 	<node id="uc" module="file://mp7_infra_uc.xml" address="0x70000000"/>
-        <node id="payload" module="file://payload.xml" address="0x80000000"/>
+    <node id="payload" module="file://payload.xml" address="0x80000000"/>
 </node>
