@@ -141,6 +141,11 @@ class TDFCore:
     scripts.
     """
 
+    AMC502_ROOT_DIR = getpath('AMC502_ROOT')
+    """Absolute path to AMC502 software root directory, used to execute amc502butler
+    scripts.
+    """
+
     def __init__(self): raise NotImplementedError()
 
 class TDF(TDFCore):

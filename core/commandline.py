@@ -179,6 +179,10 @@ class TDFCommandLine(object):
         sub.add_argument('args', nargs = argparse.REMAINDER, help = "mp7butler specific arguments")
         sub.set_defaults(func = self.cmd_mp7butler)
 
+        sub = command.add_parser('amc502butler', help = "wrapper to execute AMC502 butler software")
+        sub.add_argument('args', nargs = argparse.REMAINDER, help = "amc502butler specific arguments")
+        sub.set_defaults(func = self.cmd_amc502butler)
+
         # Unittest command parser.
         sub = command.add_parser('unittest', help = "run a device's unittest")
         sub.add_argument('device', help = "device defined in connections file").completer = DevicesCompleter
@@ -256,6 +260,15 @@ class TDFCommandLine(object):
             self.core.mp7butler(*args.args)
         except subprocess.CalledProcessError, e:
             critical("*** Failed to execute MP7 butler software:")
+            critical(" command:", " ".join(e.cmd))
+            critical(" returncode:", e.returncode)
+            sys.exit(TDF.EXIT_FAIL)
+
+    def cmd_amc502butler(self, args):
+        try:
+            self.core.amc502butler(*args.args)
+        except subprocess.CalledProcessError, e:
+            critical("*** Failed to execute AMC502 butler software:")
             critical(" command:", " ".join(e.cmd))
             critical(" returncode:", e.returncode)
             sys.exit(TDF.EXIT_FAIL)
