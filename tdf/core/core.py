@@ -41,6 +41,9 @@ __version__ = '$Revision$'
 MP7_EXECUTABLE = 'mp7butler.py'
 """Executable name for the MP7 butler software."""
 
+AMC502_EXECUTABLE = 'amc502butler.py'
+"""Executable name for the AMC502 butler software."""
+
 def DEBUG_API(frame = inspect.currentframe()):
     """Inspect function call and pass details to debug logger.
     >>> DEBUG_API(inspect.currentframe())
@@ -76,6 +79,7 @@ class TDFCore(object):
         info("TDF.ROOT_DIR:", TDF.ROOT_DIR)
         info("TDF.L1MENU_DIR:", TDF.L1MENU_DIR)
         info("TDF.MP7_ROOT_DIR:", TDF.MP7_ROOT_DIR)
+        info("TDF.AMC502_ROOT_DIR:", TDF.AMC502_ROOT_DIR)
         info("XML connections file:", self.connections)
 
     def _getNode(self, device, item):
@@ -273,11 +277,33 @@ class TDFCore(object):
         command.extend([str(arg) for arg in args])
         debug(*command)
         info("calling:", *command)
-        # Not working: capturing the stderr disables mp7butler logging outputs :(
-        #f = tempfile.SpooledTemporaryFile()
-        #subprocess.check_call(command, stderr = f, bufsize = 1)
-        #f.seek(0)
-        #print f.read()
+        stdout = kwargs.get('stdout', None)
+        stderr = kwargs.get('stderr', None)
+        subprocess.check_call(command, stdout=stdout, stderr=stderr)
+
+    def amc502butler(self, *args, **kwargs):
+        """Execute a AMC502 butler command. Optional positional argument list
+        *args* is forwared to the AMC502 butler call. Take note that the following
+        command line options are preprended to any given arguments: *-c* to set
+        the connections file used by TDF.
+
+        For capturing *stdout* use the *stdout* named argument writing to a
+        spooled tempfile:
+
+        >>> import tempfile
+        >>> tmp = tempfile.SpooledTemporaryFile()
+        >>> amc502butler(..., stdout = tmp)
+        >>> tmp.seek(0)
+        >>> result = tmp.read()
+        >>> tmp.close()
+        """
+        DEBUG_API(inspect.currentframe())
+        command = [AMC502_EXECUTABLE, '-c', self.connections]
+        if self.verbose:
+            command.append('-v')
+        command.extend([str(arg) for arg in args])
+        debug(*command)
+        info("calling:", *command)
         stdout = kwargs.get('stdout', None)
         stderr = kwargs.get('stderr', None)
         subprocess.check_call(command, stdout=stdout, stderr=stderr)
