@@ -45,6 +45,7 @@ class ScriptRunner(BaseScriptRunner):
             'wait': api.wait,
             'compare': api.compare,
             'mp7butler': api.mp7butler,
+            'amc502butler': api.amc502butler,
             'buffgen': api.buffgen,
             'TDF_INFO': logger.info,
             'TDF_NOTICE': logger.notice,
