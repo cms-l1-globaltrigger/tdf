@@ -8,7 +8,7 @@
 
 from tdf.extern import argparse
 from tdf.core.testvector import TestVector
-from tdf.mp7.images import AlgoBxMemoryImage
+from tdf.mp7.images import AlgoBxMemoryImage, MasksMemoryImage
 import sys, os
 import time
 
@@ -79,15 +79,23 @@ if not args.skip_setup:
     configure(args.device, TDF.ROOT_DIR + "/etc/config/gt_mp7/cfg-140/mp7-mux-tx-buffer.cfg")
     configure(args.device, TDF.ROOT_DIR + "/etc/config/gt_mp7/cfg-140/mp7-delay-manager-values.cfg")
 
-# Create new memory image.
-image = AlgoBxMemoryImage()
-image.setEnabled(False)
+## Create new memory image.
+#image = AlgoBxMemoryImage()
+#image.setEnabled(False)
 
-# Enable single event
-image.set(args.algorithm, args.bx, 1)
+## Enable single event
+#image.set(args.algorithm, args.bx, 1)
 
-# Write memory to firmware.
-blockwrite(args.device, "gt_mp7_gtlfdl.algo_bx_mem", image.serialize())
+## Write memory to firmware.
+#blockwrite(args.device, "gt_mp7_gtlfdl.algo_bx_mem", image.serialize())
+
+#prescales = [1] * 512
+#prescales[args.algorithm] = 1
+#blockwrite(args.device, 'gt_mp7_gtlfdl.prescale_factor', prescales)
+
+#masks = [0x1] * 512 
+#masks[args.algorithm] = 0x1
+#blockwrite(args.device, 'gt_mp7_gtlfdl.masks', masks)
 
 lumiseg = tcm_luminosity_seg_nr(args.device)
 TDF_NOTICE("current luminosity segment is:", lumiseg)
