@@ -28,6 +28,7 @@ parser.add_argument('--missmatches', action='store_true', help="enable checks fo
 parser.add_argument('--stucked', action='store_true', help="enable checks for stucked counters")
 parser.add_argument('--stucked-cache', metavar='<n>', type=int, default=3, help="number of cached luminosity segment, default 3")
 parser.add_argument('--stucked-threshold', metavar='<n>', type=int, default=10, help="threshold for detecting stucked counters, default >= 10")
+parser.add_argument('--dump', metavar='<file>', type=argparse.FileType('w'), help="dump recorded after prescale rate counters to CSV formatted file")
 args = parser.parse_args(TDF_ARGS)
 # sort the indices
 args.index.sort()
@@ -40,6 +41,11 @@ cache = []
 # Get initial luminosity section
 previous_ls = read_lumi_counter(args.device)
 print "waiting for next luminosity segment..."
+
+# Record to CSV file
+if args.dump:
+    args.dump.write(','.join([str(item) for item in ["lumi_segment/algo_rate"]+range(512)]))
+    args.dump.write("\n")
 
 with open("{0}.log".format(TDF_NAME), "w") as logger:
     TDF_NOTICE("start writing to log file", logger.name)
@@ -66,6 +72,10 @@ with open("{0}.log".format(TDF_NAME), "w") as logger:
                             err_det
                         )
                     )
+                    # Record rates to CSV file
+                    if args.dump:
+                        args.dump.write(','.join([str(item) for item in [previous_ls] + rate_cnt_before_prescaler]))
+                        args.dump.write("\n")
                     # Strip older cache entries
                     if len(cache) > args.stucked_cache:
                         cache = cache[-abs(args.stucked_cache):]
