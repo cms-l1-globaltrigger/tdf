@@ -28,7 +28,7 @@
         <node id="err_det_reset_event"          address="0x00000001" mask="0x00000001" permission="rw"/> <!-- resets err_det when 1 is written to this register -->
 <!--        <node id="bgos"                         address="0x00000002" mask="0x0000000f" permission="rw"/> <!-- used to simulate bgos events. set this register to the desired value and use bgos_event overwrite the real bgos by the value of this register for exactly one clock cycle -->-->
 <!--        <node id="bgos_event"                   address="0x00000003" mask="0x00000001" permission="rw"/> <!-- the real bgos is overwritten by the value of the software register bgos for exactly one clock cycle when 1 is written to this register -->-->
-        <node id="luminosity_seg_period_msk"    address="0x00000004" mask="0xffffffff" permission="rw"/> <!-- luminosity_seg_nr is increased when the orbit_nr mod lum_seg_period_mask = 0 -->
+<!--        <node id="luminosity_seg_period_msk"    address="0x00000004" mask="0xffffffff" permission="rw"/> <!-- luminosity_seg_nr is increased when the orbit_nr mod lum_seg_period_mask = 0 -->-->
         <node id="bx_nr"                        address="0x00000010" mask="0x00000fff" permission="r"/>
 <!--        <node id="event_nr"                     address="0x00000011" mask="0xffffffff" permission="r"/>-->
 <!--        <node id="trigger_nr_l"                 address="0x00000012" mask="0xffffffff" permission="r"/>-->
