@@ -1,6 +1,7 @@
 tdf (2.6.0-0) extra; urgency=medium
 
   * Added amc502butler command to API
+  * Removed obsolete tdf-webcontrol related files
 
  -- Bernhard Arnold <bernhard.arnold@cern.ch>  Fri, 17 Jun 2016 15:13:57 +0200
 
