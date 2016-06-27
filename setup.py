@@ -76,7 +76,6 @@ setup(
         'bin/tdf-control',
         'bin/tdf-unpacker',
         'bin/tdf-testvector',
-        'bin/tdf-webcontrol',
     ),
     setup_requires = [],
     install_requires = [],
