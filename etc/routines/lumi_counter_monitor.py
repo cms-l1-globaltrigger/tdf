@@ -14,18 +14,18 @@ MAX_ALGORITHMS = 512
 LUMI_SEC = 23.312
 
 # Holds luminosity segment number and associated counters.
-class LumiSegment(namedtuple('LumiSegment', 'ls_number, rates_before_prescaler, rates_after_prescaler, deadtime_counters, err_det')):
+class LumiSegment(namedtuple('LumiSegment', 'ls_number, rates_before_prescaler, rates_after_prescaler, deadtime_counters, l1a_rate')):
 
-    header = "| LumiSegNr | Rate before prescale | Rate after prescale  | Post dead time | err_det | Index | Name"
+    header = "| LumiSegNr | Rate before prescale | Rate after prescale  | Post dead time | L1A rate | Index | Name"
 
-    def row(self, index, name=""):
+    def row(self, index, name="n/a"):
         """Returns table row for algorithm of *index*."""
         number = self.ls_number
         before = self.rates_before_prescaler[index]
         after = self.rates_after_prescaler[index]
         deadtime = self.deadtime_counters[index]
-        err_det = self.err_det
-        return "| {number:>9} | {before:>20} | {after:>20} | {deadtime:>14} | {err_det:>7} | {index:>5} | {name}".format(**locals())
+        l1a_rate = self.l1a_rate
+        return "| {number:>9} | {before:>20} | {after:>20} | {deadtime:>14} | {l1a_rate:>8} | {index:>5} | {name}".format(**locals())
 
 def read_lumi_counter(device):
     """Returns current luminosity segment number."""
@@ -45,7 +45,7 @@ def read_segment_counters(device, ls_number):
         rates_before_prescaler=blockread(device, "gt_mp7_gtlfdl.rate_cnt_before_prescaler"),
         rates_after_prescaler=blockread(device, "gt_mp7_gtlfdl.rate_cnt_after_prescaler"),
         deadtime_counters=blockread(device, "gt_mp7_gtlfdl.rate_cnt_post_dead_time"),
-        err_det=read(args.device, "gt_mp7_frame.rb.tcm_status.err_det")
+        l1a_rate=read(args.device, "gt_mp7_gtlfdl.rate_cnt_l1a")
     )
 
 parser = argparse.ArgumentParser()
