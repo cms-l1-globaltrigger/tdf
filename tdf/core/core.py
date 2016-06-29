@@ -279,7 +279,10 @@ class TDFCore(object):
         info("calling:", *command)
         stdout = kwargs.get('stdout', None)
         stderr = kwargs.get('stderr', None)
-        subprocess.check_call(command, stdout=stdout, stderr=stderr)
+        try:
+            subprocess.check_call(command, stdout=stdout, stderr=stderr)
+        except OSError, e:
+            raise RuntimeError("{e.strerror}, missing executable {command[0]}".format(**locals()))
 
     def amc502butler(self, *args, **kwargs):
         """Execute a AMC502 butler command. Optional positional argument list
@@ -306,7 +309,10 @@ class TDFCore(object):
         info("calling:", *command)
         stdout = kwargs.get('stdout', None)
         stderr = kwargs.get('stderr', None)
-        subprocess.check_call(command, stdout=stdout, stderr=stderr)
+        try:
+            subprocess.check_call(command, stdout=stdout, stderr=stderr)
+        except OSError, e:
+            raise RuntimeError("{e.strerror}, missing executable {command[0]}".format(**locals()))
 
     def unittest(self, device, test):
         """Execute a device specific unittest. Argument *device* is the ID of
