@@ -13,7 +13,6 @@
         <node id="trig_spy12_ready" address="0x00" mask="0x80000000" permission="r" tags="0x0:NOTREADY,0x1:READY"/>
     </node>
     <node id="module_info" address="0x10" description="Module Info Regs">
-<!--	    <node id="build_version"     address="0x00" mask="0x0000ffff" parameters="type=hex" description="Build Version Number"/>-->
         <node id="build_version"     	address="0x00" mask="0xffffffff" permission="r" parameters="type=hex" description="Build Version Number"/>
         <node id="board_id" 		address="0x01" mask="0xffffffff" permission="r" />
         <node id="location" 		address="0x02" mask="0xffffffff" permission="r"/>
@@ -29,16 +28,9 @@
 <!--        <node id="bgos"                         address="0x00000002" mask="0x0000000f" permission="rw"/> <!-- used to simulate bgos events. set this register to the desired value and use bgos_event overwrite the real bgos by the value of this register for exactly one clock cycle -->-->
 <!--        <node id="bgos_event"                   address="0x00000003" mask="0x00000001" permission="rw"/> <!-- the real bgos is overwritten by the value of the software register bgos for exactly one clock cycle when 1 is written to this register -->-->
 <!--        <node id="luminosity_seg_period_msk"    address="0x00000004" mask="0xffffffff" permission="rw"/> <!-- luminosity_seg_nr is increased when the orbit_nr mod lum_seg_period_mask = 0 -->-->
-        <node id="bx_nr"                        address="0x00000010" mask="0x00000fff" permission="r"/>
-<!--        <node id="event_nr"                     address="0x00000011" mask="0xffffffff" permission="r"/>-->
-<!--        <node id="trigger_nr_l"                 address="0x00000012" mask="0xffffffff" permission="r"/>-->
-<!--        <node id="trigger_nr_h"                 address="0x00000013" mask="0x0000ffff" permission="r"/>-->
         <node id="orbit_nr_l"                   address="0x00000014" mask="0xffffffff" permission="r"/>
         <node id="orbit_nr_h"                   address="0x00000015" mask="0x0000ffff" permission="r"/>
-        <node id="bx_nr_chk"                    address="0x00000016" mask="0xffffffff" permission="r"/> <!-- should always be less or equal 0xdeb -->
         <node id="bx_nr_max"                    address="0x00000017" mask="0xffffffff" permission="r"/> <!-- should always be equal 0xdeb -->
-<!--        <node id="err_det"                      address="0x00000018" mask="0x00000001" permission="r"/> <!-- set, when bcres was not asserted correctly. can be reset via err_det_reset_event -->-->
-<!--        <node id="bx_nr_d_fdl"                  address="0x00000019" mask="0x00000fff" permission="r"/> <!-- a different version of bx_nr used by fdl -->-->
         <node id="luminosity_seg_nr"            address="0x0000001A" mask="0xffffffff" permission="r"/>
     </node>
     <node id="reset" address="0xA0" mask="0x00000001" description="Pulse reg for reset-pulse"/>

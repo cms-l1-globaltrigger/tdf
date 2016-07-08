@@ -7,21 +7,3 @@
 #   <name>: <value>
 #   ...
 #
-
-module_type:
-  UNDEFINED: 0x0
-  MINI_T5: 0x1
-  GT_MP7: 0x2
-  GMT_MP7: 0x3
-  AMC514: 0x4
-  GLIB2: 0x5
-  GLIB3: 0x6
-  TDF_MP7: 0x7
-  FINOR_AMC502: 0x8
-  EXTCOND_AMC502: 0x9
-
-module_protocol:
-  UNDEFINED: 0x0
-  PCI_E: 0x1
-  IP_BUS_v1.3: 0x2
-  IP_BUS_v2.0: 0x3
