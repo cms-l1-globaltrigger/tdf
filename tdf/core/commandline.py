@@ -113,6 +113,10 @@ class TDFCommandLine(object):
         sub.add_argument('--verify', action = 'store_true', help = "read back values to verify")
         sub.set_defaults(func = self.cmd_blockwrite)
 
+        sub = command.add_parser('status', help = "reads basic device states")
+        sub.add_argument('device', help = "device ID defined in connections file").completer = DevicesCompleter
+        sub.set_defaults(func = self.cmd_status)
+
         # Configure command parser.
         sub = command.add_parser('configure', help = "sequence a configuration file to a device")
         sub.add_argument('device', help = "device defined in connections file").completer = DevicesCompleter
@@ -201,6 +205,17 @@ class TDFCommandLine(object):
             args.connections = getConnectionsFile(args.crate)
 
         return args
+
+    def cmd_status(self, args):
+        value = self.core.read(args.device, 'ctrl.id')
+        name = self.core.read(args.device, 'gt_mp7_gtlfdl.read_versions.l1tm_name', translate = True)
+        uuid = self.core.read(args.device, 'gt_mp7_gtlfdl.read_versions.l1tm_uuid', translate = True)
+        bx_nr_max = self.core.read(args.device, 'gt_mp7_frame.rb.tcm_status.bx_nr_max')
+        print "ctrl.id     : 0x{value:08x}".format(**locals())
+        print "bx_nr_max   : 0x{bx_nr_max:x} ({bx_nr_max:d})".format(**locals())
+        if args.device.startswith("gt_mp7"):
+            print "L1Menu name : {name}".format(**locals())
+            print "L1Menu UUID : {uuid}".format(**locals())
 
     def cmd_read(self, args):
         if args.translate:
