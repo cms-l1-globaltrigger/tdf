@@ -19,7 +19,7 @@ def scansd(device):
     # Read content of temporary file.
     filenames = []
     for line in tmp.readlines():
-        result = re.search(r"([\w_\.]+\.bit)", line.strip())
+        result = re.search(r"([\w_\.]+\.(bit|bin))", line.strip())
         if result:
             filenames.append(result.group(1))
     # Close the temporary file.
