@@ -10,19 +10,22 @@ def scansd(device):
     """Read stdout results from butler command (bitfiles located on uSD).
     Returns list of filenames stored on uSD card.
     """
-    import tempfile
     # Create temporary file in memory.
     tmp = tempfile.SpooledTemporaryFile()
     # Capture stdout from butler (should contain list of bitfiles).
-    mp7butler("scansd", device, stdout = tmp)
+    mp7butler("scansd", device, stderr = tmp)
     # Set file pointer to begin of temporary file.
     tmp.seek(0)
     # Read content of temporary file.
-    result = tmp.read().strip().split("\n")
+    filenames = []
+    for line in tmp.readlines():
+        result = re.search(r"([\w_\.]+\.bit)", line.strip())
+        if result:
+            filenames.append(result.group(1))
     # Close the temporary file.
     tmp.close()
     # Return list of bitfiles.
-    return [filename.strip() for filename in result]
+    return filenames
 
 parser = argparse.ArgumentParser()
 parser.add_argument('filename', help = "uGT firmware tarball (*.tar.gz)")
@@ -104,6 +107,8 @@ print "+------------------------------------------------------------------------
 for module, bitfile in enumerate(bitfiles):
     device = device_mapping[module]
     filename = os.path.basename(bitfile)
+    binfile = os.path.splitext(filename)[0] + ".bin"  #changing file extension to *.bin for the mp7butler upload script
+
     print
     print " => checking uSD card contents on device `{device}'...".format(**locals())
 
@@ -116,11 +121,11 @@ for module, bitfile in enumerate(bitfiles):
     if filename in filenames:
         if args.force:
             print
-            print " => bit file `{filename}' does already exist, deleting...".format(**locals())
+            print " => bin file `{binfile}' does already exist, deleting...".format(**locals())
             if not args.dryrun:
-                mp7butler("deletefw", device, filename)
+                mp7butler("deletefw", device, binfile)
         else:
-            message = "bit file `{filename}' does already exist. Use `--force' to overwrite.".format(**locals())
+            message = "bin file `{binfile}' does already exist. Use `--force' to overwrite.".format(**locals())
             raise RuntimeError(message)
 
     # Extract the *.bit file from the tarball.
@@ -134,12 +139,13 @@ for module, bitfile in enumerate(bitfiles):
     tmp_filename = os.path.join(tmpdir, bitfile)
     print
     print " => extracted bit file to to temporary location `{tmp_filename}'".format(**locals())
+    binfile = os.path.splitext(filename)[0] + ".bin"  #changing file extension to *.bin for the mp7butler upload script
 
     try:
         print
         print " => uploading `{filename}' to uSD on device `{device}'".format(**locals())
         if not args.dryrun:
-            mp7butler("uploadfw", device, tmp_filename, filename)
+            mp7butler("uploadfw", device, tmp_filename, binfile)
         shutil.rmtree(tmpdir)
     except:
         # Note:
@@ -151,4 +157,4 @@ for module, bitfile in enumerate(bitfiles):
         print
         print " => rebootfpga `{filename}' on device `{device}'".format(**locals())
         if not args.dryrun:
-            mp7butler("rebootfpga", device, filename)
+            mp7butler("rebootfpga", device, binfile)
