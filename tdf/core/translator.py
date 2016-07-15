@@ -59,7 +59,9 @@ class BaseItemTranslator(BaseTranslator):
     def __init__(self):
         self.enumerations = {}
         if os.path.isfile(ENUMS_FILENAME):
-            self.enumerations = yaml.load(open(self.enumerations_filename).read())
+            enumerations = yaml.load(open(self.enumerations_filename).read())
+            if enumerations is not None: # take care, returns None if empty file!
+                self.enumerations = enumerations
 
     def translate(self, node, values):
         """Translate by *node* type. Define methods named tr_<type> to extend
