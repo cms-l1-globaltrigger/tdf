@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Environment for dummy hardware.
+
+ Run an instance of DummyHardwareUdp.exe for every device:
+
+ $ /opt/cactus/bin/uhal/tests/DummyHardwareUdp.exe -p <PORT> -v 2
+
+ See https://svnweb.cern.ch/trac/cactus/wiki/uhalQuickTutorial#WorkingwithDummyHardware
+
+ -->
+
+<connections>
+    <!-- GT slots -->
+    <connection id="gt_mp7.1" uri="ipbusudp-2.0://localhost:50101" address_table="file://mp7xe_v2_0_0/mp7xe_infra.xml" />
+    <connection id="gt_mp7.2" uri="ipbusudp-2.0://localhost:50102" address_table="file://mp7xe_v2_0_0/mp7xe_infra.xml" />
+    <connection id="gt_mp7.3" uri="ipbusudp-2.0://localhost:50103" address_table="file://mp7xe_v2_0_0/mp7xe_infra.xml" />
+    <connection id="gt_mp7.4" uri="ipbusudp-2.0://localhost:50104" address_table="file://mp7xe_v2_0_0/mp7xe_infra.xml" />
+    <connection id="gt_mp7.5" uri="ipbusudp-2.0://localhost:50105" address_table="file://mp7xe_v2_0_0/mp7xe_infra.xml" />
+    <connection id="gt_mp7.6" uri="ipbusudp-2.0://localhost:50106" address_table="file://mp7xe_v2_0_0/mp7xe_infra.xml" />
+
+    <!-- FINOR slot -->
+    <connection id="finor_amc502.7" uri="ipbusudp-2.0://localhost:50107" address_table="file://finor_amc502/mp7xe_infra.xml" />
+
+    <!-- ExtCond slots -->
+    <connection id="extcond_amc502.9" uri="ipbusudp-2.0://localhost:50109" address_table="file://extcond_amc502/mp7xe_infra.xml" />
+    <connection id="extcond_amc502.10" uri="ipbusudp-2.0://localhost:50110" address_table="file://extcond_amc502/mp7xe_infra.xml" />
+    <connection id="extcond_amc502.11" uri="ipbusudp-2.0://localhost:50111" address_table="file://extcond_amc502/mp7xe_infra.xml" />
+    <connection id="extcond_amc502.12" uri="ipbusudp-2.0://localhost:50112" address_table="file://extcond_amc502/mp7xe_infra.xml" />
+
+    <connection id="T2" uri="ipbusudp-2.0://localhost:50113" address_table="file://${CACTUS_ROOT}/etc/amc13/AMC13XG_T2.xml" />
+    <connection id="T1" uri="ipbusudp-2.0://localhost:50114" address_table="file://${CACTUS_ROOT}/etc/amc13/AMC13XG_T1.xml" />
+</connections>
