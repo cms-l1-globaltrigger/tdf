@@ -68,7 +68,7 @@ parser.add_argument('--enableSlink', action='store_true', help='Flag to enable t
 parser.add_argument('--configure-tcds', action = 'store_true', help = "Configures the TCDS (pi,iCi) for cpm at the beginning.")
 parser.add_argument('--spy', action = 'store_true', help = "Activates the spy function of the AMC13.")
 parser.add_argument('--connections-file-amc13', type=str, default='/nfshome0/ugtts/software/tdf/etc/uhal/connections_p5_pro.xml', metavar = '<file>', help='path to amc13 connection file.')
-parser.add_argument('--readout-menu', type=str, default='/nfshome0/ugtdev/software/mp7sw_v2_0_1/mp7/tests/python/daq/simple.py', metavar = '<file>',help='path to readout menu file.')
+parser.add_argument('--readout-menu', type=str, default='/nfshome0/ugtts/software/mp7sw_v2_0_1/mp7/tests/python/daq/simple.py', metavar = '<file>',help='path to readout menu file.')
 parser.add_argument('--fwversion', type=str, default='gt_mp7_xe_v103e_module_0.bit', metavar = '<sdcard file>', help='firmware version which is loaded before the run.')
 #parser.add_argument('-o', '--output-dir', default = result_area(), help = "name of output directory")
 parser.add_argument('--cap', default = DEFAULT_CAP, metavar = '<n>', type = int, help = "delay in BX for capturing the tx buffer output, default is '{DEFAULT_CAP}'".format(**locals()))
