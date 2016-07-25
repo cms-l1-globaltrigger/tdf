@@ -171,10 +171,12 @@ if args.configure_amc13:
 
 # Reconfigure uGT FPGA
 if args.loadfw:
-    mp7butler("rebootfpga", args.device, args.fwversion)
+    mp7butler("rebootfpga", args.device1, args.fwversion)
+    mp7butler("rebootfpga", args.device2, args.fwversion)
 
 # Reset link's logic
-mp7butler("reset", args.device, "--clksrc", args.clksrc, "--clkcfg", "default-ext")
+mp7butler("reset", args.device1, "--clksrc", args.clksrc, "--clkcfg", "default-ext")
+mp7butler("reset", args.device2, "--clksrc", args.clksrc, "--clkcfg", "default-ext")
 
 # Wait for uGMT/Layer2 etc to be configured.
 print ''
@@ -188,67 +190,95 @@ print ''
 
 # Setup for loopback or cable mode.
 if args.loopback:
-    mp7butler("txmgts", args.device, "--loopback", "--e", args.rx_links, "--pattern", "std")
-    mp7butler("rxmgts", args.device, "--e", args.rx_links)
-    mp7butler("rxalign", args.device, "--e", args.rx_links, "--to-bx", args.align_to or "8,4")
+    mp7butler("txmgts", args.device1, "--loopback", "--e", args.rx_links, "--pattern", "std")
+    mp7butler("rxmgts", args.device1, "--e", args.rx_links)
+    mp7butler("rxalign", args.device1, "--e", args.rx_links, "--to-bx", args.align_to or "8,4")
+    mp7butler("txmgts", args.device2, "--loopback", "--e", args.rx_links, "--pattern", "std")
+    mp7butler("rxmgts", args.device2, "--e", args.rx_links)
+    mp7butler("rxalign", args.device2, "--e", args.rx_links, "--to-bx", args.align_to or "8,4")
 else:
     if args.align_to:
-        mp7butler("rxmgts", args.device, "--e", args.rx_links)
-	mp7butler("txmgts", args.device, "--e", args.rx_links)
-        mp7butler("rxalign", args.device, "--e", args.rx_links, "--to-bx", args.align_to)
+        mp7butler("rxmgts", args.device1, "--e", args.rx_links)
+	mp7butler("txmgts", args.device1, "--e", args.rx_links)
+        mp7butler("rxalign", args.device1, "--e", args.rx_links, "--to-bx", args.align_to)
+        mp7butler("rxmgts", args.device2, "--e", args.rx_links)
+	mp7butler("txmgts", args.device2, "--e", args.rx_links)
+        mp7butler("rxalign", args.device2, "--e", args.rx_links, "--to-bx", args.align_to)
     else:
-        #mp7butler("mgts", args.device, "--e", args.rx_links, "--align-to", "3531,5")
-        mp7butler("rxmgts", args.device, "--e", args.rx_links)
-        mp7butler("txmgts", args.device, "--e", args.rx_links)
-        #mp7butler("rxalign", args.device, "--e", "0-3", "--to-bx", "3558,5")
- 	#mp7butler("rxalign", args.device, "--e", "4-10", "--to-bx", "3534,5")
-        mp7butler("rxalign", args.device, "--e", "args.rx_links")
-        #mp7butler("mgts", args.device, "--e", "12-15", "--align-to", "3534,5") # for the Ext Cond inputs
+        #mp7butler("mgts", args.device1, "--e", args.rx_links, "--align-to", "3531,5")
+        mp7butler("rxmgts", args.device1, "--e", args.rx_links)
+        mp7butler("txmgts", args.device1, "--e", args.rx_links)
+        #mp7butler("rxalign", args.device1, "--e", "0-3", "--to-bx", "3558,5")
+ 	#mp7butler("rxalign", args.device1, "--e", "4-10", "--to-bx", "3534,5")
+        mp7butler("rxalign", args.device1, "--e", "args.rx_links")
+        #mp7butler("mgts", args.device1, "--e", "12-15", "--align-to", "3534,5") # for the Ext Cond inputs
+        mp7butler("rxmgts", args.device2, "--e", args.rx_links)
+        mp7butler("txmgts", args.device2, "--e", args.rx_links)
+        mp7butler("rxalign", args.device2, "--e", "args.rx_links")
 
 
 # Setup for loopback or cable mode.
 if args.loopback:
     data_filename = TDF_NAME + "_in.dat" # Returns "tagged" filename tdf_simple_buffer_loopback_in.dat
-    buffgen(args.pattern, board = args.device, outfile = data_filename)
+    buffgen(args.pattern, board = args.device1, outfile = data_filename)
+    buffgen(args.pattern, board = args.device2, outfile = data_filename)
 
 #if args.loopback:
-    #mp7butler("buffers", args.device, "loopPlay", "--e", args.rx_links, "--inject", "file://{data_filename}".format(**locals()))
+    #mp7butler("buffers", args.device1, "loopPlay", "--e", args.rx_links, "--inject", "file://{data_filename}".format(**locals()))
 #else:
-    #mp7butler("buffers", args.device, "loopPlay")
+    #mp7butler("buffers", args.device1, "loopPlay")
 
 #if args.capture_buffers:
-    #mp7butler("buffers", args.device, "captureRxTxStb")   # buffer setting
-    #mp7butler("capture", args.device)                  # buffer capture
+    #mp7butler("buffers", args.device1, "captureRxTxStb")   # buffer setting
+    #mp7butler("capture", args.device1)                  # buffer capture
 
-run_routine("setup_ugt_triggers", args.device)
+run_routine("setup_ugt_triggers", args.device1)
+run_routine("setup_ugt_triggers", args.device2)
 
 if args.hw_delay:
-    write(args.device, "gt_mp7_frame.rb.dm.delay_muons", args.hw_delay)
-    write(args.device, "gt_mp7_frame.rb.dm.delay_eg", args.hw_delay)
-    write(args.device, "gt_mp7_frame.rb.dm.delay_tau", args.hw_delay)
-    write(args.device, "gt_mp7_frame.rb.dm.delay_jet", args.hw_delay)
-    write(args.device, "gt_mp7_frame.rb.dm.delay_ett", args.hw_delay)
-    write(args.device, "gt_mp7_frame.rb.dm.delay_ht", args.hw_delay)
-    write(args.device, "gt_mp7_frame.rb.dm.delay_etm", args.hw_delay)
-    write(args.device, "gt_mp7_frame.rb.dm.delay_htm", args.hw_delay)
-    write(args.device, "gt_mp7_frame.rb.dm.delay_ext_con", args.hw_delay)
+    write(args.device1, "gt_mp7_frame.rb.dm.delay_muons", args.hw_delay)
+    write(args.device1, "gt_mp7_frame.rb.dm.delay_eg", args.hw_delay)
+    write(args.device1, "gt_mp7_frame.rb.dm.delay_tau", args.hw_delay)
+    write(args.device1, "gt_mp7_frame.rb.dm.delay_jet", args.hw_delay)
+    write(args.device1, "gt_mp7_frame.rb.dm.delay_ett", args.hw_delay)
+    write(args.device1, "gt_mp7_frame.rb.dm.delay_ht", args.hw_delay)
+    write(args.device1, "gt_mp7_frame.rb.dm.delay_etm", args.hw_delay)
+    write(args.device1, "gt_mp7_frame.rb.dm.delay_htm", args.hw_delay)
+    write(args.device1, "gt_mp7_frame.rb.dm.delay_ext_con", args.hw_delay)
+    write(args.device2, "gt_mp7_frame.rb.dm.delay_muons", args.hw_delay)
+    write(args.device2, "gt_mp7_frame.rb.dm.delay_eg", args.hw_delay)
+    write(args.device2, "gt_mp7_frame.rb.dm.delay_tau", args.hw_delay)
+    write(args.device2, "gt_mp7_frame.rb.dm.delay_jet", args.hw_delay)
+    write(args.device2, "gt_mp7_frame.rb.dm.delay_ett", args.hw_delay)
+    write(args.device2, "gt_mp7_frame.rb.dm.delay_ht", args.hw_delay)
+    write(args.device2, "gt_mp7_frame.rb.dm.delay_etm", args.hw_delay)
+    write(args.device2, "gt_mp7_frame.rb.dm.delay_htm", args.hw_delay)
+    write(args.device2, "gt_mp7_frame.rb.dm.delay_ext_con", args.hw_delay)
 
 # Setup GTL algorithm masks.
 if args.algo_bx_mask:
-    run_routine("load_bx_masks", args.device, args.algo_bx_mask)
+    run_routine("load_bx_masks", args.device1, args.algo_bx_mask)
+    run_routine("load_bx_masks", args.device2, args.algo_bx_mask)
 else:
-    run_routine("enable_algo_bx_mem", args.device)
+    run_routine("enable_algo_bx_mem", args.device1)
+    run_routine("enable_algo_bx_mem", args.device2)
 
-mp7butler("easylatency", args.device, "--rx", "0-15", "--tx", args.tx_links, "--algoLatency", args.algo_latency, "--masterLatency", args.master_latency)
-mp7butler("rosetup", args.device, "--bxoffset", "2")
-mp7butler("romenu", args.device, args.readout_menu, "menuUGTA")
+mp7butler("easylatency", args.device1, "--rx", "0-15", "--tx", args.tx_links, "--algoLatency", args.algo_latency, "--masterLatency", args.master_latency)
+mp7butler("rosetup", args.device1, "--bxoffset", "2")
+mp7butler("romenu", args.device1, args.readout_menu, "menuUGTA")
+mp7butler("easylatency", args.device2, "--rx", "0-15", "--tx", args.tx_links, "--algoLatency", args.algo_latency, "--masterLatency", args.master_latency)
+mp7butler("rosetup", args.device2, "--bxoffset", "2")
+mp7butler("romenu", args.device2, args.readout_menu, "menuUGTA")
 
 if not args.ugmt:
-    mp7butler("buffers", args.device, "algoPlay", "--e", "0-3",   "--inject", "generate://empty") #to mask all the uGMT inputs
+    mp7butler("buffers", args.device1, "algoPlay", "--e", "0-3",   "--inject", "generate://empty") #to mask all the uGMT inputs
+    mp7butler("buffers", args.device2, "algoPlay", "--e", "0-3",   "--inject", "generate://empty") #to mask all the uGMT inputs
 if not args.demux:
-    mp7butler("buffers", args.device, "algoPlay", "--e", "4-10",   "--inject", "generate://empty") #to mask all the demux inputs
+    mp7butler("buffers", args.device1, "algoPlay", "--e", "4-10",   "--inject", "generate://empty") #to mask all the demux inputs
+    mp7butler("buffers", args.device2, "algoPlay", "--e", "4-10",   "--inject", "generate://empty") #to mask all the demux inputs
 if not args.extcond:
-    mp7butler("buffers", args.device, "algoPlay", "--e", "11-15",   "--inject", "generate://empty") #to mask all the AMC502 inputs
+    mp7butler("buffers", args.device1, "algoPlay", "--e", "11-15",   "--inject", "generate://empty") #to mask all the AMC502 inputs
+    mp7butler("buffers", args.device2, "algoPlay", "--e", "11-15",   "--inject", "generate://empty") #to mask all the AMC502 inputs
     
 # Wait for the run to be started.
 #print ''
@@ -283,16 +313,22 @@ if args.spy:
     spy(amc13, state)
 
 # Dump the memories.
-dump(args.device, "gt_mp7_frame.simspymem", outfile = TDF_NAME + "_simspymem.dat")
-algo_dump = dump(args.device, "gt_mp7_frame.spymem2_algos", outfile = TDF_NAME + "_spymem2_algos.dat")
-dump(args.device, "gt_mp7_frame.spymem2_finor", outfile = TDF_NAME + "_spymem2_finor.dat")
+dump(args.device1, "gt_mp7_frame.simspymem", outfile = TDF_NAME + "_simspymem.dat")
+algo_dump = dump(args.device1, "gt_mp7_frame.spymem2_algos", outfile = TDF_NAME + "_spymem2_algos.dat")
+dump(args.device1, "gt_mp7_frame.spymem2_finor", outfile = TDF_NAME + "_spymem2_finor.dat")
+dump(args.device2, "gt_mp7_frame.simspymem", outfile = TDF_NAME + "_simspymem.dat")
+algo_dump = dump(args.device2, "gt_mp7_frame.spymem2_algos", outfile = TDF_NAME + "_spymem2_algos.dat")
+dump(args.device2, "gt_mp7_frame.spymem2_finor", outfile = TDF_NAME + "_spymem2_finor.dat")
 
 if args.loopback:
     if args.pattern not in (':counter', ':zero'):
     # Compare the dumps.
-        compare(args.device, "gt_mp7_frame.simspymem", TDF_NAME + "_simspymem.dat", args.pattern, offset = args.delay, size = args.size)
-        compare(args.device, "gt_mp7_frame.spymem2_algos", TDF_NAME + "_spymem2_algos.dat", args.pattern, offset = args.delay + args.gtl_latency, size = args.size)
-        compare(args.device, "gt_mp7_frame.spymem2_finor", TDF_NAME + "_spymem2_finor.dat", args.pattern, offset = args.delay + args.gtl_latency, size = args.size)
+        compare(args.device1, "gt_mp7_frame.simspymem", TDF_NAME + "_simspymem.dat", args.pattern, offset = args.delay, size = args.size)
+        compare(args.device1, "gt_mp7_frame.spymem2_algos", TDF_NAME + "_spymem2_algos.dat", args.pattern, offset = args.delay + args.gtl_latency, size = args.size)
+        compare(args.device1, "gt_mp7_frame.spymem2_finor", TDF_NAME + "_spymem2_finor.dat", args.pattern, offset = args.delay + args.gtl_latency, size = args.size)
+        compare(args.device2, "gt_mp7_frame.simspymem", TDF_NAME + "_simspymem.dat", args.pattern, offset = args.delay, size = args.size)
+        compare(args.device2, "gt_mp7_frame.spymem2_algos", TDF_NAME + "_spymem2_algos.dat", args.pattern, offset = args.delay + args.gtl_latency, size = args.size)
+        compare(args.device2, "gt_mp7_frame.spymem2_finor", TDF_NAME + "_spymem2_finor.dat", args.pattern, offset = args.delay + args.gtl_latency, size = args.size)
 
     # Read in test vector.
     tv = TestVector(open(args.pattern))
@@ -325,5 +361,5 @@ if args.loopback:
 
 # Dumping TX buffer content
 #if args.loopback:
-#    mp7butler("buffers", args.device, "captureTx", "--e",  args.tx_links, "--cap", args.cap)
-#    mp7butler("capture", args.device, "--e", args.tx_links, "--outputpath", "tx_buffer_dump")
+#    mp7butler("buffers", args.device1, "captureTx", "--e",  args.tx_links, "--cap", args.cap)
+#    mp7butler("capture", args.device1, "--e", args.tx_links, "--outputpath", "tx_buffer_dump")
