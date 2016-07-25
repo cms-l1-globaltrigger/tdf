@@ -320,44 +320,44 @@ dump(args.device2, "gt_mp7_frame.simspymem", outfile = TDF_NAME + "_simspymem.da
 algo_dump = dump(args.device2, "gt_mp7_frame.spymem2_algos", outfile = TDF_NAME + "_spymem2_algos.dat")
 dump(args.device2, "gt_mp7_frame.spymem2_finor", outfile = TDF_NAME + "_spymem2_finor.dat")
 
-if args.loopback:
-    if args.pattern not in (':counter', ':zero'):
-    # Compare the dumps.
-        compare(args.device1, "gt_mp7_frame.simspymem", TDF_NAME + "_simspymem.dat", args.pattern, offset = args.delay, size = args.size)
-        compare(args.device1, "gt_mp7_frame.spymem2_algos", TDF_NAME + "_spymem2_algos.dat", args.pattern, offset = args.delay + args.gtl_latency, size = args.size)
-        compare(args.device1, "gt_mp7_frame.spymem2_finor", TDF_NAME + "_spymem2_finor.dat", args.pattern, offset = args.delay + args.gtl_latency, size = args.size)
-        compare(args.device2, "gt_mp7_frame.simspymem", TDF_NAME + "_simspymem.dat", args.pattern, offset = args.delay, size = args.size)
-        compare(args.device2, "gt_mp7_frame.spymem2_algos", TDF_NAME + "_spymem2_algos.dat", args.pattern, offset = args.delay + args.gtl_latency, size = args.size)
-        compare(args.device2, "gt_mp7_frame.spymem2_finor", TDF_NAME + "_spymem2_finor.dat", args.pattern, offset = args.delay + args.gtl_latency, size = args.size)
+#if args.loopback:
+    #if args.pattern not in (':counter', ':zero'):
+    ## Compare the dumps.
+        #compare(args.device1, "gt_mp7_frame.simspymem", TDF_NAME + "_simspymem.dat", args.pattern, offset = args.delay, size = args.size)
+        #compare(args.device1, "gt_mp7_frame.spymem2_algos", TDF_NAME + "_spymem2_algos.dat", args.pattern, offset = args.delay + args.gtl_latency, size = args.size)
+        #compare(args.device1, "gt_mp7_frame.spymem2_finor", TDF_NAME + "_spymem2_finor.dat", args.pattern, offset = args.delay + args.gtl_latency, size = args.size)
+        #compare(args.device2, "gt_mp7_frame.simspymem", TDF_NAME + "_simspymem.dat", args.pattern, offset = args.delay, size = args.size)
+        #compare(args.device2, "gt_mp7_frame.spymem2_algos", TDF_NAME + "_spymem2_algos.dat", args.pattern, offset = args.delay + args.gtl_latency, size = args.size)
+        #compare(args.device2, "gt_mp7_frame.spymem2_finor", TDF_NAME + "_spymem2_finor.dat", args.pattern, offset = args.delay + args.gtl_latency, size = args.size)
 
-    # Read in test vector.
-    tv = TestVector(open(args.pattern))
+    ## Read in test vector.
+    #tv = TestVector(open(args.pattern))
 
-    # Overall delay.
-    delay_all = args.delay + args.gtl_latency
+    ## Overall delay.
+    #delay_all = args.delay + args.gtl_latency
 
-    # Read the emulator log file if available (for active algorithms and names).
-    logfile = args.pattern.replace(".txt", ".log")
-    if os.path.isfile(logfile):
-        lines = open(logfile).readlines()
-        for i in range(len(lines)):
-            if lines[i].strip() == "=========== Summary of results ==========":
-                print lines[i].strip()
-                print "bit\tL1A/tv\tL1A/hw\tresult\tname\t(tv=testvector, hw=hardware readout)"
-                for line in lines[i:]:
-                    result = re.match("^\s+(\d+)\s+(\d+)\s+(L1_[a-zA-Z0-9_]+)", line)
-                    if result:
-                        bit, l1a, name = result.groups()
-                        index = int(bit)
-                        l1a_hw = 0
-                        for algorithm in algo_dump.algorithms()[delay_all:delay_all+args.size]:
-                            l1a_hw += (algorithm >> index) & 0x1
-                        l1a_tv = 0
-                        for algorithm in tv.algorithms()[:args.size]:
-                            l1a_tv += (algorithm >> index) & 0x1
-                        result = "OK" if l1a_tv == l1a_hw else "ERROR"
-                        print "{bit}\t{l1a_tv}\t{l1a_hw}\t{result}\t{name}".format(**locals())
-                break
+    ## Read the emulator log file if available (for active algorithms and names).
+    #logfile = args.pattern.replace(".txt", ".log")
+    #if os.path.isfile(logfile):
+        #lines = open(logfile).readlines()
+        #for i in range(len(lines)):
+            #if lines[i].strip() == "=========== Summary of results ==========":
+                #print lines[i].strip()
+                #print "bit\tL1A/tv\tL1A/hw\tresult\tname\t(tv=testvector, hw=hardware readout)"
+                #for line in lines[i:]:
+                    #result = re.match("^\s+(\d+)\s+(\d+)\s+(L1_[a-zA-Z0-9_]+)", line)
+                    #if result:
+                        #bit, l1a, name = result.groups()
+                        #index = int(bit)
+                        #l1a_hw = 0
+                        #for algorithm in algo_dump.algorithms()[delay_all:delay_all+args.size]:
+                            #l1a_hw += (algorithm >> index) & 0x1
+                        #l1a_tv = 0
+                        #for algorithm in tv.algorithms()[:args.size]:
+                            #l1a_tv += (algorithm >> index) & 0x1
+                        #result = "OK" if l1a_tv == l1a_hw else "ERROR"
+                        #print "{bit}\t{l1a_tv}\t{l1a_hw}\t{result}\t{name}".format(**locals())
+                #break
 
 # Dumping TX buffer content
 #if args.loopback:
