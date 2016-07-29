@@ -25,12 +25,20 @@ gtl = read(args.device, "gt_mp7_gtlfdl.read_versions.gtl_fw_version", translate=
 fdl = read(args.device, "gt_mp7_gtlfdl.read_versions.fdl_fw_version", translate=True)
 build = read(args.device, "gt_mp7_frame.module_info.build_version", translate=True)
 
+# experimental support for module_id
+import uhal
+try:
+    module_id = read(args.device, "gt_mp7_gtlfdl.read_versions.module_id")
+except uhal._core.exception:
+    module_id = "n/a"
+
 print
 print "Device info for", args.device, "..."
 print
 print "               l1tm name :", l1tm_name
 print "               l1tm UUID :", l1tm_uuid
 print "            l1tm UUID fw :", l1tm_uuid_fw
+print "               module_id :", module_id
 print "   VHDL producer version :", l1tm_compiler
 print "   timestamp (synthesis) :", timestamp
 print "                hostname :", hostname
