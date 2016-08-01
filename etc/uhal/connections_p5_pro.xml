@@ -3,7 +3,7 @@
 
 <connections>
     <!-- GT slots -->
-    <connection id="gt_mp7.1" uri="chtcp-2.0://bridge-s1e04-32:10203?target=amc-s1e04-32-01:50001" address_table="file://mp7xe_v2_0_0/mp7xe_infra.xml" />
+    <connection id="gt_mp7.1" uri="chtcp-2.0://bridge-s1e04-32:10203?target=amc-s1e04-32-01:50001" address_table="file://xe_v2_2_0/mp7xe_infra.xml" />
     <connection id="gt_mp7.2" uri="chtcp-2.0://bridge-s1e04-32:10203?target=amc-s1e04-32-02:50001" address_table="file://mp7xe_v2_0_0/mp7xe_infra.xml" />
     <connection id="gt_mp7.3" uri="chtcp-2.0://bridge-s1e04-32:10203?target=amc-s1e04-32-03:50001" address_table="file://mp7xe_v2_0_0/mp7xe_infra.xml" />
     <connection id="gt_mp7.4" uri="chtcp-2.0://bridge-s1e04-32:10203?target=amc-s1e04-32-04:50001" address_table="file://mp7xe_v2_0_0/mp7xe_infra.xml" />
