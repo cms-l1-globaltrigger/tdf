@@ -33,7 +33,7 @@ DEFAULT_FED_ID = 1404
 DEFAULT_SLOT = 1-2
 DEFAULT_ALGO_LATENCY = 45
 DEFAULT_MASTER_LATENCY = 169
-DEFAULT_SLOTS = 1-2
+DEFAULT_SLOTS =[1, 2]
 
 def result_area():
     from datetime import datetime
@@ -62,7 +62,7 @@ parser.add_argument('--extcond', action = 'store_true', default=False, help="Ena
 parser.add_argument('--algo-latency', default = DEFAULT_ALGO_LATENCY, metavar = '<n>', type = int, help = "algo latency in frames (240MHz cycles), default is '{DEFAULT_ALGO_LATENCY}'".format(**locals()))
 parser.add_argument('--master-latency', default = DEFAULT_MASTER_LATENCY, metavar = '<n>', type = int, help = "master latency in frames (240MHz cycles), default is '{DEFAULT_MASTER_LATENCY}'".format(**locals()))
 parser.add_argument('--fedID', type=int, default=DEFAULT_FED_ID, metavar = '<n>', help="Enter your FED ID. Default is '{DEFAULT_FED_ID}'".format(**locals()))
-parser.add_argument('--slot', type=int, nargs='+', default=DEFAULT_SLOTS, metavar = '<n>', help="Slots to activate in crate. Default is '{DEFAULT_SLOTS}'".format(**locals()))
+parser.add_argument('--slot', nargs='+', default=DEFAULT_SLOTS, metavar = '<n>', help="Slots to activate in crate. Default is '{DEFAULT_SLOTS}'".format(**locals()))
 parser.add_argument('--BCNoffset', type=int, default=(0xdec-23), metavar = '<n>', help='Bunch crossing to expect BC0 in.')
 parser.add_argument('--enableSlink', action='store_true', help='Flag to enable the Slink to DAQ.')
 parser.add_argument('--configure-tcds', action = 'store_true', help = "Configures the TCDS (pi,iCi) for cpm at the beginning.")
