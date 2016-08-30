@@ -201,7 +201,7 @@ else:
         mp7butler("txmgts", args.device, "--e", args.rx_links)
         #mp7butler("rxalign", args.device, "--e", "0-3", "--to-bx", "3558,5")
  	#mp7butler("rxalign", args.device, "--e", "4-10", "--to-bx", "3534,5")
-        mp7butler("rxalign", args.device, "--e", "args.rx_links")
+        mp7butler("rxalign", args.device, "--e", args.rx_links)
         #mp7butler("mgts", args.device, "--e", "12-15", "--align-to", "3534,5") # for the Ext Cond inputs
 
 
