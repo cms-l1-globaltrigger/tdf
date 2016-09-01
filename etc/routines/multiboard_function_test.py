@@ -2,6 +2,8 @@
 #
 # usage: tdf run multiboard_function_test --menu sample.xml --testvector sample.txt --loopback
 #
+# HB 2016-06-07: changed DEFAULT_INPUT_DELAY 9 -> 8 with FW frame v0.0.38, because of additional delay for bcres_d in dm.vhd.
+#
 
 from tdf.extern import argparse
 from tdf.core.testvector import TestVector, AlgorithmDump, FinorDump
@@ -13,8 +15,6 @@ import sys, os, re
 import time
 import shutil
 
-## HB 2016-06-07: changed DEFAULT_INPUT_DELAY with FW frame v0.0.38, because of additional delay for bcres_d in dm.vhd.
-#DEFAULT_INPUT_DELAY = 9
 DEFAULT_INPUT_DELAY = 8
 DEFAULT_GTL_LATENCY = 6
 DEFAULT_SIZE = 170
@@ -191,18 +191,20 @@ try:
         configure(device, TDF.ROOT_DIR + "/etc/config/gt_mp7/cfg-140/mp7-reset.cfg")
         configure(device, TDF.ROOT_DIR + "/etc/config/gt_mp7/cfg-140/mp7-mux-tx-buffer.cfg")
         configure(device, TDF.ROOT_DIR + "/etc/config/gt_mp7/cfg-140/mp7-delay-manager-values.cfg")
+        # Configure LEMO outputs to FINOR AMC502
+        configure(device, TDF.ROOT_DIR + "/etc/config/gt_mp7/tp_mux_finor.cfg")
 
+    # Input delays (will be obsolete in future)
     for device in devices:
-        if args.hw_delay:
-            write(device, "gt_mp7_frame.rb.dm.delay_muons", args.hw_delay)
-            write(device, "gt_mp7_frame.rb.dm.delay_eg", args.hw_delay)
-            write(device, "gt_mp7_frame.rb.dm.delay_tau", args.hw_delay)
-            write(device, "gt_mp7_frame.rb.dm.delay_jet", args.hw_delay)
-            write(device, "gt_mp7_frame.rb.dm.delay_ett", args.hw_delay)
-            write(device, "gt_mp7_frame.rb.dm.delay_ht", args.hw_delay)
-            write(device, "gt_mp7_frame.rb.dm.delay_etm", args.hw_delay)
-            write(device, "gt_mp7_frame.rb.dm.delay_htm", args.hw_delay)
-            write(device, "gt_mp7_frame.rb.dm.delay_ext_con", args.hw_delay)
+        write(device, "gt_mp7_frame.rb.dm.delay_muons", args.hw_delay)
+        write(device, "gt_mp7_frame.rb.dm.delay_eg", args.hw_delay)
+        write(device, "gt_mp7_frame.rb.dm.delay_tau", args.hw_delay)
+        write(device, "gt_mp7_frame.rb.dm.delay_jet", args.hw_delay)
+        write(device, "gt_mp7_frame.rb.dm.delay_ett", args.hw_delay)
+        write(device, "gt_mp7_frame.rb.dm.delay_ht", args.hw_delay)
+        write(device, "gt_mp7_frame.rb.dm.delay_etm", args.hw_delay)
+        write(device, "gt_mp7_frame.rb.dm.delay_htm", args.hw_delay)
+        write(device, "gt_mp7_frame.rb.dm.delay_ext_con", args.hw_delay)
 
     # Clear the memories.
     for device in devices:
@@ -270,9 +272,9 @@ try:
     # Print L1A statistics
     algorithms = sorted(menu.algorithms, key=lambda algorithm: algorithm.index)
 
-    print "|-----|------------------------------------------------------------------|--------|--------|--------|"
-    print "| Idx | Name                                                             | l1a.tv | l1a.hw | Result |"
-    print "|-----|------------------------------------------------------------------|--------|--------|--------|"
+    print "|-----|-----|------------------------------------------------------------------|--------|--------|--------|"
+    print "| Mod | Idx | Name                                                             | l1a.tv | l1a.hw | Result |"
+    print "|-----|-----|------------------------------------------------------------------|--------|--------|--------|"
     delay_all = args.delay + args.gtl_latency
     for algorithm in algorithms:
         l1a_tv = 0
@@ -282,8 +284,8 @@ try:
         for value in merged_algo_dump.algorithms()[delay_all:delay_all+args.size]:
             l1a_hw += (value >> algorithm.index) & 0x1
         result = "OK" if l1a_tv == l1a_hw else "ERROR"
-        print "| {algorithm.index:>3d} | {algorithm.name:<64} |  {l1a_tv:>4d}  |  {l1a_hw:>4d}  | {result:<5}  |".format(**locals())
-    print "|-----|------------------------------------------------------------------|--------|--------|--------|"
+        print "| {algorithm.module_id:>3d} | {algorithm.index:>3d} | {algorithm.name:<64} |  {l1a_tv:>4d}  |  {l1a_hw:>4d}  | {result:<5}  |".format(**locals())
+    print "|-----|-----|------------------------------------------------------------------|--------|--------|--------|"
 
     # Remove temporary directory
     if args.keep:

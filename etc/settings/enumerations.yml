@@ -7,3 +7,17 @@
 #   <name>: <value>
 #   ...
 #
+
+tp_mux:
+  off:                 0x0
+  local_finor:         0x1
+  local_veto:          0x2
+  clk40:               0x3
+  payload_reset:       0x4
+  clk240:              0x5
+  bcres:               0x6
+  l1a:                 0x7
+  global_finor:        0x8
+  start_lumisection:   0x9
+  delayed_bc0:         0xa
+  delayed_bc0_for_fdl: 0xb
