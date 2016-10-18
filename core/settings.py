@@ -141,11 +141,6 @@ class TDFCore:
     scripts.
     """
 
-    AMC502_ROOT_DIR = getpath('AMC502_ROOT')
-    """Absolute path to AMC502 software root directory, used to execute amc502butler
-    scripts.
-    """
-
     def __init__(self): raise NotImplementedError()
 
 class TDF(TDFCore):
@@ -169,7 +164,8 @@ class TDF(TDFCore):
     EG = DataSpecification(**OBJECTS.eg._asdict())
     """e/gamma object specification."""
 
-    TAU = DataSpecification(**OBJECTS.tau._asdict())
+    #TAU = DataSpecification(**OBJECTS.tau._asdict())
+    TAU = DataSpecification(12, 32)
     """Tau object specification."""
 
     JET = DataSpecification(**OBJECTS.jet._asdict())
@@ -186,6 +182,20 @@ class TDF(TDFCore):
 
     HTM = DataSpecification(**OBJECTS.htm._asdict())
     """HTM specification."""
+
+    ETMHF = DataSpecification(1, 32)
+    """ETMHF specification."""
+
+    HTMHF = DataSpecification(1, 32)
+    """ETMHF specification."""
+
+    LINK_11_FR_0 = DataSpecification(1, 32)
+    LINK_11_FR_1 = DataSpecification(1, 32)
+    LINK_11_FR_2 = DataSpecification(1, 32)
+    LINK_11_FR_3 = DataSpecification(1, 32)
+    LINK_11_FR_4 = DataSpecification(1, 32)
+    LINK_11_FR_5 = DataSpecification(1, 32)
+    """Link 9 spare frames specification."""
 
     EXTCOND = DataSpecification(1, 256)
     """External conditions specification."""
