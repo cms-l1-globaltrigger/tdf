@@ -19,21 +19,31 @@ data of different bit widths. All input object data are zero padded hex values
 of 8, 16, 64 or 128 characters width. The last column is assigned to the FINOR
 as a single bit value. All hex characters (a-f) expected in lower case.
 
+HB 2016-09-19: extended for all frames of calo links with new esums
+
 =========  ========  ==================================
 Column(s)  Format    Description
 =========  ========  ==================================
 1          i4        BX index (dec 0-3563)
 2 - 9      x16 * 8   8 muons, each 64 bit (hex)
 10 - 21    x8 * 12   12 e/gs, each 32 bit (hex)
-22 - 29    x8 * 8    8 tau, each 32 bit (hex)
-30 - 41    x8 * 12   12 jet, each 32 bit (hex)
-42         x8        ett, 32 bit (hex)
-43         x8        ht, 32 bit (hex)
-44         x8        etm, 32 bit (hex)
-45         x8        htm, 32 bit (hex)
-46         x64       external conditions, 256 bit (hex)
-47         x128      algorithms, 512 bit (hex)
-48         b1        FINOR, 1 bit (bin)
+22 - 33    x8 * 12   12 tau, each 32 bit (hex)
+34 - 45    x8 * 12   12 jet, each 32 bit (hex)
+46         x8        ett, ettem, minbias, 32 bit (hex)
+47         x8        ht, towercnt, minbias, 32 bit (hex)
+48         x8        etm, minbias, 32 bit (hex)
+49         x8        htm, minbias, 32 bit (hex)
+50         x8        etmhf, 32 bit (hex)
+51         x8        htmhf, 32 bit (hex)
+52         x8        link 11 frame 0, 32 bit (hex)
+53         x8        link 11 frame 1, 32 bit (hex)
+54         x8        link 11 frame 2, 32 bit (hex)
+55         x8        link 11 frame 3, 32 bit (hex)
+56         x8        link 11 frame 4, 32 bit (hex)
+57         x8        link 11 frame 5, 32 bit (hex)
+58         x64       external conditions, 256 bit (hex)
+59         x128      algorithms, 512 bit (hex)
+60         b1        FINOR, 1 bit (bin)
 =========  ========  ==================================
 
 Header format specification
@@ -101,6 +111,14 @@ class TestVector(object):
         self._ht  = []
         self._etm = []
         self._htm = []
+        self._etmhf = []
+        self._htmhf = []
+        self._link_11_fr_0 = []
+        self._link_11_fr_1 = []
+        self._link_11_fr_2 = []
+        self._link_11_fr_3 = []
+        self._link_11_fr_4 = []
+        self._link_11_fr_5 = []
         self._extcond = []
         self._algorithms = []
         self._finor = []
@@ -122,6 +140,14 @@ class TestVector(object):
             self._ht.append(row['ht'])
             self._etm.append(row['etm'])
             self._htm.append(row['htm'])
+            self._etmhf.append(row['etmhf'])
+            self._htmhf.append(row['htmhf'])
+            self._link_11_fr_0.append(row['link_11_fr_0'])
+            self._link_11_fr_1.append(row['link_11_fr_1'])
+            self._link_11_fr_2.append(row['link_11_fr_2'])
+            self._link_11_fr_3.append(row['link_11_fr_3'])
+            self._link_11_fr_4.append(row['link_11_fr_4'])
+            self._link_11_fr_5.append(row['link_11_fr_5'])
             self._extcond.append(row['ext_con'])
             self._algorithms.append(row['algorithm'])
             self._finor.append(row['finor'])
@@ -214,6 +240,30 @@ class TestVector(object):
     def htm(self):
         return self._htm
 
+    def etmhf(self):
+        return self._etmhf
+
+    def htmhf(self):
+        return self._htmhf
+
+    def link_11_fr_0(self):
+        return self._link_11_fr_0
+
+    def link_11_fr_1(self):
+        return self._link_11_fr_1
+
+    def link_11_fr_2(self):
+        return self._link_11_fr_2
+
+    def link_11_fr_3(self):
+        return self._link_11_fr_3
+
+    def link_11_fr_4(self):
+        return self._link_11_fr_4
+
+    def link_11_fr_5(self):
+        return self._link_11_fr_5
+
     def extconds(self):
         return self._extcond
 
@@ -237,6 +287,14 @@ class TestVector(object):
             cols.append(TDF.HT.hexstr(self.ht()[i]))
             cols.append(TDF.ETM.hexstr(self.etm()[i]))
             cols.append(TDF.HTM.hexstr(self.htm()[i]))
+            cols.append(TDF.ETMHF.hexstr(self.etmhf()[i]))
+            cols.append(TDF.HTMHF.hexstr(self.htmhf()[i]))
+            cols.append(TDF.LINK_11_FR_0.hexstr(self.link_11_fr_0()[i]))
+            cols.append(TDF.LINK_11_FR_1.hexstr(self.link_11_fr_1()[i]))
+            cols.append(TDF.LINK_11_FR_2.hexstr(self.link_11_fr_2()[i]))
+            cols.append(TDF.LINK_11_FR_3.hexstr(self.link_11_fr_3()[i]))
+            cols.append(TDF.LINK_11_FR_4.hexstr(self.link_11_fr_4()[i]))
+            cols.append(TDF.LINK_11_FR_5.hexstr(self.link_11_fr_5()[i]))
             cols.append(TDF.EXTCOND.hexstr(self.extconds()[i]))
             cols.append(TDF.ALGORITHM.hexstr(self.algorithms()[i]))
             cols.append(TDF.FINOR.hexstr(self.finor()[i]))
@@ -271,13 +329,22 @@ class TestVectorReader(FileReader):
         ('ht',  'x{0}'.format(charcount(TDF.HT.width))),
         ('etm', 'x{0}'.format(charcount(TDF.ETM.width))),
         ('htm', 'x{0}'.format(charcount(TDF.HTM.width))),
+        ('etmhf', 'x{0}'.format(charcount(TDF.ETMHF.width))),
+        ('htmhf', 'x{0}'.format(charcount(TDF.HTMHF.width))),
+        ('link_11_fr_0', 'x{0}'.format(charcount(TDF.LINK_11_FR_0.width))),
+        ('link_11_fr_1', 'x{0}'.format(charcount(TDF.LINK_11_FR_1.width))),
+        ('link_11_fr_2', 'x{0}'.format(charcount(TDF.LINK_11_FR_2.width))),
+        ('link_11_fr_3', 'x{0}'.format(charcount(TDF.LINK_11_FR_3.width))),
+        ('link_11_fr_4', 'x{0}'.format(charcount(TDF.LINK_11_FR_4.width))),
+        ('link_11_fr_5', 'x{0}'.format(charcount(TDF.LINK_11_FR_5.width))),
         ('ext_con', 'x{0}'.format(charcount(TDF.EXTCOND.width))),
         ('algorithm', 'x{0}'.format(charcount(TDF.ALGORITHM.width))),
         ('finor', 'b1'),
     )
     """Format for columns of test vector file. Refer to class FileReader for detailed docmatation."""
 
-    OBJECT_NAMES = ('muon', 'eg', 'tau', 'jet', 'ett', 'ht', 'etm', 'htm', 'ext_con')
+    OBJECT_NAMES = ('muon', 'eg', 'tau', 'jet', 'ett', 'ht', 'etm', 'htm', 'etmhf', 'htmhf', 
+	'link_11_fr_0', 'link_11_fr_1', 'link_11_fr_2', 'link_11_fr_3', 'link_11_fr_4', 'link_11_fr_5', 'ext_con')
     """Object names in order."""
 
     def __init__(self, fp):
@@ -304,6 +371,14 @@ class SimSpyDump(object):
         self._ht  = []
         self._etm = []
         self._htm = []
+        self._etmhf = []
+        self._htmhf = []
+        self._link_11_fr_0 = []
+        self._link_11_fr_1 = []
+        self._link_11_fr_2 = []
+        self._link_11_fr_3 = []
+        self._link_11_fr_4 = []
+        self._link_11_fr_5 = []
         self._extcond = []
 
     def read(self, fp):
@@ -322,6 +397,14 @@ class SimSpyDump(object):
             self._ht.append(row['ht'])
             self._etm.append(row['etm'])
             self._htm.append(row['htm'])
+            self._etmhf.append(row['etmhf'])
+            self._htmhf.append(row['htmhf'])
+            self._link_11_fr_0.append(row['link_11_fr_0'])
+            self._link_11_fr_1.append(row['link_11_fr_1'])
+            self._link_11_fr_2.append(row['link_11_fr_2'])
+            self._link_11_fr_3.append(row['link_11_fr_3'])
+            self._link_11_fr_4.append(row['link_11_fr_4'])
+            self._link_11_fr_5.append(row['link_11_fr_5'])
             self._extcond.append(row['ext_con'])
 
     def muon(self, i):
@@ -368,6 +451,30 @@ class SimSpyDump(object):
     def htm(self):
         return self._htm
 
+    def etmhf(self):
+        return self._etmhf
+
+    def htmhf(self):
+        return self._htmhf
+
+    def link_11_fr_0(self):
+        return self._link_11_fr_0
+
+    def link_11_fr_1(self):
+        return self._link_11_fr_1
+
+    def link_11_fr_2(self):
+        return self._link_11_fr_2
+
+    def link_11_fr_3(self):
+        return self._link_11_fr_3
+
+    def link_11_fr_4(self):
+        return self._link_11_fr_4
+
+    def link_11_fr_5(self):
+        return self._link_11_fr_5
+
     def extconds(self):
         return self._extcond
 
@@ -375,6 +482,7 @@ class SimSpyDump(object):
         rows = []
         for i in range(len(self)):
             cols = []
+            cols.append('{i:04d}'.format(i=i))
             cols.extend(TDF.MUON.hexstr(values[i]) for values in self.muons())
             cols.extend(TDF.EG.hexstr(values[i]) for values in self.egs())
             cols.extend(TDF.TAU.hexstr(values[i]) for values in self.taus())
@@ -383,6 +491,14 @@ class SimSpyDump(object):
             cols.append(TDF.HT.hexstr(self.ht()[i]))
             cols.append(TDF.ETM.hexstr(self.etm()[i]))
             cols.append(TDF.HTM.hexstr(self.htm()[i]))
+            cols.append(TDF.ETMHF.hexstr(self.etmhf()[i]))
+            cols.append(TDF.HTMHF.hexstr(self.htmhf()[i]))
+            cols.append(TDF.LINK_11_FR_0.hexstr(self.link_11_fr_0()[i]))
+            cols.append(TDF.LINK_11_FR_1.hexstr(self.link_11_fr_1()[i]))
+            cols.append(TDF.LINK_11_FR_2.hexstr(self.link_11_fr_2()[i]))
+            cols.append(TDF.LINK_11_FR_3.hexstr(self.link_11_fr_3()[i]))
+            cols.append(TDF.LINK_11_FR_4.hexstr(self.link_11_fr_4()[i]))
+            cols.append(TDF.LINK_11_FR_5.hexstr(self.link_11_fr_5()[i]))
             cols.append(TDF.EXTCOND.hexstr(self.extconds()[i]))
             rows.append(' '.join(cols))
         return '\n'.join(rows)
@@ -412,11 +528,20 @@ class SimSpyDumpReader(FileReader):
         ('ht',  'x{0}'.format(charcount(TDF.HT.width))),
         ('etm', 'x{0}'.format(charcount(TDF.ETM.width))),
         ('htm', 'x{0}'.format(charcount(TDF.HTM.width))),
+        ('etmhf', 'x{0}'.format(charcount(TDF.ETMHF.width))),
+        ('htmhf', 'x{0}'.format(charcount(TDF.HTMHF.width))),
+        ('link_11_fr_0', 'x{0}'.format(charcount(TDF.LINK_11_FR_0.width))),
+        ('link_11_fr_1', 'x{0}'.format(charcount(TDF.LINK_11_FR_1.width))),
+        ('link_11_fr_2', 'x{0}'.format(charcount(TDF.LINK_11_FR_2.width))),
+        ('link_11_fr_3', 'x{0}'.format(charcount(TDF.LINK_11_FR_3.width))),
+        ('link_11_fr_4', 'x{0}'.format(charcount(TDF.LINK_11_FR_4.width))),
+        ('link_11_fr_5', 'x{0}'.format(charcount(TDF.LINK_11_FR_5.width))),
         ('ext_con', 'x{0}'.format(charcount(TDF.EXTCOND.width))),
     )
     """Format for columns of test vector file. Refer to class FileReader for detailed docmatation."""
 
-    OBJECT_NAMES = ('muon', 'eg', 'tau', 'jet', 'ett', 'ht', 'etm', 'htm', 'ext_con')
+    OBJECT_NAMES = ('muon', 'eg', 'tau', 'jet', 'ett', 'ht', 'etm', 'htm', 'etmhf', 'htmhf', 
+	'link_11_fr_0', 'link_11_fr_1', 'link_11_fr_2', 'link_11_fr_3', 'link_11_fr_4', 'link_11_fr_5', 'ext_con')
     """Object names in order."""
 
     def __init__(self, fp):

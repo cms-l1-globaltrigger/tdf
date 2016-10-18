@@ -79,7 +79,7 @@ class TDFCore(object):
         info("TDF.ROOT_DIR:", TDF.ROOT_DIR)
         info("TDF.L1MENU_DIR:", TDF.L1MENU_DIR)
         info("TDF.MP7_ROOT_DIR:", TDF.MP7_ROOT_DIR)
-        info("TDF.AMC502_ROOT_DIR:", TDF.AMC502_ROOT_DIR)
+        #info("TDF.AMC502_ROOT_DIR:", TDF.AMC502_ROOT_DIR)
         info("XML connections file:", self.connections)
 
     def _getNode(self, device, item):
