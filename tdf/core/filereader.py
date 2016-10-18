@@ -87,14 +87,18 @@ class FileReader(object):
         for field in self._fields:
             name, base, chars, count, proc = self._fmt(field)
             values = []
+	    #print "==================="
+	    #print name, base, chars, count, proc
 
             if name in data:
                 raise KeyError("multiple declaration of field '{name}' in line {self._lineno}".format(**locals()))
 
             for i in range(count):
                 item = items.pop(0)
+		#print i, item
 
                 if len(item) != chars:
+		    #print len(item)
                     raise ValueError("invalid format, field '{name}' requires '{chars}' characters in line {self._lineno}".format(**locals()))
 
                 # Cast to integer if base is given, else store as string.
