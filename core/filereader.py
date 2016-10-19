@@ -77,7 +77,8 @@ class FileReader(object):
 
         # HACK: no empty lines allowed.
         if not items:
-            raise ValueError("invalid format, empty row in line {self._lineno}".format(**locals()))
+            lineno = self._lineno - 1
+            raise ValueError("invalid format, empty row in line {lineno}".format(**locals()))
 
         # Strip comments.
         while items[0][0:1] in self._comments:
@@ -87,19 +88,18 @@ class FileReader(object):
         for field in self._fields:
             name, base, chars, count, proc = self._fmt(field)
             values = []
-	    #print "==================="
-	    #print name, base, chars, count, proc
 
             if name in data:
-                raise KeyError("multiple declaration of field '{name}' in line {self._lineno}".format(**locals()))
+                lineno = self._lineno - 1
+                raise KeyError("multiple declaration of field '{name}' in line {lineno}".format(**locals()))
 
             for i in range(count):
                 item = items.pop(0)
-		#print i, item
 
                 if len(item) != chars:
-		    #print len(item)
-                    raise ValueError("invalid format, field '{name}' requires '{chars}' characters in line {self._lineno}".format(**locals()))
+                    nr_chars = len(item)
+                    lineno = self._lineno - 1
+                    raise ValueError("invalid format, field '{name}' requires '{chars}' characters (got '{nr_chars}' instead) in line {lineno}".format(**locals()))
 
                 # Cast to integer if base is given, else store as string.
                 value = int(item, self.FORMAT_BASE[base]) if base else item
