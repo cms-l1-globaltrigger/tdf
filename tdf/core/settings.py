@@ -164,8 +164,7 @@ class TDF(TDFCore):
     EG = DataSpecification(**OBJECTS.eg._asdict())
     """e/gamma object specification."""
 
-    #TAU = DataSpecification(**OBJECTS.tau._asdict())
-    TAU = DataSpecification(12, 32)
+    TAU = DataSpecification(**OBJECTS.tau._asdict())
     """Tau object specification."""
 
     JET = DataSpecification(**OBJECTS.jet._asdict())
@@ -183,10 +182,10 @@ class TDF(TDFCore):
     HTM = DataSpecification(**OBJECTS.htm._asdict())
     """HTM specification."""
 
-    ETMHF = DataSpecification(1, 32)
+    ETMHF = DataSpecification(**OBJECTS.etmhf._asdict())
     """ETMHF specification."""
 
-    HTMHF = DataSpecification(1, 32)
+    HTMHF = DataSpecification(**OBJECTS.htmhf._asdict())
     """ETMHF specification."""
 
     LINK_11_FR_0 = DataSpecification(1, 32)
