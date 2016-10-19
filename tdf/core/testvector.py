@@ -19,8 +19,6 @@ data of different bit widths. All input object data are zero padded hex values
 of 8, 16, 64 or 128 characters width. The last column is assigned to the FINOR
 as a single bit value. All hex characters (a-f) expected in lower case.
 
-HB 2016-09-19: extended for all frames of calo links with new esums
-
 =========  ========  ==================================
 Column(s)  Format    Description
 =========  ========  ==================================
@@ -321,29 +319,29 @@ class TestVectorReader(FileReader):
 
     FIELDS = (
         ('bx', 'd4'),
-        ('muon', 'x{0}'.format(charcount(TDF.MUON.width)), TDF.MUON.count),
-        ('eg',  'x{0}'.format(charcount(TDF.EG.width)), TDF.EG.count),
-        ('tau', 'x{0}'.format(charcount(TDF.TAU.width)), TDF.TAU.count),
-        ('jet', 'x{0}'.format(charcount(TDF.JET.width)), TDF.JET.count),
-        ('ett', 'x{0}'.format(charcount(TDF.ETT.width))),
-        ('ht',  'x{0}'.format(charcount(TDF.HT.width))),
-        ('etm', 'x{0}'.format(charcount(TDF.ETM.width))),
-        ('htm', 'x{0}'.format(charcount(TDF.HTM.width))),
-        ('etmhf', 'x{0}'.format(charcount(TDF.ETMHF.width))),
-        ('htmhf', 'x{0}'.format(charcount(TDF.HTMHF.width))),
-        ('link_11_fr_0', 'x{0}'.format(charcount(TDF.LINK_11_FR_0.width))),
-        ('link_11_fr_1', 'x{0}'.format(charcount(TDF.LINK_11_FR_1.width))),
-        ('link_11_fr_2', 'x{0}'.format(charcount(TDF.LINK_11_FR_2.width))),
-        ('link_11_fr_3', 'x{0}'.format(charcount(TDF.LINK_11_FR_3.width))),
-        ('link_11_fr_4', 'x{0}'.format(charcount(TDF.LINK_11_FR_4.width))),
-        ('link_11_fr_5', 'x{0}'.format(charcount(TDF.LINK_11_FR_5.width))),
-        ('ext_con', 'x{0}'.format(charcount(TDF.EXTCOND.width))),
-        ('algorithm', 'x{0}'.format(charcount(TDF.ALGORITHM.width))),
+        ('muon', 'x{0}'.format(TDF.MUON.charcount), TDF.MUON.count),
+        ('eg',  'x{0}'.format(TDF.EG.charcount), TDF.EG.count),
+        ('tau', 'x{0}'.format(TDF.TAU.charcount), TDF.TAU.count),
+        ('jet', 'x{0}'.format(TDF.JET.charcount), TDF.JET.count),
+        ('ett', 'x{0}'.format(TDF.ETT.charcount)),
+        ('ht',  'x{0}'.format(TDF.HT.charcount)),
+        ('etm', 'x{0}'.format(TDF.ETM.charcount)),
+        ('htm', 'x{0}'.format(TDF.HTM.charcount)),
+        ('etmhf', 'x{0}'.format(TDF.ETMHF.charcount)),
+        ('htmhf', 'x{0}'.format(TDF.HTMHF.charcount)),
+        ('link_11_fr_0', 'x{0}'.format(TDF.LINK_11_FR_0.charcount)),
+        ('link_11_fr_1', 'x{0}'.format(TDF.LINK_11_FR_1.charcount)),
+        ('link_11_fr_2', 'x{0}'.format(TDF.LINK_11_FR_2.charcount)),
+        ('link_11_fr_3', 'x{0}'.format(TDF.LINK_11_FR_3.charcount)),
+        ('link_11_fr_4', 'x{0}'.format(TDF.LINK_11_FR_4.charcount)),
+        ('link_11_fr_5', 'x{0}'.format(TDF.LINK_11_FR_5.charcount)),
+        ('ext_con', 'x{0}'.format(TDF.EXTCOND.charcount)),
+        ('algorithm', 'x{0}'.format(TDF.ALGORITHM.charcount)),
         ('finor', 'b1'),
     )
     """Format for columns of test vector file. Refer to class FileReader for detailed docmatation."""
 
-    OBJECT_NAMES = ('muon', 'eg', 'tau', 'jet', 'ett', 'ht', 'etm', 'htm', 'etmhf', 'htmhf', 
+    OBJECT_NAMES = ('muon', 'eg', 'tau', 'jet', 'ett', 'ht', 'etm', 'htm', 'etmhf', 'htmhf',
 	'link_11_fr_0', 'link_11_fr_1', 'link_11_fr_2', 'link_11_fr_3', 'link_11_fr_4', 'link_11_fr_5', 'ext_con')
     """Object names in order."""
 
@@ -524,23 +522,23 @@ class SimSpyDumpReader(FileReader):
         ('eg',  'x{0}'.format(charcount(TDF.EG.width)), TDF.EG.count),
         ('tau', 'x{0}'.format(charcount(TDF.TAU.width)), TDF.TAU.count),
         ('jet', 'x{0}'.format(charcount(TDF.JET.width)), TDF.JET.count),
-        ('ett', 'x{0}'.format(charcount(TDF.ETT.width))),
-        ('ht',  'x{0}'.format(charcount(TDF.HT.width))),
-        ('etm', 'x{0}'.format(charcount(TDF.ETM.width))),
-        ('htm', 'x{0}'.format(charcount(TDF.HTM.width))),
-        ('etmhf', 'x{0}'.format(charcount(TDF.ETMHF.width))),
-        ('htmhf', 'x{0}'.format(charcount(TDF.HTMHF.width))),
-        ('link_11_fr_0', 'x{0}'.format(charcount(TDF.LINK_11_FR_0.width))),
-        ('link_11_fr_1', 'x{0}'.format(charcount(TDF.LINK_11_FR_1.width))),
-        ('link_11_fr_2', 'x{0}'.format(charcount(TDF.LINK_11_FR_2.width))),
-        ('link_11_fr_3', 'x{0}'.format(charcount(TDF.LINK_11_FR_3.width))),
-        ('link_11_fr_4', 'x{0}'.format(charcount(TDF.LINK_11_FR_4.width))),
-        ('link_11_fr_5', 'x{0}'.format(charcount(TDF.LINK_11_FR_5.width))),
-        ('ext_con', 'x{0}'.format(charcount(TDF.EXTCOND.width))),
+        ('ett', 'x{0}'.format(TDF.ETT.charcount)),
+        ('ht',  'x{0}'.format(TDF.HT.charcount)),
+        ('etm', 'x{0}'.format(TDF.ETM.charcount)),
+        ('htm', 'x{0}'.format(TDF.HTM.charcount)),
+        ('etmhf', 'x{0}'.format(TDF.ETMHF.charcount)),
+        ('htmhf', 'x{0}'.format(TDF.HTMHF.charcount)),
+        ('link_11_fr_0', 'x{0}'.format(TDF.LINK_11_FR_0.charcount)),
+        ('link_11_fr_1', 'x{0}'.format(TDF.LINK_11_FR_1.charcount)),
+        ('link_11_fr_2', 'x{0}'.format(TDF.LINK_11_FR_2.charcount)),
+        ('link_11_fr_3', 'x{0}'.format(TDF.LINK_11_FR_3.charcount)),
+        ('link_11_fr_4', 'x{0}'.format(TDF.LINK_11_FR_4.charcount)),
+        ('link_11_fr_5', 'x{0}'.format(TDF.LINK_11_FR_5.charcount)),
+        ('ext_con', 'x{0}'.format(TDF.EXTCOND.charcount)),
     )
     """Format for columns of test vector file. Refer to class FileReader for detailed docmatation."""
 
-    OBJECT_NAMES = ('muon', 'eg', 'tau', 'jet', 'ett', 'ht', 'etm', 'htm', 'etmhf', 'htmhf', 
+    OBJECT_NAMES = ('muon', 'eg', 'tau', 'jet', 'ett', 'ht', 'etm', 'htm', 'etmhf', 'htmhf',
 	'link_11_fr_0', 'link_11_fr_1', 'link_11_fr_2', 'link_11_fr_3', 'link_11_fr_4', 'link_11_fr_5', 'ext_con')
     """Object names in order."""
 
@@ -593,7 +591,7 @@ class AlgorithmDumpReader(FileReader):
     """
 
     FIELDS = (
-        ('algorithm', 'x{0}'.format(charcount(TDF.ALGORITHM.width))),
+        ('algorithm', 'x{0}'.format(TDF.ALGORITHM.charcount)),
     )
     """Format for columns of test vector file. Refer to class FileReader for detailed docmatation."""
 

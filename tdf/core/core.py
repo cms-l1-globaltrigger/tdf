@@ -79,24 +79,24 @@ class TDFCore(object):
         info("TDF.ROOT_DIR:", TDF.ROOT_DIR)
         info("TDF.L1MENU_DIR:", TDF.L1MENU_DIR)
         info("TDF.MP7_ROOT_DIR:", TDF.MP7_ROOT_DIR)
-        #info("TDF.AMC502_ROOT_DIR:", TDF.AMC502_ROOT_DIR)
+        info("TDF.AMC502_ROOT_DIR:", TDF.AMC502_ROOT_DIR)
         info("XML connections file:", self.connections)
 
     def _getNode(self, device, item):
+        """Helper, returns uHAL node by *item* from *device*."""
         device = self.connectionManager.getDevice(device)
         return device.getNode(item)
 
     def read(self, device, item, translate = False):
+        """Read a single value from an *item*, returns an interger. If
+        *translate* is True, returns string representation according to items
+        address table description.
+        """
         DEBUG_API(inspect.currentframe())
         node = self._getNode(device, item)
         if translate:
             # Auto translate item defined by type paramater.
-            parameters = node.getParameters()
-            #type_ = 'default'
-            #if 'type' in parameters: type_ = parameters['type']
-            #info("auto translating complex item type: <{type_}>".format(**locals()))
-            #node = self._getNode(device, item)
-            if node.getSize() > 1:
+            if node.getSize() > 1: # note, translation also supports block items (strings)
                 payload = self.blockread(device, item)
             else:
                 payload = self.read(device, item)
@@ -107,6 +107,9 @@ class TDFCore(object):
         return int(value)
 
     def write(self, device, item, value, verify = False):
+        """Writs a single value to an *item*. If *verify* is True, raises an
+        assertion error on readback missmatch.
+        """
         DEBUG_API(inspect.currentframe())
         value = binutils.integer(value)
         node = self._getNode(device, item)
