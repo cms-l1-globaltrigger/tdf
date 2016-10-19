@@ -10,6 +10,18 @@
 #
 
 """MP7 specific memory images.
+
+class SimSpyMemoryImage(ColumnMemoryImage)
+class AlgorithmMemoryImage(ColumnMemoryImage)
+class FinorMemoryImage(ColumnMemoryImage)
+class MasksMemoryImage(ColumnMemoryImage)
+class PreScaleFactorsImage(ColumnMemoryImage)
+class AlgoBxMemoryImage(AlgorithmMemoryImage)
+class RopMemoryImage(GenericMemoryImage)
+
+Use instances of class FileReader to read data from memory dumps, use instances
+of class TestVector to read data from test vector files.
+
 """
 
 from tdf.core import TDF
@@ -32,16 +44,19 @@ __version__ = '$Revision$'
 
 # Blocksize of 32 bit simulation and spy memories.
 MEMORY_BLOCKSIZE = 4096
-# HB 2016-06-01: extended memory blocks (from 60 to 72) for all frames of calo links
-MEMORY_BLOCKS = 72
-# HB 2016-02-02: updated code for correct memeory size
 FINOR_VETO_MASKS_BLOCKSIZE = 512
 PRESCALE_FACTORS_BLOCKSIZE = 512
+# Number of blocks
+SIMSPY_MEMORY_BLOCKS = 72
 
 class SimSpyMemoryImage(ColumnMemoryImage):
-    """Simulation/spy memory image."""
+    """Simulation/spy memory image.
 
-    """HB 2016-06-01: extended for all frames of calo links"""
+    >>> image = SimSpyMemoryImage()
+    >>> image.read("memdump.txt") # read in memory dump
+    >>> image.read("testvector_sample.txt") # read from test vector file
+    """
+
     # Calculate the memory column offsets.
     MuonOffset    = 0
     EgOffset      = MuonOffset + TDF.MUON.dwords * TDF.MUON.count
@@ -61,14 +76,36 @@ class SimSpyMemoryImage(ColumnMemoryImage):
     L11f5Offset   = L11f4Offset  + TDF.LINK_11_FR_4.dwords
     ExtCondOffset = L11f5Offset  + TDF.LINK_11_FR_5.dwords
 
-    ObjectsOrdered = 'muon', 'eg', 'tau','jet', 'ett', 'ht', 'etm', 'htm', 'etmhf', 'htmhf', 'link_11_fr_0', 'link_11_fr_1', 'link_11_fr_2', 'link_11_fr_3', 'link_11_fr_4', 'link_11_fr_5', 'extcond'
+    ObjectsOrdered = (
+        'muon',
+        'eg',
+        'tau',
+        'jet',
+        'ett',
+        'ht',
+        'etm',
+        'htm',
+        'etmhf',
+        'htmhf',
+        'link_11_fr_0',
+        'link_11_fr_1',
+        'link_11_fr_2',
+        'link_11_fr_3',
+        'link_11_fr_4',
+        'link_11_fr_5',
+        'extcond',
+    )
 
     def __init__(self):
-	"""HB 2016-06-01: extended for all frames of calo links"""
-        #super(SimSpyMemoryImage, self).__init__(MEMORY_BLOCKSIZE * 60, MEMORY_BLOCKSIZE)
-        super(SimSpyMemoryImage, self).__init__(MEMORY_BLOCKSIZE * MEMORY_BLOCKS, MEMORY_BLOCKSIZE)
+        """Creates an empty memory image."""
+        super(SimSpyMemoryImage, self).__init__(MEMORY_BLOCKSIZE * SIMSPY_MEMORY_BLOCKS, MEMORY_BLOCKSIZE)
 
     def muon(self, i, offset = 0):
+        """Returns list of muon data sorted by bunch crossings from object
+        with index *i* with an optional *offset*, default offset is 0.
+        >>> image.muon(0) # get data for muon object 0
+        [ 0, 0, 0, ... ]
+        """
         assert 0 <= i < TDF.MUON.count, "invalid muon index"
         values = self.extract(self.MuonOffset + TDF.MUON.dwords * i, TDF.MUON.dwords)[:TDF.ORBIT_LENGTH]
         return values[offset:] + values[:offset]
@@ -78,6 +115,11 @@ class SimSpyMemoryImage(ColumnMemoryImage):
         return [self.muon(i, offset) for i in range(TDF.MUON.count)]
 
     def eg(self, i, offset = 0):
+        """Returns list of e/g data sorted by bunch crossings from
+        object with index *i* with an optional *offset*, default offset is 0.
+        >>> image.eg(0) # get data for e/g object 0
+        [ 0, 0, 0, ... ]
+        """
         assert 0 <= i < TDF.EG.count, "invalid e/g index"
         values = self.extract(self.EgOffset + TDF.EG.dwords * i, TDF.EG.dwords)[:TDF.ORBIT_LENGTH]
         return values[offset:] + values[:offset]
@@ -87,6 +129,11 @@ class SimSpyMemoryImage(ColumnMemoryImage):
         return [self.eg(i, offset) for i in range(TDF.EG.count)]
 
     def tau(self, i, offset = 0):
+        """Returns list of tau data sorted by bunch crossings from object with
+        index *i* with an optional *offset*, default offset is 0.
+        >>> image.tau(0) # get data for tau object 0
+        [ 0, 0, 0, ... ]
+        """
         assert 0 <= i < TDF.TAU.count, "invalid tau index"
         values = self.extract(self.TauOffset + TDF.TAU.dwords * i, TDF.TAU.dwords)[:TDF.ORBIT_LENGTH]
         return values[offset:] + values[:offset]
@@ -96,6 +143,11 @@ class SimSpyMemoryImage(ColumnMemoryImage):
         return [self.tau(i, offset) for i in range(TDF.TAU.count)]
 
     def jet(self, i, offset = 0):
+        """Returns list of jet data sorted by bunch crossings from object with
+        index *i* with an optional *offset*, default offset is 0.
+        >>> image.jet(0) # get data for jet object 0
+        [ 0, 0, 0, ... ]
+        """
         assert 0 <= i < TDF.JET.count, "invalid jet index"
         values = self.extract(self.JetOffset + TDF.JET.dwords * i, TDF.JET.dwords)[:TDF.ORBIT_LENGTH]
         return values[offset:] + values[:offset]
@@ -105,82 +157,110 @@ class SimSpyMemoryImage(ColumnMemoryImage):
         return [self.jet(i, offset) for i in range(TDF.JET.count)]
 
     def ett(self, offset = 0):
+        """Returns list of ETT data with optional *offset*, default offset is 0."""
         values = self.extract(self.EttOffset)[:TDF.ORBIT_LENGTH]
         return values[offset:] + values[:offset]
 
     def ht(self, offset = 0):
+        """Returns list of HTT data with optional *offset*, default offset is 0."""
         values = self.extract(self.HtOffset)[:TDF.ORBIT_LENGTH]
         return values[offset:] + values[:offset]
 
     def etm(self, offset = 0):
+        """Returns list of ETM data with optional *offset*, default offset is 0."""
         values = self.extract(self.EtmOffset)[:TDF.ORBIT_LENGTH]
         return values[offset:] + values[:offset]
 
     def htm(self, offset = 0):
+        """Returns list of HTM data with optional *offset*, default offset is 0."""
         values = self.extract(self.HtmOffset)[:TDF.ORBIT_LENGTH]
         return values[offset:] + values[:offset]
 
     def etmhf(self, offset = 0):
+        """Returns list of ETM-HF data with optional *offset*, default offset is 0."""
         values = self.extract(self.EtmhfOffset)[:TDF.ORBIT_LENGTH]
         return values[offset:] + values[:offset]
 
     def htmhf(self, offset = 0):
+        """Returns list of HTM-HF data with optional *offset*, default offset is 0."""
         values = self.extract(self.HtmhfOffset)[:TDF.ORBIT_LENGTH]
         return values[offset:] + values[:offset]
 
     def link_11_fr_0(self, offset = 0):
+        """Returns list of data from link 11, frame 0, with optional *offset*, default offset is 0."""
         values = self.extract(self.L11f0Offset)[:TDF.ORBIT_LENGTH]
         return values[offset:] + values[:offset]
 
     def link_11_fr_1(self, offset = 0):
+        """Returns list of data from link 11, frame 1, with optional *offset*, default offset is 0."""
         values = self.extract(self.L11f1Offset)[:TDF.ORBIT_LENGTH]
         return values[offset:] + values[:offset]
 
     def link_11_fr_2(self, offset = 0):
+        """Returns list of data from link 11, frame 2, with optional *offset*, default offset is 0."""
         values = self.extract(self.L11f2Offset)[:TDF.ORBIT_LENGTH]
         return values[offset:] + values[:offset]
 
     def link_11_fr_3(self, offset = 0):
+        """Returns list of data from link 11, frame 3, with optional *offset*, default offset is 0."""
         values = self.extract(self.L11f3Offset)[:TDF.ORBIT_LENGTH]
         return values[offset:] + values[:offset]
 
     def link_11_fr_4(self, offset = 0):
+        """Returns list of data from link 11, frame 4, with optional *offset*, default offset is 0."""
         values = self.extract(self.L11f4Offset)[:TDF.ORBIT_LENGTH]
         return values[offset:] + values[:offset]
 
     def link_11_fr_5(self, offset = 0):
+        """Returns list of data from link 11, frame 5, with optional *offset*, default offset is 0."""
         values = self.extract(self.L11f5Offset)[:TDF.ORBIT_LENGTH]
         return values[offset:] + values[:offset]
 
     def extconds(self, offset = 0):
+        """Returns list of external conditions data with optional *offset*, default offset is 0."""
         values = self.extract(self.ExtCondOffset, TDF.EXTCOND.dwords)[:TDF.ORBIT_LENGTH]
         return values[offset:] + values[:offset]
 
     def dump(self, fs):
+        """Dumps the serialized image to a file stream *fs*. Provided for convenience.
+        >>> with open("memdump.txt", "w") as fs:
+        ...     image.dump("memdump.txt")
+        """
         fs.write(str(self))
 
     def read(self, fs):
+        """Reads an image from a memory dump file stream *fs*.
+        >>> with open("memdump.txt", "r") as fs:
+        ...     image.read(fs)
+
+        To produce a compatible memoy dump see method *dump()*. To read data
+        from a test vector, see method *read_testvector()*.
+        """
+        # Clear image contents.
         self.clear()
 
+        # Create file reader for memory dump. Note: take care to match the format
+        # written by method *__str__*.
         reader = FileReader(fs, (
-	    ('muon', 'x{0}'.format(charcount(TDF.MUON.width)), TDF.MUON.count),
-	    ('eg',  'x{0}'.format(charcount(TDF.EG.width)), TDF.EG.count),
-	    ('tau', 'x{0}'.format(charcount(TDF.TAU.width)), TDF.TAU.count),
-	    ('jet', 'x{0}'.format(charcount(TDF.JET.width)), TDF.JET.count),
-	    ('ett', 'x{0}'.format(charcount(TDF.ETT.width))),
-	    ('ht',  'x{0}'.format(charcount(TDF.HT.width))),
-	    ('etm', 'x{0}'.format(charcount(TDF.ETM.width))),
-	    ('htm', 'x{0}'.format(charcount(TDF.HTM.width))),
-	    ('etmhf', 'x{0}'.format(charcount(TDF.ETMHF.width))),
-	    ('htmhf', 'x{0}'.format(charcount(TDF.HTMHF.width))),
-	    ('link_11_fr_0', 'x{0}'.format(charcount(TDF.LINK_11_FR_0.width))),
-	    ('link_11_fr_1', 'x{0}'.format(charcount(TDF.LINK_11_FR_1.width))),
-	    ('link_11_fr_2', 'x{0}'.format(charcount(TDF.LINK_11_FR_2.width))),
-	    ('link_11_fr_3', 'x{0}'.format(charcount(TDF.LINK_11_FR_3.width))),
-	    ('link_11_fr_4', 'x{0}'.format(charcount(TDF.LINK_11_FR_4.width))),
-	    ('link_11_fr_5', 'x{0}'.format(charcount(TDF.LINK_11_FR_5.width))),
-	    ('extcond', 'x{0}'.format(charcount(TDF.EXTCOND.width))),
+            ('muon', 'x{0}'.format(charcount(TDF.MUON.width)), TDF.MUON.count),
+            ('eg',  'x{0}'.format(charcount(TDF.EG.width)), TDF.EG.count),
+            ('tau', 'x{0}'.format(charcount(TDF.TAU.width)), TDF.TAU.count),
+            ('jet', 'x{0}'.format(charcount(TDF.JET.width)), TDF.JET.count),
+            ('ett', 'x{0}'.format(charcount(TDF.ETT.width))),
+            ('ht',  'x{0}'.format(charcount(TDF.HT.width))),
+            ('etm', 'x{0}'.format(charcount(TDF.ETM.width))),
+            ('htm', 'x{0}'.format(charcount(TDF.HTM.width))),
+            ('etmhf', 'x{0}'.format(charcount(TDF.ETMHF.width))),
+            ('htmhf', 'x{0}'.format(charcount(TDF.HTMHF.width))),
+            ('link_11_fr_0', 'x{0}'.format(charcount(TDF.LINK_11_FR_0.width))),
+            ('link_11_fr_1', 'x{0}'.format(charcount(TDF.LINK_11_FR_1.width))),
+            ('link_11_fr_2', 'x{0}'.format(charcount(TDF.LINK_11_FR_2.width))),
+            ('link_11_fr_3', 'x{0}'.format(charcount(TDF.LINK_11_FR_3.width))),
+            ('link_11_fr_4', 'x{0}'.format(charcount(TDF.LINK_11_FR_4.width))),
+            ('link_11_fr_5', 'x{0}'.format(charcount(TDF.LINK_11_FR_5.width))),
+            ('extcond', 'x{0}'.format(charcount(TDF.EXTCOND.width))),
         ))
+        # Read data from file.
         data = reader.read()
 
         # Populate memory image.
@@ -204,10 +284,19 @@ class SimSpyMemoryImage(ColumnMemoryImage):
         self.inject(data['link_11_fr_3'], self.L11f3Offset, TDF.LINK_11_FR_3.dwords)
         self.inject(data['link_11_fr_4'], self.L11f4Offset, TDF.LINK_11_FR_4.dwords)
         self.inject(data['link_11_fr_5'], self.L11f5Offset, TDF.LINK_11_FR_5.dwords)
-        #print data.keys()
         self.inject(data['extcond'], self.ExtCondOffset, TDF.EXTCOND.dwords)
 
     def read_testvector(self, fs, uuid = None):
+        """Reads an image from a text vector file stream *fs*. Optional attribute
+        *uuid* will raise a RuntimeError if either no UUID is specified in the
+        header of the test vector file or the give UUID does not match with the
+        UUID specified by the file.
+        >>> with open("testvector.txt", "r") as fs:
+        ...     image.read_testvecor(fs)
+
+        To read data from a memory dump, see method *read()*.
+        """
+        # Clear image contents.
         self.clear()
 
         # Read data from vector file.
@@ -243,10 +332,25 @@ class SimSpyMemoryImage(ColumnMemoryImage):
         self.inject(testvector.extconds(), self.ExtCondOffset, TDF.EXTCOND.dwords)
 
     def compare(self, image, offset = 0, size = TDF.ORBIT_LENGTH, outfile = sys.stdout):
+        """Compares image with content of another *image* instance. Optional
+        attribute *offset* can be used to align shifted bunch crossing positions,
+        attribute *size* limits the number of bunch crossings to be compared,
+        default is a full orbith. Attribute *outfile* is a file stream to write
+        the diagnostic output, default is STDOUT.
+
+        To simply compare two image instances:
+        >>> image.compare(other_image)
+
+        To wirte comparison results to a file:
+        with open("dump.log", "w") as fs:
+            image.compare(other_image, outfile=fs) # no output is displayed
+        """
         # ignore: number of BX to be ignored from start
         assert isinstance(image, SimSpyMemoryImage)
         errors = []
         stats = []
+
+        # TODO clean this up, make things simpler.
 
         class Analyzer:
             def __init__(self, offset, size, errors, stats):
@@ -272,12 +376,17 @@ class SimSpyMemoryImage(ColumnMemoryImage):
                         # Log mismatches.
                         if value_a != value_b:
                             err_ += 1
-                            value_a_hex = getattr(TDF, typename).hexstr(value_a)
-                            value_b_hex = getattr(TDF, typename).hexstr(value_b)
+                            objectSetting = getattr(TDF, typename)
+                            value_a_hex = objectSetting.hexstr(value_a)
+                            value_b_hex = objectSetting.hexstr(value_b)
+                            def fmt_params(params): # formated paramsd list
+                                return ", ".join(["{0}=0x{1:0x}".format(k, v) for k, v in params.iteritems()])
+                            value_a_params = fmt_params(objectSetting.decode(value_a))
+                            value_b_params = fmt_params(objectSetting.decode(value_b))
                             self.errors.append("\n".join((
                                 "{typename}[{i}] object missmatch in BX {bx} with offset {self.offset}",
-                                "mem: 0x{value_a_hex}",
-                                "ref: 0x{value_b_hex}",
+                                "mem: 0x{value_a_hex} : {value_a_params}",
+                                "ref: 0x{value_b_hex} : {value_b_params}",
                             )).format(**locals()))
                         else:
                             ok_ += 1
@@ -323,7 +432,11 @@ class SimSpyMemoryImage(ColumnMemoryImage):
         outfile.flush()
 
     def __str__(self):
-        """Cast memory to hex string."""
+        """Serialize image to memory dump format.
+        >>> with open("memdump.txt", "w") as fs:
+        ...     data = str(image)
+        ...     fs.write(data)
+        """
         lines = []
         muons, egs, taus, jets = self.muons(), self.egs(), self.taus(), self.jets()
         ett, ht, etm, htm, etmhf, htmhf = self.ett(), self.ht(), self.etm(), self.htm(), self.etmhf(), self.htmhf()
@@ -362,12 +475,13 @@ class SimSpyMemoryImage(ColumnMemoryImage):
         return '\n'.join(lines)
 
     def decode(self):
-        """Decode objects attributes to JSON."""
+        """Decode objects attributes to JSON, returns a JSON dictionary."""
 
         data = []
         muons, egs, taus, jets = self.muons(), self.egs(), self.taus(), self.jets()
-        ett, ht, etm, htm, etmhf, htmhf = self.ett(), self.ht(), self.etm(), self.htm(), self.etmhf(), self.htmhf(), 
-        link_11_fr_0, link_11_fr_1, link_11_fr_2, link_11_fr_3, link_11_fr_4, link_11_fr_5 = self.link_11_fr_0(), self.link_11_fr_1(), self.link_11_fr_2(), self.link_11_fr_3(), self.link_11_fr_4(), self.link_11_fr_5()
+        ett, ht, etm, htm, etmhf, htmhf = self.ett(), self.ht(), self.etm(), self.htm(), self.etmhf(), self.htmhf()
+        link_11_fr_0, link_11_fr_1, link_11_fr_2 = self.link_11_fr_0(), self.link_11_fr_1(), self.link_11_fr_2()
+        link_11_fr_3, link_11_fr_4, link_11_fr_5 = self.link_11_fr_3(), self.link_11_fr_4(), self.link_11_fr_5()
         extconds = self.extconds()
 
         for i in range(TDF.ORBIT_LENGTH):
@@ -453,15 +567,30 @@ class AlgorithmMemoryImage(ColumnMemoryImage):
     """Memory for spied algorithms."""
 
     def __init__(self):
+        """Creates an empty memory image."""
         super(AlgorithmMemoryImage, self).__init__(MEMORY_BLOCKSIZE * 16, MEMORY_BLOCKSIZE)
 
     def algorithms(self, offset = 0):
-        """Return algorithms as list. Offset rotates values by BX. Provided for convenience."""
+        """Return list of algorithms. Offset rotates values by BX. Provided for convenience."""
         values = self.merged()[:TDF.ORBIT_LENGTH]
         return values[offset:] + values[:offset]
 
+    def dump(self, fs):
+        """Dumps the serialized image to a file stream *fs*. Provided for convenience.
+        >>> with open("memdump.txt", "w") as fs:
+        ...     image.dump("memdump.txt")
+        """
+        fs.write(str(self)) # TODO move to base class!
+
     def read(self, fs):
-        """Read from simple dump file."""
+        """Reads an image from a memory dump file stream *fs*.
+        >>> with open("memdump.txt", "r") as fs:
+        ...     image.read(fs)
+
+        To produce a compatible memoy dump see method *dump()*. To read data
+        from a test vector, see method *read_testvector()*.
+        """
+        # Clear image contents.
         self.clear()
         reader = FileReader(fs, fields = (('algorithms', 'x128'), ))
         self.inject(reader.read()['algorithms'], 0, TDF.ALGORITHM.dwords)
@@ -517,6 +646,11 @@ class AlgorithmMemoryImage(ColumnMemoryImage):
         outfile.flush()
 
     def __str__(self):
+        """Serialize image to memory dump format.
+        >>> with open("memdump.txt", "w") as fs:
+        ...     data = str(image)
+        ...     fs.write(data)
+        """
         chars = charcount(self.columns * TDF.DATA_WIDTH)
         return '\n'.join(TDF.ALGORITHM.hexstr(value) for value in self.algorithms())
 
@@ -524,6 +658,7 @@ class FinorMemoryImage(ColumnMemoryImage):
     """Memory for spied algorithms."""
 
     def __init__(self):
+        """Creates an empty memory image."""
         super(FinorMemoryImage, self).__init__(MEMORY_BLOCKSIZE * 1, MEMORY_BLOCKSIZE)
 
     def finors(self, offset = 0):
@@ -576,25 +711,25 @@ class FinorMemoryImage(ColumnMemoryImage):
         outfile.flush()
 
     def __str__(self):
+        """Serialize image to memory dump format.
+        >>> with open("memdump.txt", "w") as fs:
+        ...     data = str(image)
+        ...     fs.write(data)
+        """
         return '\n'.join(TDF.FINOR.hexstr(value) for value in self.finors())
 
 class MasksMemoryImage(ColumnMemoryImage):
     """Memory for FINRO and veto masks."""
 
     def __init__(self):
-## HB 2016-02-02: updated code for correct memeory size
-        #super(MasksMemoryImage, self).__init__(MEMORY_BLOCKSIZE * 1, MEMORY_BLOCKSIZE)
+        """Creates an empty memory image."""
         super(MasksMemoryImage, self).__init__(FINOR_VETO_MASKS_BLOCKSIZE * 1, FINOR_VETO_MASKS_BLOCKSIZE)
 
     def finor_masks(self, offset = 0):
-## HB 2016-02-02: updated code for correct memeory size
-        #values = [value & 0x1 for value in self.merged()[:MEMORY_BLOCKSIZE]]
         values = [value & 0x1 for value in self.merged()[:FINOR_VETO_MASKS_BLOCKSIZE]]
         return values[offset:] + values[:offset]
 
     def veto_masks(self, offset = 0):
-## HB 2016-02-02: updated code for correct memeory size
-        #values = [(value >> 1) & 0x1 for value in self.merged()[:MEMORY_BLOCKSIZE]]
         values = [(value >> 1) & 0x1 for value in self.merged()[:FINOR_VETO_MASKS_BLOCKSIZE]]
         return values[offset:] + values[:offset]
 
@@ -629,32 +764,31 @@ class MasksMemoryImage(ColumnMemoryImage):
                         raise RuntimeError("error reading FINOR/veto mask file...")
             masks[name] = indices
         # initialize default values
-## HB 2016-02-02: updated code for correct memeory size
-        #values = [0x1] * MEMORY_BLOCKSIZE # veto=0, finor=1
         values = [0x1] * FINOR_VETO_MASKS_BLOCKSIZE # veto=0, finor=1
         try:
             for index in masks['veto_masks']:
-## HB 2016-02-02: updated code, because of errors during execution
-                #values[index] = values[i] | 0x2
                 values[index] = values[index] | 0x2
             for index in masks['finor_masks']:
-                #values[index] = values[i] & ~0x1
                 values[index] = values[index] & ~0x1
         except KeyError, e:
             raise RuntimeError("missing key in masks file: {e}".format(**locals()))
-        #print "values of finor-veto-masks registers (local index): [algo(0) .. algo(511)]"
-        #print values
         self.inject(values, 0, TDF.MASKS.dwords)
 
     def __str__(self):
+        """Serialize image to memory dump format.
+        >>> with open("memdump.txt", "w") as fs:
+        ...     data = str(image)
+        ...     fs.write(data)
+        """
         finor_masks = self.finor_masks()
         veto_masks = self.veto_masks()
         return '\n'.join(["{0} {1}".format(veto_masks[i], finor_masks[i]) for i in range(len(finor_masks))])
 
 class PreScaleFactorsImage(ColumnMemoryImage):
-    """Memory for algorithm BX masks."""
+    """TODO"""
 
     def __init__(self):
+        """Creates an empty memory image."""
         super(PreScaleFactorsImage, self).__init__(PRESCALE_FACTORS_BLOCKSIZE * 1, PRESCALE_FACTORS_BLOCKSIZE)
 
     def readPreScaleFactorsFile(self, fs):
@@ -738,5 +872,10 @@ class RopMemoryImage(GenericMemoryImage):
         return data
 
     def __str__(self):
+        """Serialize image to memory dump format.
+        >>> with open("memdump.txt", "w") as fs:
+        ...     data = str(image)
+        ...     fs.write(data)
+        """
         chars = charcount(self.RECORD_WIDTH)
         return '\n'.join('{0:0{1}x}'.format(value, chars) for value in self.lines())
