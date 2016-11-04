@@ -15,7 +15,9 @@ import sys, os, re
 import time
 import shutil
 
-DEFAULT_INPUT_DELAY = 8
+DEFAULT_ALIGN_CABLE = '38,5'
+DEFAULT_ALIGN_LOOPBACK = '9,5'
+DEFAULT_INPUT_DELAY = 9
 DEFAULT_GTL_LATENCY = 6
 DEFAULT_SIZE = 170
 DEFAULT_RX_LINKS = '0-15'
@@ -113,7 +115,7 @@ parser.add_argument('--delay', default=DEFAULT_INPUT_DELAY, metavar='<n>', type=
 parser.add_argument('--hw-delay', default=DEFAULT_HW_DELAY, metavar='<n>', type=int, help="delay in BX for incomming data, default is '{DEFAULT_HW_DELAY}'".format(**locals()))
 parser.add_argument('--gtl-latency', default=DEFAULT_GTL_LATENCY, metavar='<n>', type=int, help="set latency for GTL logic in BX, default is '{DEFAULT_GTL_LATENCY}'".format(**locals()))
 parser.add_argument('--size', default=DEFAULT_SIZE, metavar='<n>', type=int, help="number of BX to be compared, default is '{DEFAULT_INPUT_DELAY}'".format(**locals()))
-parser.add_argument('--align-to', default=None, help="overwrite link alignment eg. 38,5 (bx, cycle)")
+parser.add_argument('--align-to', default=None, metavar='<bx,cycle>', help="overwrite link alignment, default '{DEFAULT_ALIGN_CABLE}', with --loopback option '{DEFAULT_ALIGN_LOOPBACK}' (bx, cycle)".format(**locals()))
 parser.add_argument('--algo-bx-mask', default=None, metavar='<file>', help="load algorithm BX mask from file")
 parser.add_argument('--finor-veto-masks', default=None, metavar='<file>', help="load finor veto masks from file")
 parser.add_argument('--prescale-factors', default=None, metavar='<file>', help="load prescale factors from file")
@@ -163,11 +165,11 @@ try:
         if args.loopback:
             mp7butler("txmgts", device, "--loopback", "--e", args.rx_links, "--pattern", "std")
             mp7butler("rxmgts", device, "--e", args.rx_links)
-            mp7butler("rxalign", device, "--e", args.rx_links, "--to-bx", args.align_to or "9,5")
+            mp7butler("rxalign", device, "--e", args.rx_links, "--to-bx", args.align_to or DEFAULT_ALIGN_LOOPBACK)
         else:
             mp7butler("txmgts", device, "--e", args.rx_links)
             mp7butler("rxmgts", device, "--e", args.rx_links)
-            mp7butler("rxalign", device, "--e", args.rx_links, "--to-bx", args.align_to or "38,5")
+            mp7butler("rxalign", device, "--e", args.rx_links, "--to-bx", args.align_to or DEFAULT_ALIGN_CABLE)
 
     # Generate set of testvectors
     run_routine("testvector_split", args.testvector, args.menu, '-o', temp_dir)
