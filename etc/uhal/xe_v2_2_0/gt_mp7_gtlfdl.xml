@@ -49,10 +49,24 @@
 	<node id="rate_cnt_l1a" address="0x00093000" permission="r" parameters="type=parent"/>
 <!--HB 2016-03-03: "rate_cnt_veto" new in fdl v0.0.21 -->
 	<node id="rate_cnt_veto" address="0x00094000" permission="r" parameters="type=parent"/>
+	<!-- used in 0.9.0 -->
+	<node id="prescale_factor_set_index_updated" address="0x00095000" permission="r" parameters="type=parent"/>
+	<!-- used in 0.10.2 -->
 	<!-- used prescale set index updated at begin of lumisection -->
 	<node id="current_prescale_set_index" address="0x00095000" permission="r" parameters="type=parent"/>
 	<!-- used prescale set index correlating with rate counters of previous lumisection -->
 	<node id="previous_prescale_set_index" address="0x00095001" permission="r" parameters="type=parent"/>
 	<!-- begin and end of calibration trigger gap -->
-	<node id="calibration_trigger_gap" address="0x00096000" permission="rw" parameters="type=parent"/>
+	<node id="calibration_trigger_gap" address="0x00096000" permission="rw">
+		<node id="begin" address="0x00000000" mask="0x00000fff" permission="rw" />
+		<node id="end" address="0x00000000" mask="0x0fff0000" permission="rw" />
+	</node>
+
+	<!--HB 2016-11-22: register for prescale preview -->
+	<node id="prescale_factor_preview" address="0x01010200" mode="incremental" size="512" permission="rw" parameters="class=PreScaleFactorsImage"/>
+  <node id="rate_cnt_after_prescaler_preview" address="0x01010400" mode="incremental" size="512" permission="r"/>
+  <node id="rate_cnt_finor_preview" address="0x01091980" permission="r" parameters="type=parent"/>
+  <node id="prescale_factor_set_index_preview" address="0x01091880" permission="rw" parameters="type=parent"/>
+  <node id="prescale_factor_set_index_updated_preview" address="0x01095000" permission="r" parameters="type=parent"/>
+  <node id="prescale_factor_set_index_updated_monitoring_preview" address="0x01095001" permission="r" parameters="type=parent"/>
 </node>
