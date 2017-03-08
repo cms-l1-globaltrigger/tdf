@@ -262,9 +262,17 @@ try:
     # Compare the dumps.
     basename = os.path.splitext(os.path.basename(args.testvector))[0]
     tv_filename = "{basename}_module_{module}.txt".format(**locals())
+    print ""
+    print "Summary of input links"
     for module, device in enumerate(devices):
+        print ""
+        print "Module {module} ({device}):".format(**locals())
         compare(device, "gt_mp7_frame.simspymem", mkfilename(module, "simspymem.dat"), args.testvector, offset=args.delay, size=args.size)
 
+    print ""
+    print "-------------------------------------------------------"
+    print ""
+    print "Algo & finor summary (all modules merged):"
     compare(devices[0], "gt_mp7_frame.spymem2_algos", algodump_filename, args.testvector, offset=args.delay + args.gtl_latency, size=args.size)
     compare(devices[0], "gt_mp7_frame.spymem2_finor", finordump_filename, args.testvector, offset=args.delay + args.gtl_latency, size=args.size)
 
