@@ -36,7 +36,7 @@ parser.add_argument('--dryrun', action = 'store_true', help = "do not apply any 
 args = parser.parse_args(TDF_ARGS)
 
 if args.dryrun:
-    print "*** running in dryrun mode: does not apply any changes to uSD cards"
+    TDF_NOTICE("*** running in dryrun mode: does not apply any changes to uSD cards")
 
 # Regular expression defining the tarball filename.
 # eg. '(L1Menu_Sample)_v(1000)_(xe)-2015-01-01-T00-00-00.tar.gz'
@@ -117,8 +117,8 @@ for module, bitfile in enumerate(bitfiles):
     print " => current files on uSD card:"
     print "\n".join(filenames)
 
-    # If file with same name already exists, delete it on force.
-    if filename in filenames:
+    # If bin file with same name already exists, delete it on force.
+    if binfile in filenames:
         if args.force:
             print
             print " => bin file `{binfile}' does already exist, deleting...".format(**locals())
@@ -139,7 +139,6 @@ for module, bitfile in enumerate(bitfiles):
     tmp_filename = os.path.join(tmpdir, bitfile)
     print
     print " => extracted bit file to to temporary location `{tmp_filename}'".format(**locals())
-    binfile = os.path.splitext(filename)[0] + ".bin"  #changing file extension to *.bin for the mp7butler upload script
 
     try:
         print
