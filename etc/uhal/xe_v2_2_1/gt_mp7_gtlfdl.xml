@@ -51,4 +51,38 @@
 	<node id="rate_cnt_veto" address="0x00094000" permission="r" parameters="type=parent"/>
 <!--HB 2016-04-26: prescale_factor_set_index updated with begin of lumisection -->
 	<node id="prescale_factor_set_index_updated" address="0x00095000" permission="r" parameters="type=parent"/>
+<!-- used prescale set index correlating with rate counters of previous lumisection -->
+	<node id="previous_prescale_set_index" address="0x00095001" permission="r" parameters="type=parent"/>
+
+    <!-- JW 4.7.2017: added prescale OTF flags -->
+    <node id="prescale_otf_flags" address="0x00097000" permission="rw" parameters="type=parent">
+      <node id="production_flag"  address="0x00000000" mask="0x00000001" permission="rw" parameters="type=number"/>
+      <node id="preview_flag"     address="0x00000001" mask="0x00000001" permission="rw" parameters="type=number"/>
+	</node>
+    <!-- JW 4.7.2017: added prescale OTF status regs -->
+    <node id="prescale_otf_applied"    address="0x00097010" permission="r" parameters="type=parent">
+      <node id="current_prescale_otf"  address="0x00000000" permission="r" parameters="type=number"/>
+      <node id="previous_prescale_otf" address="0x00000001" permission="r" parameters="type=number"/>
+	</node>
+    <!-- JW 4.7.2017: added prescale preview OTF status regs -->
+    <node id="prescale_preview_otf_applied"   address="0x00097020"  permission="r" parameters="type=parent">
+      <node id="current_prescale_preview_otf"  address="0x00000000" permission="r" parameters="type=number"/>
+      <node id="previous_prescale_preview_otf" address="0x00000001" permission="r" parameters="type=number"/>
+	</node>
+
+	<!-- begin and end of calibration trigger gap -->
+	<node id="calibration_trigger_gap" address="0x00096000" permission="rw">
+		<node id="begin" address="0x00000000" mask="0x00000fff" permission="rw" />
+		<node id="end" address="0x00000000" mask="0x0fff0000" permission="rw" />
+	</node>
+
+	<!--HB 2016-11-22: register for prescale preview -->
+	<node id="preview" address="0x01000000" permission="rw" >
+		<node id="prescale_factor" address="0x00010200" mode="incremental" size="512" permission="rw" parameters="class=PreScaleFactorsImage"/>
+	 	<node id="rate_cnt_after_prescaler" address="0x00010400" mode="incremental" size="512" permission="r"/>
+	 	<node id="prescale_factor_set_index" address="0x00091880" permission="rw" parameters="type=parent"/>
+		<node id="rate_cnt_finor" address="0x00091980" permission="r" parameters="type=parent"/>
+	 	<node id="current_prescale_set_index" address="0x00095000" permission="r" parameters="type=parent"/>
+	 	<node id="previous_prescale_set_index" address="0x00095001" permission="r" parameters="type=parent"/>
+	</node>
 </node>
