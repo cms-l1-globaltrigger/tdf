@@ -18,14 +18,6 @@
 		<node id="start"            address="0x00000002" mask="0x00000001" permission="rw" parameters="type=hex"/>
 		<node id="strobe"           address="0x00000003" mask="0x00000001" permission="rw" parameters="type=hex"/>
 	</node>
-    <node id="prescale_otf_flags"   address="0x0000090e" permission="rw" parameters="type=parent">
-        <node id="production_flag"  address="0x00000000" mask="0x00000001" permission="rw" parameters="type=hex"/>
-        <node id="preview_flag"     address="0x00000000" mask="0x00000010" permission="rw" parameters="type=hex"/>
-	</node>
-    <node id="prescale_otf_applied"   address="0x0000090f" permission="r" parameters="type=parent">
-        <node id="production_applied"  address="0x00000000" mask="0x00000001" permission="r" parameters="type=hex"/>
-        <node id="preview_applied"     address="0x00000000" mask="0x00000010" permission="r" parameters="type=hex"/>
-	</node>
 	<node id="pulse_reset"   address="0x00000800" mask="0x00000001" permission="rw" description="Resets the frame logic"/>
 	<node id="counter_reset" address="0x00000800" mask="0x00000002" permission="rw" description="Resets the uGT counters"/>
 	<!-- SIM-SPY-MEMS -->
