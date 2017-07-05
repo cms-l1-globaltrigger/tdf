@@ -55,17 +55,17 @@
 	<node id="previous_prescale_set_index" address="0x00095001" permission="r" parameters="type=parent"/>
 
     <!-- JW 4.7.2017: added prescale OTF flags -->
-    <node id="prescale_otf_flags" address="0x00097000" permission="rw" parameters="type=parent">
+    <node id="prescale_otf_flags" address="0x00098000" permission="rw" parameters="type=parent">
       <node id="production_flag"  address="0x00000000" mask="0x00000001" permission="rw" parameters="type=number"/>
       <node id="preview_flag"     address="0x00000001" mask="0x00000001" permission="rw" parameters="type=number"/>
 	</node>
     <!-- JW 4.7.2017: added prescale OTF status regs -->
-    <node id="prescale_otf_applied"    address="0x00097010" permission="r" parameters="type=parent">
+    <node id="prescale_otf_applied"    address="0x00098010" permission="r" parameters="type=parent">
       <node id="current_prescale_otf"  address="0x00000000" permission="r" parameters="type=number"/>
       <node id="previous_prescale_otf" address="0x00000001" permission="r" parameters="type=number"/>
 	</node>
     <!-- JW 4.7.2017: added prescale preview OTF status regs -->
-    <node id="prescale_preview_otf_applied"   address="0x00097020"  permission="r" parameters="type=parent">
+    <node id="prescale_preview_otf_applied"   address="0x00098020"  permission="r" parameters="type=parent">
       <node id="current_prescale_preview_otf"  address="0x00000000" permission="r" parameters="type=number"/>
       <node id="previous_prescale_preview_otf" address="0x00000001" permission="r" parameters="type=number"/>
 	</node>
