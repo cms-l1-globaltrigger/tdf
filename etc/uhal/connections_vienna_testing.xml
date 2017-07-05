@@ -16,8 +16,8 @@
     <!-- FINOR slot -->
     <connection id="finor_amc502.7" uri="chtcp-2.0://localhost:10203?target=amc-gtlab-07.vie:50001" address_table="file://finor_amc502/mp7xe_infra.xml" />
 
-    <!-- test slot -->
-    <connection id="test_amc502.8" uri="chtcp-2.0://localhost:10203?target=amc-gtlab-08.vie:50001" address_table="file://testing_amc502/mp7xe_infra.xml" />
+    <!-- FINOR PREVIEW slot -->
+    <connection id="finor_pre_amc502.8" uri="chtcp-2.0://localhost:10203?target=amc-gtlab-08.vie:50001" address_table="file://finor_preview_amc502/mp7xe_infra.xml" />
 
     <!-- ExtCond slots -->
     <connection id="extcond_amc502.9" uri="chtcp-2.0://localhost:10203?target=amc-gtlab-09.vie:50001" address_table="file://extcond_amc502/mp7xe_infra.xml" />
