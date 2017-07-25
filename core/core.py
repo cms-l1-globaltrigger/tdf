@@ -25,6 +25,7 @@ from tdf.core import binutils
 from tdf.core.cfgreader import ConfigFileReader
 from tdf.core.translator import ItemTranslator
 from tdf.extcond.images import *
+from tdf.finor.images import *
 from tdf.mp7.images import *
 from tdf.core.images import GenericMemoryImage
 from tdf.mp7.buffgen import Buffgen
