@@ -43,5 +43,5 @@
     <node id="spy12_next_event" address="0xA0" mask="0x00000008" description="Triggers a spy event for the next orbity"/>
     <node id="rate_cnt_finor_tcds" address="0xB1" permission="r" description="Rate counter for finor to TCDS"/> <!-- HB 2016-06-21: 0xB0 was wrong, 0xB1 is correct -->
     <node id="rate_cnt_loc_finor" address="0xC8" mode="incremental" size="6" permission="r" description="Rate counter for local finor"/>
-    <node id="spymem" address="0x01000000" description="Spy memory" mode="incremental" size="4096" permission="r" parameters="foo=bar;type=mem;class=ExtCondMemoryImage" description="Memory for spying the input signals"/>
+    <node id="spymem" address="0x01000000" description="Spy memory" mode="incremental" size="4096" permission="r" parameters="type=mem;class=FinORMemoryImage" description="Memory for spying the input signals"/>
 </node>
