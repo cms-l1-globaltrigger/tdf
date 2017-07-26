@@ -4,12 +4,25 @@ import time
 
 def parse():
     parser = argparse.ArgumentParser()
-    parser.add_argument('--module', action = 'store', choices = range(1, 7), metavar = 'int', help = 'number of modules in use', default = 6)
+    parser.add_argument('--modules', action = 'store', metavar = '1-6:1-6', help = 'test between modules n:n', type = str, default = '')
     return parser.parse_args(TDF_ARGS)
 
 bit_count = 8    #the ammount of bits used
 args = parse()
 err = False    #variavle for the final output
+min_module = 1
+max_module = 6
+from_module = 0
+to_module = 6
+if args.modules != '':    #sets the new range in the for loops
+    if len(args.modules) != 3:
+        raise Exception('Argument for --module is not permitted! Try using a value between 1-6 then ":" and then another value between 1-6.')
+    if not int(args.modules[0]) <= max_module and int(args.modules[0]) >= min_module:
+        raise Exception('Argument for --module is not permitted! Try using a value between 1-6 then a : and then another value between 1-6.')
+    if not int(args.modules[2]) <= max_module and int(args.modules[2]) >= min_module:
+        raise Exception('Argument for --module is not permitted! Try using a value between 1-6 then a : and then another value between 1-6.')
+    from_module = int(args.modules[0]) - 1
+    to_module = int(args.modules[2])
 
 finor_module = 'finor_amc502.7'    #finalOR card
 finor_pre_module = 'finor_pre_amc502.8'    #finalOR pre card
@@ -29,7 +42,7 @@ cables = {    #the different cables and names
     2: 'finOR preview cable',
 }
 
-for module in range(args.module):    #sets the output of the finOR modules to 1
+for module in range(from_module, to_module):    #sets the output of the finOR modules to 1
     write(finor_module, 'payload.input_masks.module_{}'.format(module), '1')
     write(finor_pre_module, 'payload.input_masks.module_{}'.format(module), '1')
 
@@ -38,12 +51,12 @@ algo_dumps = {}
 bit_help = ['01', '02', '04', '08', '10', '20']    #used for the bits witch triggert on the finOR card
 
 
-for module_index in range(args.module):    #prepares cards and cables for output and sets them to 0
+for module_index in range(from_module, to_module):    #prepares cards and cables for output and sets them to 0
     for cable in range(3):
         write(devices[module_index], 'gt_mp7_tp_mux.tp_mux.out{}'.format(cable), '0x14')
         write(devices[module_index], 'gt_mp7_tp_mux.test_out{}'.format(cable), '0')
 
-for module_index in range(args.module):
+for module_index in range(from_module, to_module):
     for cable in range(3):
         write(devices[module_index], 'gt_mp7_tp_mux.test_out{}'.format(cable), '1')    #set one cable output to 1
         time.sleep(0.1)
