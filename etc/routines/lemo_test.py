@@ -4,7 +4,7 @@ import time
 
 def parse():
     parser = argparse.ArgumentParser()
-    parser.add_argument('--modules', action = 'store', metavar = '1-6:1-6', help = 'test between modules n:n', type = str, default = '')
+    parser.add_argument('--modules', action = 'store', metavar = '1-6:1-6', help = 'test between modules n:n', type = str)
     return parser.parse_args(TDF_ARGS)
 
 bit_count = 8    #the ammount of bits used
@@ -14,13 +14,15 @@ min_module = 1
 max_module = 6
 from_module = 0
 to_module = 6
-if args.modules != '':    #sets the new range in the for loops
-    if len(args.modules) != 3:
-        raise Exception('Argument for --module is not permitted! Try using a value between 1-6 then ":" and then another value between 1-6.')
-    if not int(args.modules[0]) <= max_module and int(args.modules[0]) >= min_module:
-        raise Exception('Argument for --module is not permitted! Try using a value between 1-6 then a : and then another value between 1-6.')
-    if not int(args.modules[2]) <= max_module and int(args.modules[2]) >= min_module:
-        raise Exception('Argument for --module is not permitted! Try using a value between 1-6 then a : and then another value between 1-6.')
+if args.modules:    #sets the new range in the for loops
+    if len(args.modules) != 3:    #checks if the argument is only 3 characters long
+        raise Exception('Argument for --module is invalid! Try using a value between 1-6 then ":" and then another value between 1-6.')
+    if not ((int(args.modules[0]) <= max_module) and (int(args.modules[0]) >= min_module)):    #checks if the first number is valid
+        raise Exception('Argument for --module is invalid! Try using a value between 1-6 then a : and then another value between 1-6.')
+    if not ((int(args.modules[2]) <= max_module) and (int(args.modules[2]) >= min_module)):    #checksis the second number is valid
+        raise Exception('Argument for --module is invalid! Try using a value between 1-6 then a : and then another value between 1-6.')
+    if int(args.modules[0]) > int(args.modules[2]):    #checks if the smaller number is at the start and the bigger number at the end
+        raise Exception('Argument for --module is invalid! Try to keep the smaller number at the start and the bigger number at the end.')
     from_module = int(args.modules[0]) - 1
     to_module = int(args.modules[2])
 
