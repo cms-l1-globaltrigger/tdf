@@ -86,7 +86,7 @@ class TestVector(object):
     MetaDataStartChar = '|'
     YamlSeparator = ':'
 
-    def __init__(self, fs = None):
+    def __init__(self, fs=None):
         self.reset()
         if isinstance(fs, str):
             self.read(open(fs, 'rb'))
@@ -346,13 +346,13 @@ class TestVectorReader(FileReader):
     """Object names in order."""
 
     def __init__(self, fp):
-        super(TestVectorReader, self).__init__(fp, fields = self.FIELDS)
+        super(TestVectorReader, self).__init__(fp, fields=self.FIELDS)
 
 class SimSpyDump(object):
     """
     """
 
-    def __init__(self, f = None):
+    def __init__(self, f=None):
         self.reset()
         if isinstance(f, str):
             self.read(open(f, 'rb'))
@@ -543,13 +543,13 @@ class SimSpyDumpReader(FileReader):
     """Object names in order."""
 
     def __init__(self, fp):
-        super(SimSpyDumpReader, self).__init__(fp, fields = self.FIELDS)
+        super(SimSpyDumpReader, self).__init__(fp, fields=self.FIELDS)
 
 class AlgorithmDump(object):
     """
     """
 
-    def __init__(self, f = None):
+    def __init__(self, f=None):
         self.reset()
         if isinstance(f, str):
             self.read(open(f, 'rb'))
@@ -596,13 +596,13 @@ class AlgorithmDumpReader(FileReader):
     """Format for columns of test vector file. Refer to class FileReader for detailed docmatation."""
 
     def __init__(self, fp):
-        super(AlgorithmDumpReader, self).__init__(fp, fields = self.FIELDS)
+        super(AlgorithmDumpReader, self).__init__(fp, fields=self.FIELDS)
 
 class FinorDump(object):
     """
     """
 
-    def __init__(self, f = None):
+    def __init__(self, f=None):
         self.reset()
         if isinstance(f, str):
             self.read(open(f, 'rb'))
@@ -647,4 +647,4 @@ class FinorDumpReader(FileReader):
     """Format for columns of test vector file. Refer to class FileReader for detailed docmatation."""
 
     def __init__(self, fp):
-        super(FinorDumpReader, self).__init__(fp, fields = self.FIELDS)
+        super(FinorDumpReader, self).__init__(fp, fields=self.FIELDS)

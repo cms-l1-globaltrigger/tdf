@@ -34,7 +34,7 @@ def branding():
     for line in lines:
         logging.info(line)
 
-def getConnectionsFile(crate = os.getenv('TDF_DEFAULT_CRATE', "vienna_testing")):
+def getConnectionsFile(crate=os.getenv('TDF_DEFAULT_CRATE', "vienna_testing")):
     root = TDF.ROOT_DIR
     return "file://{root}/etc/uhal/connections_{crate}.xml".format(**locals())
 
@@ -75,121 +75,121 @@ class TDFCommandLine(object):
     """Command line interface for the TDF core API."""
 
     def parse(self):
-        parser = argparse.ArgumentParser(prog = 'tdf', description = "Test and Development Framework - Command Line Interface", )
+        parser = argparse.ArgumentParser(prog='tdf', description="Test and Development Framework - Command Line Interface", )
         group = parser.add_mutually_exclusive_group()
-        group.add_argument('--crate', metavar = '<id>', help = "set crate environment (eg. vienna_testing)")
-        group.add_argument('-c', '--connections', metavar = '<url>', default = getConnectionsFile(), help = "use custom connections file")
-        parser.add_argument('-v', '--verbose', action = 'count', help = "prints addional information what is going on")
-        parser.add_argument('-V', '--version', action = 'version', version = "%(prog)s {0}".format(TDF.VERSION))
+        group.add_argument('--crate', metavar='<id>', help="set crate environment (eg. vienna_testing)")
+        group.add_argument('-c', '--connections', metavar='<url>', default=getConnectionsFile(), help="use custom connections file")
+        parser.add_argument('-v', '--verbose', action='count', help="prints addional information what is going on")
+        parser.add_argument('-V', '--version', action='version', version="%(prog)s {0}".format(TDF.VERSION))
         command = parser.add_subparsers()
 
         # Read command parser.
-        sub = command.add_parser('read', help = "read from a single item")
-        sub.add_argument('device', help = "device defined in connections file").completer = DevicesCompleter
-        sub.add_argument('item', help = "item defined in address table").completer = ItemsCompleter
-        sub.add_argument('-t', '--translate', action = 'store_true', help = "auto translate item defined by type paramater")
-        sub.set_defaults(func = self.cmd_read)
+        sub = command.add_parser('read', help="read from a single item")
+        sub.add_argument('device', help="device defined in connections file").completer = DevicesCompleter
+        sub.add_argument('item', help="item defined in address table").completer = ItemsCompleter
+        sub.add_argument('-t', '--translate', action='store_true', help="auto translate item defined by type paramater")
+        sub.set_defaults(func=self.cmd_read)
 
         # Write command parser.
-        sub = command.add_parser('write', help = "write to a single item")
-        sub.add_argument('device', help = "device defined in connections file").completer = DevicesCompleter
-        sub.add_argument('item', help = "item defined in address table").completer = ItemsCompleter
-        sub.add_argument('value', type = binutils.integer, help = "value to be written (dec or bin/hex with prefix)")
-        sub.add_argument('--verify', action = 'store_true', help = "read back values to verify")
-        sub.set_defaults(func = self.cmd_write)
+        sub = command.add_parser('write', help="write to a single item")
+        sub.add_argument('device', help="device defined in connections file").completer = DevicesCompleter
+        sub.add_argument('item', help="item defined in address table").completer = ItemsCompleter
+        sub.add_argument('value', type=binutils.integer, help="value to be written (dec or bin/hex with prefix)")
+        sub.add_argument('--verify', action='store_true', help="read back values to verify")
+        sub.set_defaults(func=self.cmd_write)
 
         # Blockread command parser.
-        sub = command.add_parser('blockread', help = "read from a memory item")
-        sub.add_argument('device', help = "device defined in connections file").completer = DevicesCompleter
-        sub.add_argument('item', help = "item defined in address table").completer = ItemsCompleter
-        sub.add_argument('count', nargs = '?', type = int, help = "number of registers to be read")
-        sub.set_defaults(func = self.cmd_blockread)
+        sub = command.add_parser('blockread', help="read from a memory item")
+        sub.add_argument('device', help="device defined in connections file").completer = DevicesCompleter
+        sub.add_argument('item', help="item defined in address table").completer = ItemsCompleter
+        sub.add_argument('count', nargs='?', type=int, help="number of registers to be read")
+        sub.set_defaults(func=self.cmd_blockread)
 
         # Blockwrite command parser.
-        sub = command.add_parser('blockwrite', help = "write to a memory item")
-        sub.add_argument('device', help = "device defined in connections file").completer = DevicesCompleter
-        sub.add_argument('item', help = "item defined in address table").completer = ItemsCompleter
-        sub.add_argument('value', nargs = '+', help = "values to be written (dec or hex with prefix)")
-        sub.add_argument('--verify', action = 'store_true', help = "read back values to verify")
-        sub.set_defaults(func = self.cmd_blockwrite)
+        sub = command.add_parser('blockwrite', help="write to a memory item")
+        sub.add_argument('device', help="device defined in connections file").completer = DevicesCompleter
+        sub.add_argument('item', help="item defined in address table").completer = ItemsCompleter
+        sub.add_argument('value', nargs='+', help="values to be written (dec or hex with prefix)")
+        sub.add_argument('--verify', action='store_true', help="read back values to verify")
+        sub.set_defaults(func=self.cmd_blockwrite)
 
         # Configure command parser.
-        sub = command.add_parser('configure', help = "sequence a configuration file to a device")
-        sub.add_argument('device', help = "device defined in connections file").completer = DevicesCompleter
-        sub.add_argument('filename', help = "configuration file (name or URI) to sequence (*.cfg)")
-        sub.add_argument('--verify', action = 'store_true', help = "read back values to verify")
-        sub.set_defaults(func = self.cmd_configure)
+        sub = command.add_parser('configure', help="sequence a configuration file to a device")
+        sub.add_argument('device', help="device defined in connections file").completer = DevicesCompleter
+        sub.add_argument('filename', help="configuration file (name or URI) to sequence (*.cfg)")
+        sub.add_argument('--verify', action='store_true', help="read back values to verify")
+        sub.set_defaults(func=self.cmd_configure)
 
         # Memory dump command parser.
-        sub = command.add_parser('dump', help = "dump formatted memory")
-        sub.add_argument('device', help = "device defined in connections file").completer = DevicesCompleter
-        sub.add_argument('item', help = "memory item defined in address table").completer = ItemsCompleter
+        sub = command.add_parser('dump', help="dump formatted memory")
+        sub.add_argument('device', help="device defined in connections file").completer = DevicesCompleter
+        sub.add_argument('item', help="memory item defined in address table").completer = ItemsCompleter
         group = sub.add_mutually_exclusive_group()
-        group.add_argument('--decode', action = 'store_true', help = "decode to JSON")
-        group.add_argument('--raw', action = 'store_true', help = "return raw data format")
-        sub.add_argument('-o', '--outfile', metavar = '<file>', default = sys.stdout, help = "write output to file, default is stdout")
-        sub.set_defaults(func = self.cmd_dump)
+        group.add_argument('--decode', action='store_true', help="decode to JSON")
+        group.add_argument('--raw', action='store_true', help="return raw data format")
+        sub.add_argument('-o', '--outfile', metavar='<file>', default=sys.stdout, help="write output to file, default is stdout")
+        sub.set_defaults(func=self.cmd_dump)
 
         # Memory load command parser.
-        sub = command.add_parser('load', help = "load memory from test vector or dump")
-        sub.add_argument('device', help = "device defined in connections file").completer = DevicesCompleter
-        sub.add_argument('item', help = "memory item defined in address table").completer = ItemsCompleter
-        sub.add_argument('filename', help = "pattern (:counter, :zero) or dump file to be loaded")
-        sub.add_argument('--verify', action = 'store_true', help = "read back memory to verify")
-        sub.set_defaults(func = self.cmd_load)
+        sub = command.add_parser('load', help="load memory from test vector or dump")
+        sub.add_argument('device', help="device defined in connections file").completer = DevicesCompleter
+        sub.add_argument('item', help="memory item defined in address table").completer = ItemsCompleter
+        sub.add_argument('filename', help="pattern (:counter, :zero) or dump file to be loaded")
+        sub.add_argument('--verify', action='store_true', help="read back memory to verify")
+        sub.set_defaults(func=self.cmd_load)
 
         # Memory clear command parser.
-        sub = command.add_parser('clear', help = "clear memory")
-        sub.add_argument('device', help = "device defined in connections file").completer = DevicesCompleter
-        sub.add_argument('item', help = "memory item defined in address table").completer = ItemsCompleter
-        sub.add_argument('--verify', action = 'store_true', help = "read back memory to verify")
-        sub.set_defaults(func = self.cmd_clear)
+        sub = command.add_parser('clear', help="clear memory")
+        sub.add_argument('device', help="device defined in connections file").completer = DevicesCompleter
+        sub.add_argument('item', help="memory item defined in address table").completer = ItemsCompleter
+        sub.add_argument('--verify', action='store_true', help="read back memory to verify")
+        sub.set_defaults(func=self.cmd_clear)
 
-        sub = command.add_parser('compare', help = "compare memory dumps with test vector file")
-        sub.add_argument('device', help = "device defined in connections file").completer = DevicesCompleter
-        sub.add_argument('item', help = "memory item defined in address table").completer = ItemsCompleter
-        sub.add_argument('dump',  type = argparse.FileType('rb'), help = "memory dump file")
-        sub.add_argument('testvector',  help = "emulator test vector file")
-        sub.add_argument('--offset', metavar = '<bx>', default = 0, type = int, help = "data offset to compare, default is 0")
-        sub.add_argument('--size', metavar = '<bx>', default = TDF.ORBIT_LENGTH, type=int, help = "number of bx to compare")
-        sub.add_argument('-o', '--outfile', metavar = '<file>', default = sys.stdout, type = argparse.FileType('w'), help = "write output to file")
-        sub.set_defaults(func = self.cmd_compare)
+        sub = command.add_parser('compare', help="compare memory dumps with test vector file")
+        sub.add_argument('device', help="device defined in connections file").completer = DevicesCompleter
+        sub.add_argument('item', help="memory item defined in address table").completer = ItemsCompleter
+        sub.add_argument('dump',  type=argparse.FileType('rb'), help="memory dump file")
+        sub.add_argument('testvector',  help="emulator test vector file")
+        sub.add_argument('--offset', metavar='<bx>', default=0, type=int, help="data offset to compare, default is 0")
+        sub.add_argument('--size', metavar='<bx>', default=TDF.ORBIT_LENGTH, type=int, help="number of bx to compare")
+        sub.add_argument('-o', '--outfile', metavar='<file>', default=sys.stdout, type=argparse.FileType('w'), help="write output to file")
+        sub.set_defaults(func=self.cmd_compare)
 
-        sub = command.add_parser('wait', help = "wait for item until it contains value or timeout")
-        sub.add_argument('device', help = "device defined in connections file").completer = DevicesCompleter
-        sub.add_argument('item', help = "memory item defined in address table").completer = ItemsCompleter
-        sub.add_argument('value', type = binutils.integer, help = "value to be tested (dec or bin/hex with prefix), default is 0")
-        sub.add_argument('--timeout', default = 10.0, type = float, help = "timeout in seconds, default is10.0")
-        sub.add_argument('--interval', default = 0.25, type = float, help = "interval in seconds, default is 0.25")
-        sub.set_defaults(func = self.cmd_wait)
+        sub = command.add_parser('wait', help="wait for item until it contains value or timeout")
+        sub.add_argument('device', help="device defined in connections file").completer = DevicesCompleter
+        sub.add_argument('item', help="memory item defined in address table").completer = ItemsCompleter
+        sub.add_argument('value', type=binutils.integer, help="value to be tested (dec or bin/hex with prefix), default is 0")
+        sub.add_argument('--timeout', default=10.0, type=float, help="timeout in seconds, default is10.0")
+        sub.add_argument('--interval', default=0.25, type=float, help="interval in seconds, default is 0.25")
+        sub.set_defaults(func=self.cmd_wait)
 
-        sub = command.add_parser('buffgen', help = "generate MP7 240 MHz algorithm buffer patterns")
-        sub.add_argument('pattern', default = ':counter', nargs = '?', help = "type of generated pattern (:zero, :counter) or a test vector file, default is `:counter'")
-        sub.add_argument('-q', '--quads', metavar = '<n>', default = 18, type = int, help = "number of quads, default 18")
-        sub.add_argument('-f', '--frames', metavar = '<n>', default = 1024, type = int, help = "number of frames, default 1024")
-        sub.add_argument('-b', '--board', metavar = '<id>', default = 'MP7_TEST', help = "board ID, default MP7_TEST")
-        sub.add_argument('-o', '--outfile', metavar = '<file>', default = sys.stdout, type = argparse.FileType('w'), help = "write output to file")
-        sub.set_defaults(func = self.cmd_buffgen)
+        sub = command.add_parser('buffgen', help="generate MP7 240 MHz algorithm buffer patterns")
+        sub.add_argument('pattern', default=':counter', nargs='?', help="type of generated pattern (:zero, :counter) or a test vector file, default is `:counter'")
+        sub.add_argument('-q', '--quads', metavar='<n>', default=18, type=int, help="number of quads, default 18")
+        sub.add_argument('-f', '--frames', metavar='<n>', default=1024, type=int, help="number of frames, default 1024")
+        sub.add_argument('-b', '--board', metavar='<id>', default='MP7_TEST', help="board ID, default MP7_TEST")
+        sub.add_argument('-o', '--outfile', metavar='<file>', default=sys.stdout, type=argparse.FileType('w'), help="write output to file")
+        sub.set_defaults(func=self.cmd_buffgen)
 
-        sub = command.add_parser('mp7butler', help = "wrapper to execute MP7 butler software")
-        sub.add_argument('args', nargs = argparse.REMAINDER, help = "mp7butler specific arguments")
-        sub.set_defaults(func = self.cmd_mp7butler)
+        sub = command.add_parser('mp7butler', help="wrapper to execute MP7 butler software")
+        sub.add_argument('args', nargs=argparse.REMAINDER, help="mp7butler specific arguments")
+        sub.set_defaults(func=self.cmd_mp7butler)
 
-        sub = command.add_parser('amc502butler', help = "wrapper to execute AMC502 butler software")
-        sub.add_argument('args', nargs = argparse.REMAINDER, help = "amc502butler specific arguments")
-        sub.set_defaults(func = self.cmd_amc502butler)
+        sub = command.add_parser('amc502butler', help="wrapper to execute AMC502 butler software")
+        sub.add_argument('args', nargs=argparse.REMAINDER, help="amc502butler specific arguments")
+        sub.set_defaults(func=self.cmd_amc502butler)
 
         # Unittest command parser.
-        sub = command.add_parser('unittest', help = "run a device's unittest")
-        sub.add_argument('device', help = "device defined in connections file").completer = DevicesCompleter
+        sub = command.add_parser('unittest', help="run a device's unittest")
+        sub.add_argument('device', help="device defined in connections file").completer = DevicesCompleter
         sub.add_argument('test', help = "name of the unittest").completer = UnittestsCompleter
-        sub.set_defaults(func = self.cmd_unittest)
+        sub.set_defaults(func=self.cmd_unittest)
 
         # Script runner command parser.
-        sub = command.add_parser('run', help = "execute a test or routine script")
-        sub.add_argument('routine', help = "name or URL of the script/routine to run").completer = RoutinesCompleter
-        sub.add_argument('args', nargs = argparse.REMAINDER, help = "additional test specific argument")
-        sub.set_defaults(func = self.cmd_run)
+        sub = command.add_parser('run', help="execute a test or routine script")
+        sub.add_argument('routine', help="name or URL of the script/routine to run").completer = RoutinesCompleter
+        sub.add_argument('args', nargs=argparse.REMAINDER, help="additional test specific argument")
+        sub.set_defaults(func=self.cmd_run)
 
         # Enable tab auto completion.
         argcomplete.autocomplete(parser)
@@ -204,9 +204,9 @@ class TDFCommandLine(object):
 
     def cmd_read(self, args):
         if args.translate:
-            print self.core.read(args.device, args.item, translate = True)
+            print self.core.read(args.device, args.item, translate=True)
         else:
-            print "0x{0:08x}".format(self.core.read(args.device, args.item, translate = False))
+            print "0x{0:08x}".format(self.core.read(args.device, args.item, translate=False))
 
     def cmd_write(self, args):
         self.core.write(args.device, args.item, args.value, args.verify)
@@ -217,7 +217,7 @@ class TDFCommandLine(object):
             print "0x{value:08x}".format(**locals())
 
     def cmd_blockwrite(self, args):
-        self.core.blockwrite(args.device, args.item, args.value, verify = args.verify)
+        self.core.blockwrite(args.device, args.item, args.value, verify=args.verify)
 
     def cmd_configure(self, args):
         self.core.configure(args.device, args.filename, args.verify)

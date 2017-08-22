@@ -1,7 +1,0 @@
-<node description="MP7 clock region" fwinfo="endpoint">
-	<node id="buffer" module="file://mp7_chan_buffer.xml" address="0x0"/>
-	<node id="mgt" module="file://mp7_links.xml" address="0x40"/>
-	<node id="drp" address="0x200" size="0x200" mode="block" fwinfo="endpoint;width=9"/>
-	<node id="drp_com" address="0x400" size="0x200" mode="block" fwinfo="endpoint;width=9"/>
-</node>
-

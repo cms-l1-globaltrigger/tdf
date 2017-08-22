@@ -1,7 +1,7 @@
 Dependencies
 ============
 
-On SLC6
+On SLC6 / CC7
 
  $ sudo yum install python-sphinx pip
  $ sudo pip install sphinx_rtd_theme

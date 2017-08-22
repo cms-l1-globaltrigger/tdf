@@ -1,3 +1,10 @@
+tdf (2.8.0-0) extra; urgency=medium
+
+  * Using extern CellConfig for XML adress tables
+  * Removed abandoned executables tdf-testvector and tdf-unpacker
+
+ --  Bernhard Arnold <bernhard.arnold@cern.ch>  Mon, 21 Aug 2017 12:51:36 +0200
+
 tdf (2.7.0-0) extra; urgency=medium
 
   * Introduced new TestVector and memory format.

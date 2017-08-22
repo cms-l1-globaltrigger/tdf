@@ -1,7 +1,7 @@
 #!/usr/bin/env python2
 # -*- coding: utf-8 -*-
 #
-# Copyright 2013-2014 Bernhard Arnold <bernahrd.arnold@cern.ch>
+# Copyright 2013-2017 Bernhard Arnold <bernahrd.arnold@cern.ch>
 #
 # Repository path   : $HeadURL$
 # Last committed    : $Revision$
@@ -45,7 +45,7 @@ MP7_EXECUTABLE = 'mp7butler.py'
 AMC502_EXECUTABLE = 'amc502butler.py'
 """Executable name for the AMC502 butler software."""
 
-def DEBUG_API(frame = inspect.currentframe()):
+def DEBUG_API(frame=inspect.currentframe()):
     """Inspect function call and pass details to debug logger.
     >>> DEBUG_API(inspect.currentframe())
     """
@@ -69,7 +69,7 @@ def toImage(node):
 class TDFCore(object):
     """TDF core API class."""
 
-    def __init__(self, connections, verbose = 0):
+    def __init__(self, connections, verbose=0):
         DEBUG_API(inspect.currentframe())
         self.connections = connections
         self.connectionManager = uhal.ConnectionManager(connections)
@@ -78,6 +78,7 @@ class TDFCore(object):
         self.stdout = sys.stdout
 
         info("TDF.ROOT_DIR:", TDF.ROOT_DIR)
+        info("TDF.CELLCONFIG_DIR:", TDF.CELLCONFIG_DIR)
         info("TDF.L1MENU_DIR:", TDF.L1MENU_DIR)
         info("TDF.MP7_ROOT_DIR:", TDF.MP7_ROOT_DIR)
         info("TDF.AMC502_ROOT_DIR:", TDF.AMC502_ROOT_DIR)
@@ -88,7 +89,7 @@ class TDFCore(object):
         device = self.connectionManager.getDevice(device)
         return device.getNode(item)
 
-    def read(self, device, item, translate = False):
+    def read(self, device, item, translate=False):
         """Read a single value from an *item*, returns an interger. If
         *translate* is True, returns string representation according to items
         address table description.
@@ -107,7 +108,7 @@ class TDFCore(object):
         info("read 0x{value:0x} from {device}:{item}".format(**locals()))
         return int(value)
 
-    def write(self, device, item, value, verify = False):
+    def write(self, device, item, value, verify=False):
         """Writs a single value to an *item*. If *verify* is True, raises an
         assertion error on readback missmatch.
         """
@@ -123,7 +124,7 @@ class TDFCore(object):
             if readback != value:
                 assert readback == value, "write(): verification mismatch: {device} {item} write=0x{value:08x} read=0x{readback:08x}".format(**locals())
 
-    def blockread(self, device, item, count = None):
+    def blockread(self, device, item, count=None):
         DEBUG_API(inspect.currentframe())
         node = self._getNode(device, item)
         if count is None:
@@ -133,7 +134,7 @@ class TDFCore(object):
         node.getClient().dispatch()
         return [int(value) for value in values]
 
-    def blockwrite(self, device, item, values, verify = False):
+    def blockwrite(self, device, item, values, verify=False):
         DEBUG_API(inspect.currentframe())
         node = self._getNode(device, item)
         count = len(values)
@@ -148,7 +149,7 @@ class TDFCore(object):
                 readback = readbacks[i]
                 assert readback == value, "blockwrite(): verification mismatch: {device} {item} offset={i} write=0x{value:08x} read=0x{readback:08x}".format(**locals())
 
-    def configure(self, device, filename, verify = False):
+    def configure(self, device, filename, verify=False):
         """Configure device from configuration file. If *verify* is set to
         *True* every write access is verified by reading back the value. This
         applies only for r+w items.
@@ -167,7 +168,7 @@ class TDFCore(object):
             self.write(device, item, value, verify)
         info("done.")
 
-    def dump(self, device, item, raw = False, decode = False, outfile = None):
+    def dump(self, device, item, raw=False, decode=False, outfile=None):
         DEBUG_API(inspect.currentframe())
         node = self._getNode(device, item)
         bytes_ = node.getSize()*4
@@ -185,10 +186,11 @@ class TDFCore(object):
                     fp.write(image.decode())
                 else:
                     fp.write(str(image))
+                fp.write("\n") # newline at eof
                 fp.flush()
         return image
 
-    def load(self, device, item, source, verify = False):
+    def load(self, device, item, source, verify=False):
         DEBUG_API(inspect.currentframe())
         node = self._getNode(device, item)
         parameters = node.getParameters()
@@ -205,12 +207,12 @@ class TDFCore(object):
         values = image.serialize()
         self.blockwrite(device, item, values, verify)
 
-    def clear(self, device, item, verify = False):
+    def clear(self, device, item, verify=False):
         DEBUG_API(inspect.currentframe())
         node = self._getNode(device, item)
         self.blockwrite(device, item, [0x0] * node.getSize(), verify)
 
-    def compare(self, device, item, dump, pattern, offset = 0, size = TDF.ORBIT_LENGTH, outfile = sys.stdout):
+    def compare(self, device, item, dump, pattern, offset=0, size=TDF.ORBIT_LENGTH, outfile=sys.stdout):
         DEBUG_API(inspect.currentframe())
         node = self._getNode(device, item)
         image = toImage(node)
@@ -224,7 +226,7 @@ class TDFCore(object):
         #print >>open('b', 'wb'), str(reference)
         image.compare(reference, offset, size, outfile)
 
-    def wait(self, device, item, value = 0, timeout = 10.0, interval = 0.25):
+    def wait(self, device, item, value=0, timeout=10.0, interval=0.25):
         """Wait for item until it contains requested *value* or fail after
         *timeout* in seconds, shows optional *message* on timeout. Argument
         *interval* defines the interval for reading *item*.
@@ -236,7 +238,7 @@ class TDFCore(object):
                 raise RuntimeError("Timeout waiting for `{item}' to be `0x{value:0x}' on device `{device}'.".format(**locals()))
             time.sleep(interval)
 
-    def buffgen(self, pattern, quads = 18, frames = 1024, board = 'MP7_GENERIC', outfile = sys.stdout):
+    def buffgen(self, pattern, quads=18, frames=1024, board='MP7_GENERIC', outfile=sys.stdout):
         DEBUG_API(inspect.currentframe())
         # Using MP7 tx/rx buffer generator.
         buffgen = Buffgen(board)

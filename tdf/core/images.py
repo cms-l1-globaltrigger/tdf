@@ -44,12 +44,12 @@ class GenericMemoryImage(object):
     def data(self):
         return self._data
 
-    def clear(self, value = 0):
+    def clear(self, value=0):
         """Clear image data block. Optional attribute *value* is the value the
         image is initialized."""
         self._data = [value] * self.size
 
-    def fill_counter(self, reverse = False):
+    def fill_counter(self, reverse=False):
         """Fill data space with counter. The value represents the DWORDs address
         offset. Optional attribute *reverse* provides a decrementing counter
         ending with zero. Provided for debug purposes."""
@@ -75,11 +75,11 @@ class GenericMemoryImage(object):
 
     def read(self, fs):
         """Basic file reader for single column hex files."""
-        reader = FileReader(fs, fields = (('values', 'x8'), ))
+        reader = FileReader(fs, fields=(('values', 'x8'), ))
         values = reader.read()['values']
         self.deserialize(values)
 
-    def compare(self, image, offset = 0, size = None, outfile = sys.stdout):
+    def compare(self, image, offset=0, size=None, outfile=sys.stdout):
         assert isinstance(image, GenericMemoryImage), "can only compare two memory images of same type"
         if size is None:
             size = self.size
@@ -159,7 +159,7 @@ class ColumnMemoryImage(GenericMemoryImage):
             buffer &= ~(1 << (n - offset))
         self.setValue(col, row, buffer)
 
-    def extract(self, column, count = 1):
+    def extract(self, column, count=1):
         """Extract values spanning over multiple columns."""
         assert column + count - 1 < self.columns, "extract: invalid column slice"
         values = []
@@ -170,7 +170,7 @@ class ColumnMemoryImage(GenericMemoryImage):
             values.append(binutils.bitjoin(self.data[begin:end:step], TDF.DATA_WIDTH))
         return values
 
-    def inject(self, values, column, count = 1):
+    def inject(self, values, column, count=1):
         """Inject values spanning over multiple columns."""
         # For number of values if values less/equal then blocksize.
         for i in range( min(len(values), self.blocksize) ):
@@ -184,7 +184,7 @@ class ColumnMemoryImage(GenericMemoryImage):
 
     def read(self, fs):
         """Basic file reader for multiple 32 bit colums hex files."""
-        reader = FileReader(fs, fields = (('values', 'x8', self.columns), ))
+        reader = FileReader(fs, fields=(('values', 'x8', self.columns), ))
         self.clear()
         for column, values in enumerate(reader.read()['values']):
             self.inject(values, column, 1)

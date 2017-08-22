@@ -34,7 +34,7 @@ __version__ = '$Revision$'
 UHAL_DATA_WIDTH = 32
 UHAL_ADDR_WIDTH = 32
 
-def getpath(name, default = None):
+def getpath(name, default=None):
     """Returns absolute path if variable *name* is set, else None or absolute
     path of default if set."""
     value = os.getenv(name, default)
@@ -46,7 +46,7 @@ class DataSpecification(object):
     Attribute *count* is the number of occurrences (eg. objects), attribute
     *width* the width in bits."""
 
-    def __init__(self, count, width, coding = {}):
+    def __init__(self, count, width, coding={}):
         self._count = count
         self._width = width
         self._coding = coding
@@ -115,6 +115,9 @@ class TDFCore:
     ADDR_WIDTH = UHAL_ADDR_WIDTH
     """Architecture address bus width in bits."""
 
+    HOME_DIR = os.path.expanduser("~")
+    """Absolute path to user home directory."""
+
     ROOT_DIR = getpath('TDF_ROOT', '/opt/tdf')
     """Absolute path to TDF root directory, used to access side files. If
     environment variable *TDF_ROOT* is not set it uses */opt/tdf*.
@@ -142,8 +145,13 @@ class TDFCore:
     """
 
     AMC502_ROOT_DIR = getpath('AMC502_ROOT')
-    """Absolute path to AMC502 software root directory, used to execute amc502butler
-    scripts.
+    """Absolute path to AMC502 software root directory, used to execute
+    amc502butler scripts.
+    """
+
+    CELLCONFIG_DIR = getpath('TDF_CELLCONFIG', os.path.join(HOME_DIR, 'CellConfig'))
+    """Absolute path to CellConfig directory containing device address tables.
+    If environment variable *TDF_CELLCONFIG* is not set it uses *~/CellConfig*.
     """
 
     def __init__(self): raise NotImplementedError()
