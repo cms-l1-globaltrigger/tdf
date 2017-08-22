@@ -54,7 +54,7 @@ def requires(n, width):
     """
     return n // width + bool(n % width)
 
-def bitsplit(value, n, width = 8):
+def bitsplit(value, n, width=8):
     """Split a value from left to right into *n* values of *width* bits in size.
     >>> bitsplit(0xaabbccdd, 4, 8)
     [0xdd, 0xcc, 0xbb, 0xaa]
@@ -79,7 +79,7 @@ def bitjoin(values, width):
         i += 1
     return result
 
-def bitdecode(value, slices = {}):
+def bitdecode(value, slices={}):
     """Decodes value to bit slices.
     >>> bitdecode(0xdeadbeef, dict(foo=(15,0), bar=(31,16)'))
     {'bar': 0xdead, 'foo': 0xbeef, }
@@ -90,7 +90,7 @@ def bitdecode(value, slices = {}):
         junks[name] = (value & (bitmask(msb - lsb + 1) << lsb)) >> lsb
     return junks
 
-def hexdecode(values, n = 32):
+def hexdecode(values, n=32):
     """Converts a list of values to a string. Optional attribute *n* is the
     width of the values.
         >>> values = [1769105782, 544437602, 1953066613, 29545, ]
@@ -102,7 +102,7 @@ def hexdecode(values, n = 32):
         chars.extend([chr(c) for c in bitsplit(value, charcount(n), 8) if c])
     return ''.join(chars)
 
-def hexencode(s, n = 32):
+def hexencode(s, n=32):
     """Converts a string to a list of values. Optional attribute *n* is the width
     of the values. A width of 32 bits can store 4 characters as a character
     always consumes 8 bits.
@@ -112,7 +112,7 @@ def hexencode(s, n = 32):
     count = requires(len(s), requires(n, 8)) # calculate required number of values.
     return bitsplit(int(s[::-1].encode('hex'), 16), count, n)
 
-def uuiddecode(values, n = 32):
+def uuiddecode(values, n=32):
     """Converts a list of values to an UUID4 string. Optional attribute *n* is
     the width of the values.
         >>> values = [1769105782, 544437602, 1953066613, 29545, ]
@@ -123,7 +123,7 @@ def uuiddecode(values, n = 32):
     uuid = "{0:0{1}x}".format(bitjoin(values, 32), charcount(128))
     return "{0}-{1}-{2}-{3}-{4}".format(uuid[0:8], uuid[8:12], uuid[12:16], uuid[16:20], uuid[20:33])
 
-def uuidencode(uuid, n = 32):
+def uuidencode(uuid, n=32):
     """Converts an UUID string to a list of values. Optional attribute *n* is the width
     of the values. A width of 32 bits can store 4 characters as a character
     always consumes 8 bits.

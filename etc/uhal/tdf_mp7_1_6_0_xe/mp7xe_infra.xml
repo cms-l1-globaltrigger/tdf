@@ -1,8 +1,0 @@
-<node id="TOP">
-   <node id="ctrl" module="file://mp7xe_ctrl.xml" address="0x0"/>
-    <node id="ttc" module="file://mp7_ttc.xml" address="0x40"/>
-    <node id="readout" module="file://mp7_readout.xml" address="0x50"/>
-    <node id="datapath" module="file://mp7_datapath.xml" address="0x1000"/>
-    <node id="uc" module="file://mp7_infra_uc.xml" address="0x70000000"/>
-    <node id="tdf_mp7" module="file://tdf_mp7.xml" address="0x80000000"/>
-</node>

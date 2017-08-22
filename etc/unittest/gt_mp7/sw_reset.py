@@ -12,10 +12,8 @@ def read_orbit_nr():
 # Get current orbit number.
 orbit_nr_old = read_orbit_nr()
 
-# Emit software reset.
-#configure(TDF_DEVICE, TDF_ROOT_DIR + "/etc/config/gt_mp7/sw_reset.cfg")
-write(TDF_DEVICE, "gt_mp7_frame.rb.sw_reset.reset_event", 0x1)
-write(TDF_DEVICE, "gt_mp7_frame.rb.sw_reset.reset_event", 0x0)
+# Emit counter reset.
+write(TDF_DEVICE, "gt_mp7_frame.counter_reset", 0x1)
 
 # Get current orbit number.
 orbit_nr_new = read_orbit_nr()

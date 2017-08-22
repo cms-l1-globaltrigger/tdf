@@ -66,16 +66,14 @@ setup(
     packages = ['tdf', 'tdf.core', 'tdf.extern', 'tdf.mp7', 'tdf.widgets'],
     data_files = glob_files('/opt/tdf',
         'etc/uhal/*.xml', # connection files.
-        'etc/uhal/*/*.xml', # device address tables.
         'etc/config/*/*.cfg', # device configurations.
         'etc/routines/*.py', # routine scripts.
         'etc/unittest/*/*.py', # unittests.
     ),
     scripts = (
         'bin/tdf',
+        'bin/tdf-analyzer',
         'bin/tdf-control',
-        'bin/tdf-unpacker',
-        'bin/tdf-testvector',
     ),
     setup_requires = [],
     install_requires = [],

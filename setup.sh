@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# Copyright 2013-2014 Bernhard Arnold <bernahrd.arnold@cern.ch>
+# Copyright 2013-2017 Bernhard Arnold <bernahrd.arnold@cern.ch>
 #                     Johannes Wittmann <johannes.wittmann@cern.ch>
 #
 # Repository path   : $HeadURL: $
@@ -20,5 +20,5 @@ echo PATH: $PATH
 
 # Source argcompletion
 if [ -f $TDF_ROOT/completion.sh ]; then
-        . $TDF_ROOT/completion.sh
+    . $TDF_ROOT/completion.sh
 fi

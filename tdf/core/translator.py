@@ -111,7 +111,7 @@ class ItemTranslator(BaseItemTranslator):
 
     def tr_version(self, node, values):
         """Translate value to version number."""
-        return '{2}.{1}.{0}'.format(*binutils.bitsplit(values[0], n = 3, width = 8))
+        return '{2}.{1}.{0}'.format(*binutils.bitsplit(values[0], n=3, width=8))
 
     def tr_timestamp(self, node, values):
         """Translate value from UNIX timestamp to ISO represnatation."""

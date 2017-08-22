@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright 2013-2014 Bernhard Arnold <bernahrd.arnold@cern.ch>
+# Copyright 2013-2017 Bernhard Arnold <bernahrd.arnold@cern.ch>
 #                     Johannes Wittmann <johannes.wittmann@cern.ch>
 #
 # Repository path   : $HeadURL$
@@ -31,7 +31,7 @@ class IconLabel(QtGui.QLabel):
         layout.addWidget(self.iconLabel)
         layout.addWidget(self.textLabel)
         self.setLayout(layout)
-    def icon(self, icon):
+    def icon(self):
         return QtGui.QIcon(self.iconLabel.pixmap())
     def setIcon(self, icon):
         if isinstance(icon, str):
@@ -39,7 +39,7 @@ class IconLabel(QtGui.QLabel):
         elif isinstance(icon, QtGui.QIcon):
             icon = icon.pixmap()
         self.iconLabel.setPixmap(icon)
-    def text(self, icon):
+    def text(self):
         return self.textLabel.text()
-    def setText(self, icon):
+    def setText(self, text):
         self.textLabel.setText(text)

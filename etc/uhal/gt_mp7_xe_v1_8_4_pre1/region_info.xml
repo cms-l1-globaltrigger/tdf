@@ -1,4 +1,0 @@
-<node description="MP7 region info" fwinfo="endpoint;width=0">
-	<node id="mgt_kind" mask="0xf"/>
-	<node id="formatter_kind" mask="0xf0"/>
-</node>

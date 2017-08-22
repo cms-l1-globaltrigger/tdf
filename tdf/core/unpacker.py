@@ -54,7 +54,7 @@ class RecordItem(object):
     class ComparisonError(object):
         """Comparison error value container."""
 
-        def __init__(self, item, reference, mask = None):
+        def __init__(self, item, reference, mask=None):
             self.item = item
             self.reference = reference
             self.mask = mask
@@ -90,7 +90,7 @@ class RecordItem(object):
                 return self._missmatch_item
             return self._missmatch_value
 
-    def __init__(self, code, line = 0, value = 0):
+    def __init__(self, code, line=0, value=0):
         """Attribute *code* is the items format descriptior. Optional attribute
         *line* is the line offset where the item is located in the record.
         Optional attribute *value* is the value assigned to the item. The
@@ -123,7 +123,7 @@ class RecordItem(object):
     def value(self, value):
         self._value = value & bitmask(self.bitwidth)
 
-    def compare(self, reference, mask = None):
+    def compare(self, reference, mask=None):
         """Compare items value with another item or a constant value.
 
         Attribute *reference* can be an object of class RecordItem or a constant
@@ -136,7 +136,7 @@ class RecordItem(object):
         ========
 
         >>> item = RecordItem("data:[42]")
-        >>> ref = RecordItem("reference:[0]", value = 42)
+        >>> ref = RecordItem("reference:[0]", value=42)
         >>> item.compare(reference)
         <ComparisonError object>
 
@@ -246,7 +246,7 @@ class RecordData(object):
         report listing (showing line, name, hex value, dec value).
         """
         return RECORD_EOL.join([
-            "0x{offset:04x} {value:0{chars}x}".format(offset = i, value = self.index(i), chars = charcount(RECORD_WIDTH))
+            "0x{offset:04x} {value:0{chars}x}".format(offset=i, value=self.index(i), chars=charcount(RECORD_WIDTH))
             for i in range(self.lines)])
 
 # -----------------------------------------------------------------------------
@@ -261,10 +261,10 @@ class RecordFileReader(object):
 
     def read(self):
         record = RecordData()
-        pattern = re.compile('^[0-9a-f]{{{chars}}}(?:(?:\r)?{eol})?$'.format(chars = charcount(RECORD_WIDTH), eol = RECORD_EOL))
+        pattern = re.compile('^[0-9a-f]{{{chars}}}(?:(?:\r)?{eol})?$'.format(chars=charcount(RECORD_WIDTH), eol=RECORD_EOL))
         for i, line in enumerate(self._file):
             if not pattern.match(line):
-                raise ValueError("read(): format mismatch in line {lineno}".format(lineno = i + 1))
+                raise ValueError("read(): format mismatch in line {lineno}".format(lineno=i + 1))
             record.append(int(line, 16))
         return record
 
@@ -298,7 +298,7 @@ class RecordSection(object):
     0xcafe
     """
 
-    def __init__(self, data, name = None):
+    def __init__(self, data, name=None):
         self.pos = data.pos
         self.data = data
         self.data_raw = []
@@ -328,7 +328,7 @@ class RecordSection(object):
                 setattr(self, item.name, ItemList(filter(lambda item_: item_.name == item.name, self.items)))
 
             # Sort by line number and descending LSB position.
-            self.items.sort(key = lambda item: (item.line, item.index, -item.lsb))
+            self.items.sort(key=lambda item: (item.line, item.index, -item.lsb))
 
         self.unpack_pos += 1
 

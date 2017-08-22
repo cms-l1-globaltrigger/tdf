@@ -28,7 +28,7 @@ def device_type(device):
     return device.split('.')[0]
 
 def sort_devices(devices):
-    return sorted(devices, key = lambda device: slot_number(device))
+    return sorted(devices, key=lambda device: slot_number(device))
 
 def to_namedtuple(d, classname='struct'):
     """Convert a dict into a namedtuple.
