@@ -50,12 +50,12 @@ class FileReader(object):
     # Regular expression for format string.
     FORMAT_REGEX = re.compile(r'([bodxs])(\d+)')
 
-    def __init__(self, csvfile, fields, delimiter = ' ', *args, **kwds):
+    def __init__(self, csvfile, fields, delimiter=' ', *args, **kwds):
         """Attribute *csvfile* can be any object which supports the iterator
         protocol and returns a string each time its next() method is called -
         file objects and list objects are both suitable.
         """
-        self._reader = csv.reader(csvfile, delimiter = delimiter, *args, **kwds)
+        self._reader = csv.reader(csvfile, delimiter=delimiter, *args, **kwds)
         self._fields = fields
         self._comments = '!|#' # Skips lines starting with..
         self._lineno = 1
@@ -157,7 +157,7 @@ class FileReader(object):
                 row[key] = str_formats[key].format(**{key : value})
         return row
 
-    def read(self, lines = None):
+    def read(self, lines=None):
         """Reading entire file or number of *lines* of stream and returning its
         content. Provided for convenience.
         """

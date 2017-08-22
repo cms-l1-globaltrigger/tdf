@@ -39,7 +39,7 @@ class ConfigFileReader(object):
 
     """
 
-    def __init__(self, filename = None):
+    def __init__(self, filename=None):
         self._data = []
         if filename:
             self.read(filename)
