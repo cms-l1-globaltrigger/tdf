@@ -13,8 +13,13 @@ export TDF_ROOT="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 export PYTHONPATH=$PYTHONPATH:$TDF_ROOT
 export PATH=$TDF_ROOT/bin:$PATH
 
+if [ ! -n "$TDF_CELLCONFIG" ]; then
+    export TDF_CELLCONFIG="$HOME/CellConfig"
+fi
+
 # Print paths for debug purposes.
 echo TDF_ROOT: $TDF_ROOT
+echo TDF_CELLCONFIG: $TDF_CELLCONFIG
 echo PYTHONPATH: $PYTHONPATH
 echo PATH: $PATH
 
