@@ -1,47 +1,36 @@
 from tdf.extern import argparse
-import os
+from tdf.core import TDF
+from tdf.core.binutils import bitmask
+from collections import Counter
+import sys, os
 import time
 
-def parse():
-    parser = argparse.ArgumentParser()
-    parser.add_argument('--modules', action = 'store', metavar = '1-6:1-6', help = 'test between modules n:n', type = str)
-    return parser.parse_args(TDF_ARGS)
+DEFAULT_OFFSET = 10
+MAX_MODULES = 6
+FW_BUILD = 0xabc3
 
-# the ammount of bits used
-bit_count = 8
-args = parse()
+FINOR_CABLE = 0
+VETO_CABLE = 1
+FINOR2TCDS_CABLE = 2
+
+parser = argparse.ArgumentParser()
+parser.add_argument('--modules', metavar='<n>[-<m>]', help="single module or range of modules (default 0-5)")
+parser.add_argument('--offset', metavar='<n>', default=DEFAULT_OFFSET, type=int, help="take sample data with offset (default {})".format(DEFAULT_OFFSET))
+parser.add_argument('--reset', action='store_true', help="reset AMC502 logic before test")
+args = parser.parse_args(TDF_ARGS)
 
 # variable for the final output
-err = False
-min_module = 1
-max_module = 6
-from_module = 0
-to_module = 6
+errors = False
+
+modules = range(MAX_MODULES)
 
 # sets the new range in the for loops
 if args.modules:
-    # checks if the argument is only 3 characters long
-    if len(args.modules) != 3:
-        raise Exception('Argument for --module is invalid! Try using a value between 1-6 then ":" and then another value between 1-6.')
-    # checks if the first number is valid
-    if not ((int(args.modules[0]) <= max_module) and (int(args.modules[0]) >= min_module)):
-        raise Exception('Argument for --module is invalid! Try using a value between 1-6 then a : and then another value between 1-6.')
-    # checks if the second number is valid
-    if not ((int(args.modules[2]) <= max_module) and (int(args.modules[2]) >= min_module)):
-        raise Exception('Argument for --module is invalid! Try using a value between 1-6 then a : and then another value between 1-6.')
-    # checks if the smaller number is at the start and the bigger number at the end
-    if int(args.modules[0]) > int(args.modules[2]):
-        raise Exception('Argument for --module is invalid! Try to keep the smaller number at the start and the bigger number at the end.')
-    from_module = int(args.modules[0]) - 1
-    to_module = int(args.modules[2])
+    nm = args.modules.split('-')
+    modules = range(int(nm[0]), int(nm[-1])+1)
 
-# finalOR card
-finor_module = 'finor_amc502.7'
-# finalOR pre card
-finor_pre_module = 'finor_pre_amc502.8'
-
-# the different cards installed
-devices = {
+# Source devices
+ugt_devices = {
     0: 'gt_mp7.1',
     1: 'gt_mp7.2',
     2: 'gt_mp7.3',
@@ -50,88 +39,129 @@ devices = {
     5: 'gt_mp7.6',
 }
 
-# the different cables and names
-cables = {
-    0: 'finOR cable',
-    1: 'veto cable',
-    2: 'finOR preview cable',
+finor_device = 'finor_amc502.7'
+finor_pre_device = 'finor_pre_amc502.8'
+
+# FinOR devices by cable number
+finor_devices = {
+    FINOR_CABLE: finor_device,
+    VETO_CABLE: finor_device,
+    FINOR2TCDS_CABLE: finor_pre_device,
 }
 
-# sets the output of the finOR modules to 1
-for module in range(from_module, to_module):
-    write(finor_module, 'payload.input_masks.module_{}'.format(module), '1')
-    write(finor_pre_module, 'payload.input_masks.module_{}'.format(module), '1')
+cables = (
+    FINOR_CABLE,
+    VETO_CABLE,
+    FINOR2TCDS_CABLE,
+)
 
-output = ''
-algo_dumps = {}
-# used for the bits witch triggert on the finOR card
-bit_help = ['01', '02', '04', '08', '10', '20']
+# the different cables and names
+cable_names = {
+    FINOR_CABLE: 'finOR cable',
+    VETO_CABLE: 'veto cable',
+    FINOR2TCDS_CABLE: 'finOR preview cable',
+}
 
-# prepares cards and cables for output and sets them to 0
-for module_index in range(from_module, to_module):
-    for cable in range(3):
-        write(devices[module_index], 'gt_mp7_tp_mux.tp_mux.out{}'.format(cable), '0x14')
-        write(devices[module_index], 'gt_mp7_tp_mux.test_out{}'.format(cable), '0')
+if args.reset:
+    # Reset AMC502 logic
+    amc502butler('reset', finor_device, '--clksrc=external')
+    amc502butler('reset', finor_pre_device, '--clksrc=external')
 
-for module_index in range(from_module, to_module):
-    for cable in range(3):
-        # set one cable output to 1
-        write(devices[module_index], 'gt_mp7_tp_mux.test_out{}'.format(cable), '1')
+# Setup target inputs
+for index in range(MAX_MODULES):
+    write(finor_device, 'payload.input_masks.module_{}'.format(index), 0)
+    write(finor_pre_device, 'payload.input_masks.module_{}'.format(index), 0)
+
+# Setup target inputs
+for index in modules:
+    write(finor_device, 'payload.input_masks.module_{}'.format(index), 1)
+    write(finor_pre_device, 'payload.input_masks.module_{}'.format(index), 1)
+
+# Setup source modules
+for index in modules:
+    device = ugt_devices[index]
+
+    # Verify firmware version
+    build = read(device, "gt_mp7_frame.module_info.build_version")
+    if build != FW_BUILD:
+        TDF_WARNING("device={}, loaded firmware 0x{:04x} probably not suitable for"
+                    "this test (expected 0x{:04x})".format(device, build, FW_BUILD))
+
+    for cable in cables:
+        # Configure output MUX
+        write(device, 'gt_mp7_tp_mux.tp_mux.out{}'.format(cable), 0x14)
+        # Disable cable output
+        write(device, 'gt_mp7_tp_mux.test_out{}'.format(cable), 0)
+
+for index in modules:
+    source_device = ugt_devices[index]
+    for cable in cables:
+        # Enable current cable
+        write(source_device, 'gt_mp7_tp_mux.test_out{}'.format(cable), 1)
+
         time.sleep(0.1)
-        # if the current cable is on the finOR pre module
-        if cable == 2:
-            # use the finOr pre card for the output
-            write(finor_pre_module, 'payload.spy12_next_event', '1')
-            algo_dumps[cable] = dump(finor_pre_module, 'payload.spymem')
-        else:    #use the finOR module
-            write(finor_module, 'payload.spy12_next_event', '1')
-            algo_dumps[cable] = dump(finor_module, 'payload.spymem')
-        # the variable output gets the value of the dump in line 10 and converts it into 0x and then into a string
-        output = str(hex(algo_dumps[cable].finor()[10]))
+
+        # Select target device by cable number
+        target_device = finor_devices[cable]
+        write(target_device, 'payload.spy12_next_event', 1)
+
+        # Fetch raw memory to decode and cross-check...
+        spymem = dump(target_device, 'payload.spymem')
+
+        # Check for jitter
+        samples = spymem.merged()[1:TDF.ORBIT_LENGTH]
+        counter = Counter(samples)
+        if len(counter) != 1:
+            errors += 1
+            TDF_ERROR("DETECTED JITTER:")
+            for key, count in counter.iteritems():
+                TDF_ERROR("  value=0x{:08x} count={} times".format(key, count))
+
+        # Fetch sample memory line
+        # bits [xxxxxxxTxxVVVVVVxxFFFFFF]  T=finor2tcds, V=veto, F=finor
+        sample = spymem.merged()[args.offset]
+        sample_finor = (sample >> (0 + index)) & bitmask(6)
+        sample_veto = (sample >> (8 + index)) & bitmask(6)
+        sample_finor2tcds = (sample >> 16) & bitmask(1)
+
+        # Cross check (no other bit must be active)
+        reference = (sample_finor2tcds << 16) | (sample_veto << (8 + index)) | (sample_finor << (0 + index))
+        if sample != reference:
+            errors += 1
+            TDF_ERROR("CROSS-CHECK FAILED: sample={:08x} (reference={:08x})".format(sample, reference))
+
+        TDF_NOTICE(
+            "source={}, target={}, cable={}, sample=0x{:08x}, finor={}, veto={}, finor2tcds={}".format(
+                device, target_device, cable, sample, sample_finor, sample_veto, sample_finor2tcds)
+        )
+
+        success = False
+
+        if cable == FINOR_CABLE:
+            if sample_finor == 1:
+                success = True
+
+        elif cable == VETO_CABLE:
+            if sample_veto == 1:
+                success = True
+
+        elif cable == FINOR2TCDS_CABLE:
+            if sample_finor == 1:
+                success = True
+
+        if not success:
+            errors += 1
+            TDF_ERROR("error at connection : {} => {}".format(source_device, target_device))
+            TDF_ERROR("              cable : #{} ({})".format(cable, cable_names[cable]))
+            TDF_ERROR("*** cable not connected!")
 
         time.sleep(0.1)
-        out_len = len(output)
-        # here bit_h gets the int value of bit_help[moudle_index] eg. when the module number is 3 it gets 04 back and converts it to an int (4)
-        bit_h = int(bit_help[module_index])
-        # here the output message is made
-        if cable == 1:
-            should_out = '0x{}00'.format(int(bit_help[module_index])) # eg for module 1 it is 0x100
-        elif cable == 0 or cable == 2:
-            should_out = '0x100{}'.format(bit_help[module_index]) # eg 0x10001
 
-        # if the output length is three is looks like this 0x0 then the cable isnt conneceted or no signal was sent
-        if out_len == 3:
-            err = True
-            print 'error at module: {}'.format(devices[module_index])
-            print '         cable : {}'.format(cables[cable])
-            print 'cable not connected'
-        # if the output length is 5 it looks like this 0x100 that means it can only come form the first 4 modules and is the veto cable
-        elif out_len == 5:
-            if int(output[2:3]) != bit_h and cable == 1:
-                err = True
-                print 'error at module: {}'.format(devices[module_index])
-                print '         cable : {}'.format(cables[cable])
-                print 'bit should be: {}    bits are: {}'.format(should_out, output)
-        # if the output length is 6 it looks like ths 0x1000 that means it can only come form the last 2 module and is the veto cable
-        elif out_len == 6:
-            if int(output[2:4]) != bit_h and cable == 1:
-                err = True
-                print 'error at module: {}'.format(devices[module_index])
-                print '         cable : {}'.format(cables[cable])
-                print 'bit should be: {}    bits are: {}'.format(should_out, output)
-        # if the length is 7 is looks like this 0x10001 that means it is either the finOR cable or the finOR pre cable
-        elif out_len == 7:
-            if int(output[5:]) != bit_h and cable != 1:
-                err = True
-                print 'error at module: {}'.format(devices[module_index])
-                print '         cable : {}'.format(cables[cable])
-                print 'bit should be: {}    bits are: {}'.format(should_out, output)
-        write(devices[module_index], 'gt_mp7_tp_mux.test_out{}'.format(cable), '0')
-
-print 'all cables checked'
+        # Disable current cable
+        write(source_device, 'gt_mp7_tp_mux.test_out{}'.format(cable), 0)
 
 # if any error was found err is true
-if err:
-    print 'Errors found!'
+if errors:
+    TDF_ERROR(errors, "errors found!")
 else:
-    print 'no errors found'
+    TDF_NOTICE("No errors found")

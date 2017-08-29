@@ -1,3 +1,10 @@
+tdf (2.9.0-0) extra; urgency=medium
+
+  * Added Finor502MemoryImage class
+  * Rewritten lemo_test routine
+
+ --  Bernhard Arnold <bernhard.arnold@cern.ch>  Mon, 29 Aug 2017 13:26:04 +0200
+
 tdf (2.8.0-0) extra; urgency=medium
 
   * Using extern CellConfig for XML adress tables
