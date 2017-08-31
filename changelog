@@ -1,3 +1,10 @@
+tdf (2.9.1-0) extra; urgency=medium
+
+  * Added power_cycle_slot routine
+  * Some connection file fixes
+
+ --  Bernhard Arnold <bernhard.arnold@cern.ch>  Thu, 31 Aug 2017 12:55:49 +0200
+
 tdf (2.9.0-0) extra; urgency=medium
 
   * Added Finor502MemoryImage class
