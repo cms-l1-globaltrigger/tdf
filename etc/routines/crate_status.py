@@ -3,6 +3,7 @@
 
 from tdf.extern import argparse
 from tdf.core.toolbox import slot_number, device_type
+import sys, os
 import uhal
 
 # -----------------------------------------------------------------------------
@@ -30,6 +31,12 @@ CrateConfig = [
 #  Helper functions
 # -----------------------------------------------------------------------------
 
+def tty_ctrl(*codes):
+    """Create responsive TTY control sequences."""
+    if sys.stdout.isatty():
+        return "\033[{}m".format(';'.join([format(code) for code in codes]))
+    return ''
+
 def is_device_present(device):
     """Retruns True if device is accessible (assumingly present)."""
     try:
@@ -54,21 +61,97 @@ def mp7_design(device):
 #  TTY color helpers
 # -----------------------------------------------------------------------------
 
-class Colors:
-    """TTY color codes."""
-    Reset = '\033[0m'
-    Bold = '\033[1m'
-    Red = '\033[31m'
-    Green = '\033[32m'
-    Yellow = '\033[33m'
-    Blue = '\033[34m'
-    Black = '\033[37m'
-    White = '\033[39m'
-    BgRed = '\033[41m'
-    BgGreen = '\033[42m'
-    BgYellow = '\033[43m'
-    BgBlue = '\033[44m'
-    BgBlack = '\033[48m'
+WhiteRedBold = tty_ctrl(1, 37, 41)
+WhiteGreenBold = tty_ctrl(1, 37, 42)
+WhiteYellowBold = tty_ctrl(1, 37, 43)
+WhiteBlueBold = tty_ctrl(1, 37, 44)
+WhiteCyanBold = tty_ctrl(1, 37, 45)
+Reset = tty_ctrl(0)
+Bold = tty_ctrl(1)
+
+def render_title(left, right='', width=80):
+    """Render fancy colored title bar with left and optional right content."""
+    left_width = (width - 2) - len(right)
+    right_width = len(right)
+    content = "{0:<{1}}{2:>{3}}".format(left, left_width, right, right_width)
+    return "{0} {1} {2}".format(WhiteBlueBold, content, Reset)
+
+class CrateLayout(object):
+    """Render ASCII crate visualization."""
+
+    Template = """
+╔═════╤═════╤═════╤═════╤═════╤═════╤═════╤═════╤═════╤═════╤═════╤═════╤═════╗
+║01%00│02%00│03%00│04%00│05%00│06%00│13%00│07%00│08%00│09%00│10%00│11%00│12%00║
+║01%01│02%01│03%01│04%01│05%01│06%01│13%01│07%01│08%01│09%01│10%01│11%01│12%01║
+║01%02│02%02│03%02│04%02│05%02│06%02│13%02│07%02│08%02│09%02│10%02│11%02│12%02║
+║01%03│02%03│03%03│04%03│05%03│06%03│13%03│07%03│08%03│09%03│10%03│11%03│12%03║
+║01%04│02%04│03%04│04%04│05%04│06%04├─────┤07%04│08%04│09%04│10%04│11%04│12%04║
+║01%05│02%05│03%05│04%05│05%05│06%05│14%00│07%05│08%05│09%05│10%05│11%05│12%05║
+║01%06│02%06│03%06│04%06│05%06│06%06│14%01│07%06│08%06│09%06│10%06│11%06│12%06║
+║01%07│02%07│03%07│04%07│05%07│06%07│14%02│07%07│08%07│09%07│10%07│11%07│12%07║
+║01%08│02%08│03%08│04%08│05%08│06%08│14%03│07%08│08%08│09%08│10%08│11%08│12%08║
+╚═════╧═════╧═════╧═════╧═════╧═════╧═════╧═════╧═════╧═════╧═════╧═════╧═════╝
+   1     2     3     4     5     6           7     8     9     10    11    12
+"""
+
+    def __init__(self):
+       	self.colors = {}
+        self.content = {}
+        for slot in range(1, 14 + 1):
+            self.reset(slot)
+        self.set_default()
+
+    def set_default(self):
+        """Set default labels."""
+        for slot in range(1, 6 + 1):
+            self.reset(slot)
+            self.set_text(slot, 1, ' MP7 ')
+            self.set_color(slot, WhiteGreenBold)
+        for slot in range(7, 12 + 1):
+            self.reset(slot)
+            self.set_text(slot, 1, ' AMC ')
+            self.set_text(slot, 2, ' 502 ')
+            self.set_color(slot, WhiteGreenBold)
+        self.reset(13)
+        self.set_text(13, 1, 'AMC13')
+        self.reset(14)
+        self.set_text(14, 1, ' MCH ')
+
+    def create(self, slot):
+        """Create empty content for slot."""
+        lines = 9
+        if slot > 12:
+            lines = 4
+        content = {}
+        for line in range(lines):
+            content[line] = ' ' * 5
+        return content
+
+    def encode(self, slot, line):
+        """Encode slot/line to template placeholders."""
+        return '{0:02d}%{1:02d}'.format(slot, line)
+
+    def reset(self, slot):
+        """Reset text and colors for slot."""
+        self.content[slot] = self.create(slot)
+        self.set_color(slot, Bold)
+
+    def set_text(self, slot, line, value):
+        """Set text for slot and line."""
+        self.content[slot][line] = "{:<5}".format(value)[:5]
+
+    def set_color(self, slot, color):
+        """Set (background) color for slot."""
+        self.colors[slot] = color
+
+    def render(self):
+        """Render crate representation."""
+        template = self.Template
+        for slot, lines in self.content.items():
+            for line, value in lines.items():
+                value = "{}{}{}".format(self.colors[slot], value, Reset)
+                template = template.replace(self.encode(slot, line), value)
+        return template
 
 # -----------------------------------------------------------------------------
 #  AMC status record classes
@@ -159,39 +242,17 @@ for device in CrateConfig:
 #  Print visual crate representation
 # -----------------------------------------------------------------------------
 
-# encoding
-# slot 1=a, 2=b, 3=c, ... 12=l
-doodle = """
-  ╔═══╤═══╤═══╤═══╤═══╤═══╦═══╦═══╤═══╤═══╤═══╤═══╤═══╗
-  ║aaa│bbb│ccc│ddd│eee│fff║AMC║ggg│hhh│iii│jjj│kkk│lll║
-  ║aaa│bbb│ccc│ddd│eee│fff║ 1 ║ggg│hhh│iii│jjj│kkk│lll║
-  ║aaa│bbb│ccc│ddd│eee│fff║ 3 ║ggg│hhh│iii│jjj│kkk│lll║
-  ║aa0│bb0│cc0│dd0│ee0│ff0╟───╢gg0│hh0│ii0│jj0│kk0│ll0║
-  ║aa1│bb1│cc1│dd1│ee1│ff1║ M ║gg1│hh1│ii1│jj1│kk1│ll1║
-  ║aaa│bbb│ccc│ddd│eee│fff║ C ║ggg│hhh│iii│jjj│kkk│lll║
-  ║aaa│bbb│ccc│ddd│eee│fff║ H ║ggg│hhh│iii│jjj│kkk│lll║
-  ╚═══╧═══╧═══╧═══╧═══╧═══╩═══╩═══╧═══╧═══╧═══╧═══╧═══╝
-    1   2   3   4   5   6       7   8   9   10  11  12
-"""
+crate = CrateLayout()
 
 for record in records:
-    char = chr(ord('a') + record.slot - 1)
-    bgcolor = Colors.BgGreen if record.present else Colors.BgBlack
-    doodle = doodle.replace(char*3, bgcolor+'   '+Colors.Reset)
-    label_0 = 'n/a'
-    label_1 = '   '
-    if record.present:
-        label_0 = '   '
-        if isinstance(record, MP7Record):
-            label_0 = 'MP7'
-        elif isinstance(record, AMC502Record):
-            label_0 = 'AMC'
-            label_1 = '502'
-    color = bgcolor+Colors.Black+Colors.Bold
-    doodle = doodle.replace(char*2+'0', color+label_0+Colors.Reset)
-    doodle = doodle.replace(char*2+'1', color+label_1+Colors.Reset)
+    if not record.present:
+        crate.reset(record.slot)
+        crate.set_text(record.slot, 1, ' n/a ')
+    # Add additional checks...
 
-print doodle
+print
+print render_title("Crate Status")
+print crate.render()
 
 # -----------------------------------------------------------------------------
 #  Print device records
@@ -204,11 +265,7 @@ for record in records:
         continue
 
     # Fancy title bar
-    color = Colors.BgBlue + Colors.White + Colors.Bold
-    right_label = "slot #{0} ".format(record.slot)
-    left_label = " {0:<80}".format(record.device)
-    title = "{0}{1}".format(left_label[:80-len(right_label)], right_label)
-    print "{0}{1}{2}".format(color, title, Colors.Reset)
+    print render_title(record.device, "slot #{0}".format(record.slot))
 
     # MP7 specific
     if isinstance(record, MP7Record):
