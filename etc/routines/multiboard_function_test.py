@@ -9,6 +9,7 @@ from tdf.extern import argparse
 from tdf.core.testvector import TestVector, AlgorithmDump, FinorDump
 from tdf.core.xmlmenu import XmlMenu
 from tdf.core.settings import TDF
+from tdf.core import tty
 
 import tempfile
 import sys, os, re
@@ -26,6 +27,11 @@ DEFAULT_CAP = 0
 DEFAULT_HW_DELAY = 0
 DEFAULT_TTC_BC0_BX = 3539
 
+# Keys
+RESULT_OK = "OK"
+RESULT_ERROR = "ERROR"
+RESULT_IGNORED = "IGNORED"
+
 # Default module to device mapping.
 device_mapping = {
     0: 'gt_mp7.1',
@@ -35,6 +41,11 @@ device_mapping = {
     4: 'gt_mp7.5',
     5: 'gt_mp7.6',
 }
+
+# Ignored algorithm names.
+ignored_algorithms = [
+    'L1_FirstBunchInTrain',
+]
 
 def mkfilename(module, name, prefix=TDF_NAME):
     """Returns prefixed absolute path and filename with contained module index.
@@ -281,11 +292,14 @@ try:
 
     # Print L1A statistics
     algorithms = sorted(menu.algorithms, key=lambda algorithm: algorithm.index)
+    delay_all = args.delay + args.gtl_latency
+    good = 0
+    errors = 0
+    ignored = 0
 
     print "|-----|-----|------------------------------------------------------------------|--------|--------|--------|"
     print "| Mod | Idx | Name                                                             | l1a.tv | l1a.hw | Result |"
     print "|-----|-----|------------------------------------------------------------------|--------|--------|--------|"
-    delay_all = args.delay + args.gtl_latency
     for algorithm in algorithms:
         l1a_tv = 0
         for value in tv.algorithms()[:args.size]:
@@ -293,8 +307,19 @@ try:
         l1a_hw = 0
         for value in merged_algo_dump.algorithms()[delay_all:delay_all+args.size]:
             l1a_hw += (value >> algorithm.index) & 0x1
-        result = "OK" if l1a_tv == l1a_hw else "ERROR"
-        print "| {algorithm.module_id:>3d} | {algorithm.index:>3d} | {algorithm.name:<64} |  {l1a_tv:>4d}  |  {l1a_hw:>4d}  | {result:<5}  |".format(**locals())
+        if algorithm.name in ignored_algorithms:
+            result = RESULT_IGNORED
+            result_style = tty.Yellow + tty.Bold
+            ignored += 1
+        elif l1a_tv == l1a_hw:
+            result = RESULT_OK
+            result_style = tty.Green + tty.Bold
+            good += 1
+        else:
+            result = RESULT_ERROR
+            result_style = tty.Red + tty.Bold
+            errors += 1
+        print "| {algorithm.module_id:>3d} | {algorithm.index:>3d} | {algorithm.name:<64} |  {l1a_tv:>4d}  |  {l1a_hw:>4d}  | {result_style}{result:<5}{tty.Reset}  |".format(**locals())
     print "|-----|-----|------------------------------------------------------------------|--------|--------|--------|"
 
     # Remove temporary directory
@@ -303,6 +328,11 @@ try:
     else:
         TDF_NOTICE("removing temporary directory:", temp_dir)
         shutil.rmtree(temp_dir)
+
+    if ignored:
+        TDF_WARNING(ignored, "algorithms ignored.")
+    if errors:
+        TDF_ERROR(errors, "errors occured.")
 
 # Clean up on exception
 except:
