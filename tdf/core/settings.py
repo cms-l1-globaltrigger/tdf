@@ -91,7 +91,7 @@ class DataSpecification(object):
 
     def decode(self, value):
         """Decode object value according to given bit slice mapping."""
-        assert isinstance(value, int)
+        assert isinstance(value, int) or isinstance(value, long)
         if not self._coding:
             return {}
         data = dict([(k, (v.msb, v.lsb)) for k, v in self._coding._asdict().items()])
