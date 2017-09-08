@@ -297,30 +297,35 @@ try:
     errors = 0
     ignored = 0
 
-    print "|-----|-----|------------------------------------------------------------------|--------|--------|--------|"
-    print "| Mod | Idx | Name                                                             | l1a.tv | l1a.hw | Result |"
-    print "|-----|-----|------------------------------------------------------------------|--------|--------|--------|"
+    print "|-----|-----|------------------------------------------------------------------|--------|--------|----------|"
+    print "| Mod | Idx | Name                                                             | l1a.tv | l1a.hw | Result   |"
+    print "|-----|-----|------------------------------------------------------------------|--------|--------|----------|"
     for algorithm in algorithms:
+
         l1a_tv = 0
         for value in tv.algorithms()[:args.size]:
             l1a_tv += (value >> algorithm.index) & 0x1
+
         l1a_hw = 0
         for value in merged_algo_dump.algorithms()[delay_all:delay_all+args.size]:
             l1a_hw += (value >> algorithm.index) & 0x1
+
         if algorithm.name in ignored_algorithms:
-            result = RESULT_IGNORED
+            result_code = RESULT_IGNORED
             result_style = tty.Yellow + tty.Bold
             ignored += 1
         elif l1a_tv == l1a_hw:
-            result = RESULT_OK
+            result_code = RESULT_OK
             result_style = tty.Green + tty.Bold
             good += 1
         else:
-            result = RESULT_ERROR
+            result_code = RESULT_ERROR
             result_style = tty.Red + tty.Bold
             errors += 1
-        print "| {algorithm.module_id:>3d} | {algorithm.index:>3d} | {algorithm.name:<64} |  {l1a_tv:>4d}  |  {l1a_hw:>4d}  | {result_style}{result:<5}{tty.Reset}  |".format(**locals())
-    print "|-----|-----|------------------------------------------------------------------|--------|--------|--------|"
+
+        result = "{result_style}{result_code:<7}{tty.Reset}".format(**locals())
+        print "| {algorithm.module_id:>3d} | {algorithm.index:>3d} | {algorithm.name:<64} |  {l1a_tv:>4d}  |  {l1a_hw:>4d}  | {result}  |".format(**locals())
+    print "|-----|-----|------------------------------------------------------------------|--------|--------|----------|"
 
     # Remove temporary directory
     if args.keep:
