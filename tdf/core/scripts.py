@@ -15,6 +15,7 @@
 from tdf.core import TDF
 from tdf.core import toolbox
 from tdf.core import logger
+from tdf.core import tty
 import os
 
 # -----------------------------------------------------------------------------
@@ -75,21 +76,21 @@ class ScriptRunner(BaseScriptRunner):
         try:
             execfile(filename, global_vars)
         except AssertionError, message:
-            state = "[\033[31mFAILED\033[0m]"
+            state = "[{0}FAILED{1}]".format(tty.Red, tty.Reset)
             self.report.append("{base_msg:<50} {state}".format(**locals()))
             self.report.append(" *** {message}".format(**locals()))
             self.success = False
         else:
             if not self.success and self.recursion_depth <= 1:
-                state = "[\033[31mFAILED\033[0m]"
+                state = "[{0}FAILED{1}]".format(tty.Red, tty.Reset)
                 self.report.append("{base_msg:<50} {state}".format(**locals()))
                 self.report.append(" *** one or more subcalls failed".format(**locals()))
             else:
-                state = "[  \033[32mOK\033[0m  ]"
+                state = "[  {0}OK{1}  ]".format(tty.Green, tty.Reset)
                 self.report.append("{base_msg:<50} {state}".format(**locals()))
         self.recursion_depth -= 1
         if self.recursion_depth < 1:
-            print "\n".join(self.report)
+            print os.linesep.join(self.report)
             self.report = []
         return self.success
 

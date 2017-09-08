@@ -3,6 +3,8 @@
 
 from tdf.extern import argparse
 from tdf.core.toolbox import slot_number, device_type
+from tdf.core import tty
+
 import sys, os
 import uhal
 
@@ -31,12 +33,6 @@ CrateConfig = [
 #  Helper functions
 # -----------------------------------------------------------------------------
 
-def tty_ctrl(*codes):
-    """Create responsive TTY control sequences."""
-    if sys.stdout.isatty():
-        return "\033[{}m".format(';'.join([format(code) for code in codes]))
-    return ''
-
 def is_device_present(device):
     """Retruns True if device is accessible (assumingly present)."""
     try:
@@ -58,23 +54,20 @@ def mp7_design(device):
     return design
 
 # -----------------------------------------------------------------------------
-#  TTY color helpers
+#  TTY colors and helpers
 # -----------------------------------------------------------------------------
 
-WhiteRedBold = tty_ctrl(1, 37, 41)
-WhiteGreenBold = tty_ctrl(1, 37, 42)
-WhiteYellowBold = tty_ctrl(1, 37, 43)
-WhiteBlueBold = tty_ctrl(1, 37, 44)
-WhiteCyanBold = tty_ctrl(1, 37, 45)
-Reset = tty_ctrl(0)
-Bold = tty_ctrl(1)
+RedStyle = tty.White + tty.Bold + tty.BackgroundRed
+GreenStyle = tty.White + tty.Bold + tty.BackgroundGreen
+YellowStyle = tty.White + tty.Bold + tty.BackgroundYellow
+BlueStyle = tty.White + tty.Bold + tty.BackgroundBlue
 
-def render_title(left, right='', width=80):
+def fancy_header(left, right='', width=80, style=BlueStyle):
     """Render fancy colored title bar with left and optional right content."""
     left_width = (width - 2) - len(right)
     right_width = len(right)
     content = "{0:<{1}}{2:>{3}}".format(left, left_width, right, right_width)
-    return "{0} {1} {2}".format(WhiteBlueBold, content, Reset)
+    return "{0} {1} {2}".format(style, content, tty.Reset)
 
 class CrateLayout(object):
     """Render ASCII crate visualization."""
@@ -106,16 +99,18 @@ class CrateLayout(object):
         for slot in range(1, 6 + 1):
             self.reset(slot)
             self.set_text(slot, 1, ' MP7 ')
-            self.set_color(slot, WhiteGreenBold)
+            self.set_color(slot, GreenStyle)
         for slot in range(7, 12 + 1):
             self.reset(slot)
             self.set_text(slot, 1, ' AMC ')
             self.set_text(slot, 2, ' 502 ')
-            self.set_color(slot, WhiteGreenBold)
+            self.set_color(slot, GreenStyle)
         self.reset(13)
         self.set_text(13, 1, 'AMC13')
+        self.set_color(13, GreenStyle)
         self.reset(14)
         self.set_text(14, 1, ' MCH ')
+        self.set_color(14, GreenStyle)
 
     def create(self, slot):
         """Create empty content for slot."""
@@ -134,7 +129,7 @@ class CrateLayout(object):
     def reset(self, slot):
         """Reset text and colors for slot."""
         self.content[slot] = self.create(slot)
-        self.set_color(slot, Bold)
+        self.set_color(slot, tty.Bold)
 
     def set_text(self, slot, line, value):
         """Set text for slot and line."""
@@ -149,7 +144,7 @@ class CrateLayout(object):
         template = self.Template
         for slot, lines in self.content.items():
             for line, value in lines.items():
-                value = "{}{}{}".format(self.colors[slot], value, Reset)
+                value = "{}{}{}".format(self.colors[slot], value, tty.Reset)
                 template = template.replace(self.encode(slot, line), value)
         return template
 
@@ -251,7 +246,7 @@ for record in records:
     # Add additional checks...
 
 print
-print render_title("Crate Status")
+print fancy_header("Crate Status")
 print crate.render()
 
 # -----------------------------------------------------------------------------
@@ -265,7 +260,7 @@ for record in records:
         continue
 
     # Fancy title bar
-    print render_title(record.device, "slot #{0}".format(record.slot))
+    print fancy_header(record.device, "slot #{0}".format(record.slot))
 
     # MP7 specific
     if isinstance(record, MP7Record):
