@@ -32,7 +32,7 @@ class ScriptRunner(BaseScriptRunner):
     def __init__(self, api):
         """Core is an TDF core API object used to execute the commands."""
         self.success = True
-        self.recursion_depth = 0
+        self.unittest_stack = [] # Track recursive unittest calls
         self.report = []
         self.core_api = {
             'read': api.read,
@@ -57,7 +57,6 @@ class ScriptRunner(BaseScriptRunner):
 
     def run_unittest(self, device, test):
         logger.info("running unittest", test, "on device", device)
-        self.recursion_depth += 1
         root_dir = TDF.ROOT_DIR
         # Construct absolute unittest filename.
         filename = ''.join((test, self.script_extension))
@@ -73,6 +72,8 @@ class ScriptRunner(BaseScriptRunner):
             'run_routine': self.run_routine,
         }
         global_vars.update(self.core_api)
+        # push stack
+        self.unittest_stack.append((device, test))
         try:
             execfile(filename, global_vars)
         except AssertionError, message:
@@ -81,22 +82,23 @@ class ScriptRunner(BaseScriptRunner):
             self.report.append(" *** {message}".format(**locals()))
             self.success = False
         else:
-            if not self.success and self.recursion_depth <= 1:
+            if not self.success and len(self.unittest_stack) <= 1:
                 state = "[{0}FAILED{1}]".format(tty.Red, tty.Reset)
                 self.report.append("{base_msg:<50} {state}".format(**locals()))
                 self.report.append(" *** one or more subcalls failed".format(**locals()))
             else:
                 state = "[  {0}OK{1}  ]".format(tty.Green, tty.Reset)
                 self.report.append("{base_msg:<50} {state}".format(**locals()))
-        self.recursion_depth -= 1
-        if self.recursion_depth < 1:
+        # Pop stack
+        self.unittest_stack.pop()
+        # Print report if stack empty
+        if len(self.unittest_stack) == 0:
             print os.linesep.join(self.report)
             self.report = []
         return self.success
 
     def run_routine(self, name, *args):
         logger.info("running routine", name, *args)
-        self.recursion_depth += 1
         # Construct absolute routine filename.
         filename = ''.join((name, self.script_extension))
         filename = os.path.join(TDF.ROUTINES_DIR, filename)
@@ -113,7 +115,5 @@ class ScriptRunner(BaseScriptRunner):
             execfile(filename, global_vars)
         except:
             self.success = False
-            self.recursion_depth -= 1
             raise
-        self.recursion_depth -= 1
         return self.success
