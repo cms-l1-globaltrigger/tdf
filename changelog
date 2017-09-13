@@ -1,3 +1,13 @@
+tdf (2.10.0-0) extra; urgency=medium
+
+  * Added module tdf.core.tty to provide TTY control sequences (colors)
+  * Extended class XmlMenu for reading external cabling information
+  * Fixed unittest calls in class ScriptRunner
+  * Added routine crate_status
+  * Improved routine multiboard_function_test
+
+ --  Bernhard Arnold <bernhard.arnold@cern.ch>  Wed, 13 Sep 2017 17:15:38 +0200
+
 tdf (2.9.1-0) extra; urgency=medium
 
   * Added power_cycle_slot routine
