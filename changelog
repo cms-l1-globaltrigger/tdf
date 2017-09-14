@@ -5,6 +5,7 @@ tdf (2.10.0-0) extra; urgency=medium
   * Fixed unittest calls in class ScriptRunner
   * Added routine crate_status
   * Improved routine multiboard_function_test
+  * Various minor improvements in tdf.core.settings
 
  --  Bernhard Arnold <bernhard.arnold@cern.ch>  Wed, 13 Sep 2017 17:15:38 +0200
 
