@@ -40,6 +40,14 @@ def getpath(name, default=None):
     value = os.getenv(name, default)
     return value and os.path.abspath(value)
 
+def read_settings(filename):
+    """Read YAML settings to named tuple tree."""
+    with open(filename) as fp:
+        data = yaml.load(fp.read())
+    return to_namedtuple(
+        yaml.load(open(os.path.join(TDFCoreSettings.SETTINGS_DIR, 'objects.yml')).read())
+    )
+
 class DataSpecification(object):
     """Container class for object and algorithm data specifications.
 
@@ -97,7 +105,7 @@ class DataSpecification(object):
         data = dict([(k, (v.msb, v.lsb)) for k, v in self._coding._asdict().items()])
         return binutils.bitdecode(value, data)
 
-class TDFCore:
+class TDFCoreSettings:
     """Constants for TDF software."""
 
     VERSION = TDF_VERSION
@@ -156,11 +164,11 @@ class TDFCore:
 
     def __init__(self): raise NotImplementedError()
 
-class TDF(TDFCore):
+class TDFSettings(TDFCoreSettings):
     """Constants for TDF software."""
 
     # Ugly
-    OBJECTS = to_namedtuple(yaml.load(open(os.path.join(TDFCore.SETTINGS_DIR, 'objects.yml')).read()))
+    OBJECTS = read_settings(os.path.join(TDFCoreSettings.SETTINGS_DIR, 'objects.yml'))
 
     ORBIT_LENGTH = 3564
     """LHC orbit length in bunch crossings."""
@@ -222,3 +230,6 @@ class TDF(TDFCore):
     """FINOR and veto data specification."""
 
     def __init__(self): raise NotImplementedError()
+
+# Register alias
+TDF = TDFSettings
