@@ -13,7 +13,7 @@ Load a menu from XML file:
 >>> from xmlmenu import XmlMenu
 >>> menu = XmlMenu("sample.xml")
 
-Access menu meta inforamtion:
+Access menu meta information:
 
 >>> menu.name
 'L1Menu_Sample'
@@ -31,6 +31,12 @@ Filter algorithms by attributes:
 ...     for algorithm in menu.algorithms.byModule(module):
 ...         do_something(...)
 
+To reduce execution time it is possible to disable parsing for algorithms and/or
+external signals by using flags. To read only menu meta data disable parsing:
+
+>>> from xmlmenu import XmlMenu
+>>> menu = XmlMenu("sample.xml", parse_algorithms=False, parse_externals=False)
+
 """
 
 import sys, os
@@ -38,7 +44,7 @@ import sys, os
 try:
     from lxml import etree
 except ImportError:
-    raise RuntimeError("package lxml is missing, please install \"python-lxml\" using your package manager")
+    raise RuntimeError("package lxml is missing, please install \"python-lxml\" by using your package manager")
 
 __all__ = [ 'XmlMenu', '__doc__' ]
 
@@ -151,7 +157,7 @@ class XmlMenu(object):
     [...]
     """
 
-    def __init__(self, filename=None):
+    def __init__(self, filename=None, parse_algorithms=True, parse_externals=True):
         self.filename = None
         self.name = None
         self.uuid_menu = None
@@ -161,8 +167,12 @@ class XmlMenu(object):
         self.is_obsolete = False
         self.n_modules = 0
         self.comment = ""
+        self.ext_signal_set = ""
         self.algorithms = AlgorithmContainer()
         self.externals = ExternalSignalContainer()
+        # Override parinsing options
+        self.parse_algorithms = parse_algorithms
+        self.parse_externals = parse_externals
         if filename: self.read(filename)
 
     def read(self, filename):
@@ -171,7 +181,7 @@ class XmlMenu(object):
         self.algorithms = AlgorithmContainer()
         self.externals = ExternalSignalContainer()
         with open(self.filename, 'rb') as fp:
-            # Access static elements
+            # Access meta data
             context = etree.parse(fp)
             self.name = get_xpath(context, 'name')
             self.uuid_menu = get_xpath(context, 'uuid_menu')
@@ -181,16 +191,19 @@ class XmlMenu(object):
             self.is_obsolete = get_xpath(context, 'is_obsolete', bool)
             self.n_modules = get_xpath(context, 'n_modules', int)
             self.comment = get_xpath(context, 'comment', default="")
-            # Access list of algorithms
-            fp.seek(0) # Seek begin of file
-            context = etree.iterparse(fp, tag='algorithm')
-            fast_iter(context, self._read_algorithm)
-            # Access list of external signals
-            fp.seek(0) # Seek begin of file
-            context = etree.iterparse(fp, tag='ext_signal')
-            fast_iter(context, self._read_external)
+            self.ext_signal_set = get_xpath(context, 'ext_signal_set/name', default="")
+            if self.parse_algorithms:
+                # Access list of algorithms
+                fp.seek(0) # Seek begin of file
+                context = etree.iterparse(fp, tag='algorithm')
+                fast_iter(context, self._load_algorithm)
+            if self.parse_externals:
+                # Access list of external signals
+                fp.seek(0) # Seek begin of file
+                context = etree.iterparse(fp, tag='ext_signal')
+                fast_iter(context, self._load_external)
 
-    def _read_algorithm(self, elem):
+    def _load_algorithm(self, elem):
         """Fetch information from an algorithm tag and appends it to the list of algorithms."""
         name = get_xpath(elem, 'name')
         index = get_xpath(elem, 'index', int)
@@ -201,7 +214,7 @@ class XmlMenu(object):
         algorithm = Algorithm(index, name, expression, module_id, module_index, comment)
         self.algorithms.append(algorithm)
 
-    def _read_external(self, elem):
+    def _load_external(self, elem):
         """Fetch information from an algorithm tag and appends it to the list of algorithms."""
         name = get_xpath(elem, 'name')
         system = get_xpath(elem, 'system')
@@ -219,31 +232,40 @@ if __name__ == '__main__':
     logging.getLogger().setLevel(logging.DEBUG)
 
     filename = sys.argv[1]
-    menu = XmlMenu(filename)
 
-    logging.info("menu.filename      : %s", menu.filename)
-    logging.info("menu.name          : %s", menu.name)
+    import time
+    t1 = time.time()
+    menu = XmlMenu(filename)
+    t2 = time.time()
+
+    logging.info("menu.filename      : \"%s\"", menu.filename)
+    logging.info("menu.name          : \"%s\"", menu.name)
     logging.info("menu.uuid_menu     : %s", menu.uuid_menu)
     logging.info("menu.uuid_firmware : %s", menu.uuid_firmware)
     logging.info("menu.n_modules     : %s", menu.n_modules)
     logging.info("menu.is_valid      : %s", menu.is_valid)
     logging.info("menu.is_obsolete   : %s", menu.is_obsolete)
-    logging.info("menu.comment       : %s", menu.comment)
+    if menu.comment:
+        logging.info("menu.comment       : \"%s\"", menu.comment)
+
+    logging.info("menu.ext_signal_set : \"%s\"", menu.ext_signal_set)
 
     for algorithm in menu.algorithms:
-        logging.info("algorithm.name         : %s", algorithm.name)
+        logging.info("algorithm.name         : \"%s\"", algorithm.name)
         logging.info("algorithm.index        : %s", algorithm.index)
         logging.info("algorithm.module_id    : %s", algorithm.module_id)
         logging.info("algorithm.module_index : %s", algorithm.module_index)
         if algorithm.comment:
-            logging.info("algorithm.comment : %s", algorithm.comment)
+            logging.info("algorithm.comment      : \"%s\"", algorithm.comment)
 
     for external in menu.externals:
-        logging.info("ext_signal.name        : %s", external.name)
-        logging.info("ext_signal.system      : %s", external.system)
+        logging.info("ext_signal.name        : \"%s\"", external.name)
+        logging.info("ext_signal.system      : \"%s\"", external.system)
         logging.info("ext_signal.cable       : %s", external.cable)
         logging.info("ext_signal.channel     : %s", external.channel)
         if external.label:
-            logging.info("ext_signal.label       : %s", external.label)
+            logging.info("ext_signal.label       : \"%s\"", external.label)
         if external.description:
-            logging.info("ext_signal.description : %s", external.description)
+            logging.info("ext_signal.description : \"%s\"", external.description)
+
+    logging.info("XML parsed in %.03f seconds.", (t2 - t1))
