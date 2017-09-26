@@ -5,39 +5,26 @@ from tdf.extern import argparse
 from tdf.core.toolbox import slot_number, device_type
 from tdf.core import tty
 
+from distutils.version import StrictVersion
 import sys, os
 import uhal
-
-# -----------------------------------------------------------------------------
-#  Crate configuration
-#
-#  Defines the full assembled crate layout. If an AMC is not present in the
-#  crate it is excluded and assumed not present.
-# -----------------------------------------------------------------------------
-CrateConfig = [
-    'gt_mp7.1',
-    'gt_mp7.2',
-    'gt_mp7.3',
-    'gt_mp7.4',
-    'gt_mp7.5',
-    'gt_mp7.6',
-    'finor_amc502.7',
-    'finor_pre_amc502.8',
-    'extcond_amc502.9',
-    'extcond_amc502.10',
-    'extcond_amc502.11',
-    'extcond_amc502.12',
-]
 
 # -----------------------------------------------------------------------------
 #  Helper functions
 # -----------------------------------------------------------------------------
 
+def all_equal(items):
+    """Returns True if all items in list are equal.
+    >>> all_equal([42, 42, 42, 42])
+    True
+    """
+    return len(set(items)) == 1
+
 def is_device_present(device):
     """Retruns True if device is accessible (assumingly present)."""
     try:
         read(device, 'ctrl.id')
-    except:
+    except uhal._core.exception:
         return False
     return True
 
@@ -60,14 +47,285 @@ def mp7_design(device):
 RedStyle = tty.White + tty.Bold + tty.BackgroundRed
 GreenStyle = tty.White + tty.Bold + tty.BackgroundGreen
 YellowStyle = tty.White + tty.Bold + tty.BackgroundYellow
+RedStyle = tty.White + tty.Bold + tty.BackgroundRed
 BlueStyle = tty.White + tty.Bold + tty.BackgroundBlue
 
-def fancy_header(left, right='', width=80, style=BlueStyle):
+class FancyHeader(object):
     """Render fancy colored title bar with left and optional right content."""
-    left_width = (width - 2) - len(right)
-    right_width = len(right)
-    content = "{0:<{1}}{2:>{3}}".format(left, left_width, right, right_width)
-    return "{0} {1} {2}".format(style, content, tty.Reset)
+
+    def __init__(self, style=BlueStyle, width=80):
+        self.style = style
+        self.width = width
+
+    def render(self, left, right=""):
+        left, right = format(left), format(right)
+        left_width = (self.width - 2) - len(right)
+        right_width = len(right)
+        content = "{0:<{1}}{2:>{3}}".format(left, left_width, right, right_width)
+        return "{0} {1} {2}".format(self.style, content, tty.Reset)
+
+# -----------------------------------------------------------------------------
+#  Device property classes
+# -----------------------------------------------------------------------------
+
+class DeviceProperty(object):
+
+    def __init__(self, name, label=None, callback=None, template=None):
+        self.name = name
+        self.label = label or name
+        self.callback = callback
+        self.template = template or "{}"
+        # Retrieved information
+        self.value = None
+        self.is_warning = False
+        self.is_error = False
+        self.message = ""
+
+    def dispatch(self):
+        """Dispatch property value by executing assigned callback function."""
+        try:
+            self.value = self.callback() if self.callback else None
+        except:
+            self.value = None
+            self.is_error = True
+
+    def render(self):
+        """Render property for device listing.
+        >>> print property.render()
+        '    board ID : 10'
+        """
+        # Set proper visual appeareance for TTY
+        style = tty.Reset
+        if self.is_error:
+            style = tty.Red+tty.Bold
+        elif self.is_warning:
+            style = tty.Yellow+tty.Bold
+        # Apply custom string formatting templates
+        value = self.template.format(self.value)
+        message = ""
+        if self.message:
+            message = "{}{:>24} : *** {:<49}".format(os.linesep, "", self.message)
+        # Return endered item
+        return "{}{:>24} : {:<53}{}{}".format(style, self.label, value, message, tty.Reset)
+
+class Device(object):
+
+    def __init__(self, device):
+        self.device = device
+        self.is_present = False
+        self.properties = {}
+        self.properties_order = []
+        self.is_warning = False
+        self.is_error = False
+
+    @property
+    def slot(self):
+        return slot_number(self.device)
+
+    @property
+    def ordered_properties(self):
+        """Returns ordered list of properties."""
+        unordered = list(set(self.properties.keys()) - set(self.properties_order))
+        properties_order = self.properties_order + unordered
+        return sorted(self.properties.values(), key=lambda prop: properties_order.index(prop.name))
+
+    def add_property(self, name, label=None, callback=None, template=None):
+        prop = DeviceProperty(name, label, callback, template)
+        self.properties[name] = prop
+        setattr(self, name, prop)
+
+    def dispatch(self):
+        for prop in self.properties.values():
+            prop.dispatch()
+
+    def render(self):
+        """Render device header and properties."""
+        lines = []
+        slot = "slot #{}".format(self.slot)
+        lines.append(FancyHeader(BlueStyle).render(self.device, slot))
+        for prop in self.ordered_properties:
+            lines.append(format(prop.render()))
+        return os.linesep.join(lines)
+
+class MP7Device(Device):
+
+    def __init__(self, device):
+        super(MP7Device, self).__init__(device)
+        self.add_property('mp7_firmware', "MP7 firmware", self._mp7_version)
+        self.add_property('mp7_design', "MP7 design", self._mp7_design)
+        self.properties_order = [
+            'mp7_firmware',
+            'mp7_design',
+        ]
+
+    def _mp7_present(self):
+        """Retruns True if device is accessible (assumingly present)."""
+        try:
+            read(self.device, 'ctrl.id')
+        except uhal._core.exception:
+            return False
+        return True
+
+    def _mp7_version(self):
+        """Retruns MP7 firmware version."""
+        a = read(self.device, 'ctrl.id.fwrev.a')
+        b = read(self.device, 'ctrl.id.fwrev.b')
+        c = read(self.device, 'ctrl.id.fwrev.c')
+        return "{0}.{1}.{2}".format(a, b, c)
+
+    def _mp7_design(self):
+        """Retruns MP7 firmware design version."""
+        design = read(self.device, 'ctrl.id.fwrev.design')
+        return design
+
+    def dispatch(self):
+        """Detect if board is present, if so dispatch all properties."""
+        self.is_present = self._mp7_present()
+        if self.is_present:
+            super(MP7Device, self).dispatch()
+
+class GtDevice(MP7Device):
+
+    def __init__(self, device):
+        super(GtDevice, self).__init__(device)
+        self.add_property(
+            name='menu_name',
+            label="menu name",
+            callback=lambda: read(self.device, 'gt_mp7_gtlfdl.read_versions.l1tm_name', translate=True)
+        )
+        self.add_property(
+            name='menu_uuid',
+            label="menu UUID",
+            callback=lambda: read(self.device, 'gt_mp7_gtlfdl.read_versions.l1tm_uuid', translate=True)
+        )
+        self.add_property(
+            name='menu_uuid_fw',
+            label="menu firmware UUID",
+            callback=lambda: read(self.device, 'gt_mp7_gtlfdl.read_versions.l1tm_fw_uuid', translate=True)
+        )
+        self.add_property(
+            name='module_id',
+            label="module ID",
+            callback=lambda: read(self.device, 'gt_mp7_gtlfdl.read_versions.module_id')
+        )
+        self.add_property(
+            name='producer_version',
+            label="VHDL producer",
+            callback=lambda: read(self.device, 'gt_mp7_gtlfdl.read_versions.l1tm_compiler_version', translate=True)
+        )
+        self.add_property(
+            name='timestamp',
+            callback=lambda: read(self.device, 'gt_mp7_frame.module_info.timestamp', translate=True)
+        )
+        self.add_property(
+            name='hostname',
+            callback=lambda: read(self.device, 'gt_mp7_frame.module_info.hostname', translate=True)
+        )
+        self.add_property(
+            name='username',
+            callback=lambda: read(self.device, 'gt_mp7_frame.module_info.username', translate=True)
+        )
+        self.add_property(
+            name='build_version',
+            label="uGT build",
+            template="0x{:04x}",
+            callback=lambda: read(self.device, 'gt_mp7_frame.module_info.build_version')
+        )
+        self.add_property(
+            name='payload_version',
+            label="payload (frame) version",
+            callback=lambda: read(self.device, 'gt_mp7_frame.module_info.frame_version', translate=True)
+        )
+        self.add_property(
+            name='gtl_version',
+            label="GTL version",
+            callback=lambda: read(self.device, 'gt_mp7_gtlfdl.read_versions.gtl_fw_version', translate=True)
+        )
+        self.add_property(
+            name='fdl_version',
+            label="FDL version",
+            callback=lambda: read(self.device, 'gt_mp7_gtlfdl.read_versions.fdl_fw_version', translate=True)
+        )
+
+        self.properties_order = [
+            'menu_name',
+            'menu_uuid',
+            'menu_uuid_fw',
+            'module_id',
+            'producer_version',
+            'timestamp',
+            'hostname',
+            'username',
+            'build_version',
+            'payload_version',
+            'gtl_version',
+            'fdl_version',
+        ] + self.properties_order
+
+    def dispatch(self):
+        super(GtDevice, self).dispatch()
+
+        # Validations
+        if self.module_id.value != (self.slot - 1):
+            self.module_id.is_warning = True
+            self.module_id.message = "wrong slot number?"
+
+        # if self.is_present:
+        #     if StrictVersion(self.gtl_version.value) < StrictVersion("1.4.1"):
+        #         self.gtl_version.is_warning = True
+        #         self.gtl_version.message = "outdated GTL logic"
+
+class AMC502Device(MP7Device):
+
+    def __init__(self, device):
+        super(AMC502Device, self).__init__(device)
+        self.add_property(
+            name='board_id',
+            label="board ID",
+            callback=lambda: read(self.device, 'payload.module_info.board_id')
+        )
+        self.add_property(
+            name='build_version',
+            label="build version",
+            template="0x{:04x}",
+            callback=lambda: read(self.device, 'payload.module_info.build_version')
+        )
+        self.properties_order = [
+            'board_id',
+            'build_version',
+        ] + self.properties_order
+
+    def dispatch(self):
+        super(AMC502Device, self).dispatch()
+        # Validations
+        if self.board_id.value != self.slot:
+            self.board_id.is_warning = True
+            self.board_id.message = "wrong slot number?"
+
+class FinorDevice(AMC502Device):
+
+    def __init__(self, device):
+        super(FinorDevice, self).__init__(device)
+        self.add_property(
+            name='timestamp',
+            label="timestamp (synthesis)",
+            callback=lambda: read(self.device, 'payload.module_info.timestamp', translate=True)
+        )
+        self.add_property(
+            name='username',
+            label="username (crator)",
+            callback=lambda: read(self.device, 'payload.module_info.username', translate=True)
+        )
+
+class PreviewDevice(FinorDevice):
+
+    def __init__(self, device):
+        super(PreviewDevice, self).__init__(device)
+
+class ExtcondDevice(AMC502Device):
+
+    def __init__(self, device):
+        super(ExtcondDevice, self).__init__(device)
 
 class CrateLayout(object):
     """Render ASCII crate visualization."""
@@ -98,18 +356,18 @@ class CrateLayout(object):
         """Set default labels."""
         for slot in range(1, 6 + 1):
             self.reset(slot)
-            self.set_text(slot, 1, ' MP7 ')
+            self.set_text(slot, 1, " MP7 ")
             self.set_color(slot, GreenStyle)
         for slot in range(7, 12 + 1):
             self.reset(slot)
-            self.set_text(slot, 1, ' AMC ')
-            self.set_text(slot, 2, ' 502 ')
+            self.set_text(slot, 1, " AMC ")
+            self.set_text(slot, 2, " 502 ")
             self.set_color(slot, GreenStyle)
         self.reset(13)
-        self.set_text(13, 1, 'AMC13')
+        self.set_text(13, 1, "AMC13")
         self.set_color(13, GreenStyle)
         self.reset(14)
-        self.set_text(14, 1, ' MCH ')
+        self.set_text(14, 1, " MCH ")
         self.set_color(14, GreenStyle)
 
     def create(self, slot):
@@ -119,12 +377,12 @@ class CrateLayout(object):
             lines = 4
         content = {}
         for line in range(lines):
-            content[line] = ' ' * 5
+            content[line] = " " * 5
         return content
 
     def encode(self, slot, line):
         """Encode slot/line to template placeholders."""
-        return '{0:02d}%{1:02d}'.format(slot, line)
+        return "{0:02d}%{1:02d}".format(slot, line)
 
     def reset(self, slot):
         """Reset text and colors for slot."""
@@ -149,68 +407,6 @@ class CrateLayout(object):
         return template
 
 # -----------------------------------------------------------------------------
-#  AMC status record classes
-# -----------------------------------------------------------------------------
-
-class CoreRecord(object):
-    """Tests if a device is present and tries to retrieve common MP7 core
-    information available on every board.
-    """
-    def __init__(self, device):
-        self.device = device
-        self.present = is_device_present(device)
-        self.mp7_version = mp7_version(device) if self.present else None
-        self.mp7_design = mp7_design(device) if self.present else None
-
-    @property
-    def slot(self):
-        """Returns device slot number."""
-        return slot_number(self.device)
-
-    @property
-    def type(self):
-        """Returns device full type name."""
-        return device_type(self.device)
-
-    def get(self, item, default=None, translate=True):
-        """Retruns value read from item if device present or else a default value."""
-        if self.present:
-            return read(self.device, item, translate=translate)
-        return default
-
-class MP7Record(CoreRecord):
-    """Retrieves MP7 board specific information."""
-
-    def __init__(self, device):
-        super(MP7Record, self).__init__(device)
-        self.timestamp = self.get("gt_mp7_frame.module_info.timestamp")
-        self.hostname = self.get("gt_mp7_frame.module_info.hostname")
-        self.username = self.get("gt_mp7_frame.module_info.username")
-        self.frame = self.get("gt_mp7_frame.module_info.frame_version")
-        self.l1tm_name = self.get("gt_mp7_gtlfdl.read_versions.l1tm_name")
-        self.l1tm_uuid = self.get("gt_mp7_gtlfdl.read_versions.l1tm_uuid")
-        self.l1tm_uuid_fw = self.get("gt_mp7_gtlfdl.read_versions.l1tm_fw_uuid")
-        self.l1tm_compiler = self.get("gt_mp7_gtlfdl.read_versions.l1tm_compiler_version")
-        self.gtl = self.get("gt_mp7_gtlfdl.read_versions.gtl_fw_version")
-        self.fdl = self.get("gt_mp7_gtlfdl.read_versions.fdl_fw_version")
-        self.build = self.get("gt_mp7_frame.module_info.build_version", translate=False)
-        try:
-            self.module_id = self.get("gt_mp7_gtlfdl.read_versions.module_id", translate=False)
-        except uhal._core.exception:
-            self.module_id = "n/a"
-
-class AMC502Record(CoreRecord):
-    """Retrieves AMC502 board specific information."""
-
-    def __init__(self, device):
-        super(AMC502Record, self).__init__(device)
-        self.timestamp = self.get("payload.module_info.timestamp")
-        self.username = self.get("payload.module_info.username")
-        # self.hostname = self.get("payload.module_info.hostname") # TODO n/a
-        self.board_id = self.get("payload.module_info.board_id", translate=False)
-        self.build = self.get("payload.module_info.build_version", translate=False)
-
-# -----------------------------------------------------------------------------
 #  Parse command line args
 # -----------------------------------------------------------------------------
 
@@ -222,74 +418,40 @@ args = parser.parse_args(TDF_ARGS)
 #  Create records
 # -----------------------------------------------------------------------------
 
-records = []
+devices = []
+devices.append(GtDevice('gt_mp7.1'))
+devices.append(GtDevice('gt_mp7.2'))
+devices.append(GtDevice('gt_mp7.3'))
+devices.append(GtDevice('gt_mp7.4'))
+devices.append(GtDevice('gt_mp7.5'))
+devices.append(GtDevice('gt_mp7.6'))
+devices.append(PreviewDevice('finor_pre_amc502.8'))
+devices.append(ExtcondDevice('extcond_amc502.9'))
+devices.append(ExtcondDevice('extcond_amc502.9'))
+devices.append(ExtcondDevice('extcond_amc502.10'))
+devices.append(ExtcondDevice('extcond_amc502.11'))
+devices.append(ExtcondDevice('extcond_amc502.12'))
 
-for device in CrateConfig:
-    if device_type(device).endswith('_mp7'):
-        record= MP7Record(device)
-    elif device_type(device).endswith('_amc502'):
-        record = AMC502Record(device)
-    else:
-        raise RuntimeError("Unknown device {}".format(device))
-    records.append(record)
-
-# -----------------------------------------------------------------------------
-#  Print visual crate representation
-# -----------------------------------------------------------------------------
+for device in devices:
+    device.dispatch()
 
 crate = CrateLayout()
 
-for record in records:
-    if not record.present:
-        crate.reset(record.slot)
-        crate.set_text(record.slot, 1, ' n/a ')
+for device in devices:
+    if not device.is_present:
+        crate.reset(device.slot)
+        crate.set_text(device.slot, 1, " n/a ")
+    elif device.is_warning:
+        crate.set_color(device.slot, YellowStyle)
+    elif device.is_error:
+        crate.set_color(device.slot, RedStyle)
     # Add additional checks...
 
 print
-print fancy_header("Crate Status")
+print FancyHeader().render("Crate Status")
 print crate.render()
 
-# -----------------------------------------------------------------------------
-#  Print device records
-# -----------------------------------------------------------------------------
-
-for record in records:
-
-    # Skip boards that are not present
-    if not record.present:
-        continue
-
-    # Fancy title bar
-    print fancy_header(record.device, "slot #{0}".format(record.slot))
-
-    # MP7 specific
-    if isinstance(record, MP7Record):
-        print "                 l1tm name :", record.l1tm_name
-        print "                 l1tm UUID :", record.l1tm_uuid
-        print "              l1tm UUID fw :", record.l1tm_uuid_fw
-        print "                 module_id :", record.module_id
-        print "     VHDL producer version :", record.l1tm_compiler
-        print "     timestamp (synthesis) :", record.timestamp
-        print "                  hostname :", record.hostname
-        print "                  username :", record.username
-        print "      uGT fw build version :", hex(record.build)
-
-    # AMC502 specific
-    if isinstance(record, AMC502Record):
-        # TODO: exclude module info for extconds for the time being
-        if not record.type.startswith('extcond'):
-             print "     timestamp (synthesis) :", record.timestamp
-             print "                  username :", record.username
-        print "                  board ID :", record.board_id
-        print "    firmware build version :", hex(record.build)
-
-    # MP7 specific
-    if isinstance(record, MP7Record):
-        print "   payload (frame) version :", record.frame
-        print "      gtl firmware version :", record.gtl
-        print "      fdl firmware version :", record.fdl
-
-    # Common information
-    print "      MP7 firmware version :", record.mp7_version
-    print "       MP7 firmware design :", record.mp7_design
-    print
+for device in devices:
+    if device.is_present:
+        print device.render()
+        print
