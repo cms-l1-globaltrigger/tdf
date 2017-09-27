@@ -6,6 +6,7 @@ from tdf.core.toolbox import slot_number, device_type
 from tdf.core import tty
 
 from distutils.version import StrictVersion
+import random
 import sys, os
 import uhal
 
@@ -49,6 +50,14 @@ GreenStyle = tty.White + tty.Bold + tty.BackgroundGreen
 YellowStyle = tty.White + tty.Bold + tty.BackgroundYellow
 RedStyle = tty.White + tty.Bold + tty.BackgroundRed
 BlueStyle = tty.White + tty.Bold + tty.BackgroundBlue
+
+def get_style(item):
+    """Retruns style for fancy header according to error level of item."""
+    if item.is_error:
+        return RedStyle
+    if item.is_warning:
+        return YellowStyle
+    return BlueStyle
 
 class FancyHeader(object):
     """Render fancy colored title bar with left and optional right content."""
@@ -142,7 +151,12 @@ class Device(object):
         """Render device header and properties."""
         lines = []
         slot = "slot #{}".format(self.slot)
-        lines.append(FancyHeader(BlueStyle).render(self.device, slot))
+        style = BlueStyle
+        if self.is_warning:
+            style = YellowStyle
+        if self.is_error:
+            style = RedStyle
+        lines.append(FancyHeader(get_style(self)).render(self.device, slot))
         for prop in self.ordered_properties:
             lines.append(format(prop.render()))
         return os.linesep.join(lines)
@@ -264,16 +278,29 @@ class GtDevice(MP7Device):
 
     def dispatch(self):
         super(GtDevice, self).dispatch()
+        if self.is_present:
+            # Validations
+            if self.module_id.value != (self.slot - 1):
+                self.module_id.is_warning = True
+                self.module_id.message = "wrong slot number?"
+                self.is_warning = True
 
-        # Validations
-        if self.module_id.value != (self.slot - 1):
-            self.module_id.is_warning = True
-            self.module_id.message = "wrong slot number?"
 
-        # if self.is_present:
-        #     if StrictVersion(self.gtl_version.value) < StrictVersion("1.4.1"):
-        #         self.gtl_version.is_warning = True
-        #         self.gtl_version.message = "outdated GTL logic"
+    def match(self, other):
+        """Match with reference device."""
+        assert isinstance(other, GtDevice)
+        if self.menu_name.value != other.menu_name.value:
+            self.menu_name.is_warning = True
+            self.menu_name.message = "menu name mismatch"
+            self.is_warning = True
+        if self.menu_uuid.value != other.menu_uuid.value:
+            self.menu_uuid.is_warning = True
+            self.menu_uuid.message = "menu UUID mismatch"
+            self.is_warning = True
+        if self.menu_uuid_fw.value != other.menu_uuid_fw.value:
+            self.menu_uuid_fw.is_warning = True
+            self.menu_uuid_fw.message = "firmware UUID mismatch"
+            self.is_warning = True
 
 class AMC502Device(MP7Device):
 
@@ -297,10 +324,11 @@ class AMC502Device(MP7Device):
 
     def dispatch(self):
         super(AMC502Device, self).dispatch()
-        # Validations
-        if self.board_id.value != self.slot:
-            self.board_id.is_warning = True
-            self.board_id.message = "wrong slot number?"
+        if self.is_present:
+            # Validations
+            if self.board_id.value != self.slot:
+                self.board_id.is_warning = True
+                self.board_id.message = "wrong slot number?"
 
 class FinorDevice(AMC502Device):
 
@@ -326,6 +354,14 @@ class ExtcondDevice(AMC502Device):
 
     def __init__(self, device):
         super(ExtcondDevice, self).__init__(device)
+
+    def match(self, other):
+        """Match with reference device."""
+        assert isinstance(other, ExtcondDevice)
+        if self.build_version.value != other.build_version.value:
+            self.build_version.is_warning = True
+            self.build_version.message = "build version mismatch"
+            self.is_warning = True
 
 class CrateLayout(object):
     """Render ASCII crate visualization."""
@@ -369,6 +405,8 @@ class CrateLayout(object):
         self.reset(14)
         self.set_text(14, 1, " MCH ")
         self.set_color(14, GreenStyle)
+        self.is_warning = False
+        self.is_error = False
 
     def create(self, slot):
         """Create empty content for slot."""
@@ -418,40 +456,85 @@ args = parser.parse_args(TDF_ARGS)
 #  Create records
 # -----------------------------------------------------------------------------
 
-devices = []
-devices.append(GtDevice('gt_mp7.1'))
-devices.append(GtDevice('gt_mp7.2'))
-devices.append(GtDevice('gt_mp7.3'))
-devices.append(GtDevice('gt_mp7.4'))
-devices.append(GtDevice('gt_mp7.5'))
-devices.append(GtDevice('gt_mp7.6'))
-devices.append(PreviewDevice('finor_pre_amc502.8'))
-devices.append(ExtcondDevice('extcond_amc502.9'))
-devices.append(ExtcondDevice('extcond_amc502.9'))
-devices.append(ExtcondDevice('extcond_amc502.10'))
-devices.append(ExtcondDevice('extcond_amc502.11'))
-devices.append(ExtcondDevice('extcond_amc502.12'))
+gt_devices = [
+    GtDevice('gt_mp7.1'),
+    GtDevice('gt_mp7.2'),
+    GtDevice('gt_mp7.3'),
+    GtDevice('gt_mp7.4'),
+    GtDevice('gt_mp7.5'),
+    GtDevice('gt_mp7.6'),
+]
+finor_devices = [
+    PreviewDevice('finor_amc502.7'),
+    PreviewDevice('finor_pre_amc502.8'),
+]
+extcond_devices = [
+    ExtcondDevice('extcond_amc502.9'),
+    ExtcondDevice('extcond_amc502.9'),
+    ExtcondDevice('extcond_amc502.10'),
+    ExtcondDevice('extcond_amc502.11'),
+    ExtcondDevice('extcond_amc502.12'),
+]
 
+devices = []
+devices.extend(gt_devices)
+devices.extend(finor_devices)
+devices.extend(extcond_devices)
+
+# Dispatch devices
 for device in devices:
     device.dispatch()
 
+# Match MP7 devices
+for device in [device for device in gt_devices if device.is_present]:
+    device.match(gt_devices[0])
+
+# Match Extcond devices
+for device in [device for device in extcond_devices if device.is_present]:
+    device.match(extcond_devices[0])
+
+# Build crate
 crate = CrateLayout()
 
 for device in devices:
-    if not device.is_present:
+    if device.is_present:
+        if device.is_warning:
+            crate.set_color(device.slot, YellowStyle)
+            crate.is_warning = True
+        if device.is_error:
+            crate.set_color(device.slot, RedStyle)
+            crate.is_error = True
+    else:
         crate.reset(device.slot)
         crate.set_text(device.slot, 1, " n/a ")
-    elif device.is_warning:
-        crate.set_color(device.slot, YellowStyle)
-    elif device.is_error:
-        crate.set_color(device.slot, RedStyle)
-    # Add additional checks...
 
 print
-print FancyHeader().render("Crate Status")
+print FancyHeader(get_style(crate)).render("Crate Status")
 print crate.render()
 
+# Print device reports
 for device in devices:
     if device.is_present:
         print device.render()
         print
+
+# Collect earnings/errors.
+warnings = 0
+errors = 0
+for device in devices:
+    if device.is_present:
+        if device.is_warning:
+            warnings += 1
+        if device.is_error:
+            errors += 1
+
+# Dump warnings/errors.
+if warnings:
+    print FancyHeader(YellowStyle).render("Warnings: {}".format(warnings))
+    print
+if errors:
+    print FancyHeader(RedStyle).render("Errors: {}".format(errors))
+    print
+if not (warnings or errors):
+    print FancyHeader(GreenStyle).render("All is well!")
+    print
