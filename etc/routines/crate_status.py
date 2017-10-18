@@ -109,8 +109,8 @@ class DeviceProperty(object):
             style = tty.Red+tty.Bold
         elif self.is_warning:
             style = tty.Yellow+tty.Bold
-        # Apply custom string formatting templates
-        value = self.template.format(self.value)
+        # Apply custom string formatting templates if value not None
+        value = '' if value is None else self.template.format(self.value)
         message = ""
         if self.message:
             message = "{}{:>24} : *** {:<49}".format(os.linesep, "", self.message)
@@ -291,15 +291,15 @@ class GtDevice(MP7Device):
         assert isinstance(other, GtDevice)
         if self.menu_name.value != other.menu_name.value:
             self.menu_name.is_warning = True
-            self.menu_name.message = "menu name mismatch"
+            self.menu_name.message = "menu name does not match module #{}".format(other.slot)
             self.is_warning = True
         if self.menu_uuid.value != other.menu_uuid.value:
             self.menu_uuid.is_warning = True
-            self.menu_uuid.message = "menu UUID mismatch"
+            self.menu_uuid.message = "menu UUID does not match module #{}".format(other.slot)
             self.is_warning = True
         if self.menu_uuid_fw.value != other.menu_uuid_fw.value:
             self.menu_uuid_fw.is_warning = True
-            self.menu_uuid_fw.message = "firmware UUID mismatch"
+            self.menu_uuid_fw.message = "firmware UUID does not match module #{}".format(other.slot)
             self.is_warning = True
 
 class AMC502Device(MP7Device):
@@ -469,7 +469,6 @@ finor_devices = [
     PreviewDevice('finor_pre_amc502.8'),
 ]
 extcond_devices = [
-    ExtcondDevice('extcond_amc502.9'),
     ExtcondDevice('extcond_amc502.9'),
     ExtcondDevice('extcond_amc502.10'),
     ExtcondDevice('extcond_amc502.11'),
