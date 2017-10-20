@@ -34,9 +34,9 @@ if args.sort:
         reverse=reverse
     )
 
-print "|---------|-----------|----------|--------------------------------|--------|--------------|"
-print "| Channel | Rate (Hz) | Count    | Name                           | System | Label        |"
-print "|---------|-----------|----------|--------------------------------|--------|--------------|"
+print "|---------|------------|-----------|--------------------------------|--------|--------------|"
+print "| Channel | Rate (Hz)  | Count     | Name                           | System | Label        |"
+print "|---------|------------|-----------|--------------------------------|--------|--------------|"
 for channel, count in counts:
     rate = count / LUMI_SEC
     name = 'n/a'
@@ -52,5 +52,5 @@ for channel, count in counts:
             name = item.name[:31]
             system = item.system[:9]
             label = item.label[:12]
-    print "| {channel:>7d} | {rate_style}{rate:>9.1f}{tty.Reset} | {rate_style}{count:>8d}{tty.Reset} | {name:<30} | {system:<6} | {label:<12} |".format(**locals())
-print "|---------|-----------|----------|--------------------------------|--------|--------------|"
+    print "| {channel:>7d} | {rate_style}{rate:>10.1f}{tty.Reset} | {rate_style}{count:>9d}{tty.Reset} | {name:<30} | {system:<6} | {label:<12} |".format(**locals())
+print "|---------|------------|-----------|--------------------------------|--------|--------------|"
