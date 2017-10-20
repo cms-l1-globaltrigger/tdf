@@ -2,6 +2,8 @@ from tdf.extern import argparse
 from tdf.core import tty
 from tdf.core.xmlmenu import XmlMenu
 
+LUMI_SEC = 23.312
+
 devices = {
     9: 'extcond_amc502.9',
     10: 'extcond_amc502.10',
@@ -18,24 +20,25 @@ args = parser.parse_args(TDF_ARGS)
 if args.menu:
     menu = XmlMenu(args.menu)
 
-# Get rates from memory image
-rates = dump(devices[args.slot], 'payload.rate_cnt_extcond').data
+# Get counts from memory image
+counts = dump(devices[args.slot], 'payload.rate_cnt_extcond').data
 
 # Enumerate
-rates = list(enumerate(rates))
+counts = list(enumerate(counts))
 
 # Sort by rate if required
 if args.sort:
     reverse = dict(asc=False, desc=True)[args.sort]
-    rates.sort(
+    counts.sort(
         key=lambda item: (item[1]),
         reverse=reverse
     )
 
-print "|---------|----------|---------------------------------|--------|--------------|"
-print "| Channel | Rate     | Name                            | System | Label        |"
-print "|---------|----------|---------------------------------|--------|--------------|"
-for channel, rate in rates:
+print "|---------|-----------|----------|--------------------------------|--------|--------------|"
+print "| Channel | Rate (Hz) | Count    | Name                           | System | Label        |"
+print "|---------|-----------|----------|--------------------------------|--------|--------------|"
+for channel, count in counts:
+    rate = count / LUMI_SEC
     name = 'n/a'
     system = ''
     label = ''
@@ -49,5 +52,5 @@ for channel, rate in rates:
             name = item.name[:31]
             system = item.system[:9]
             label = item.label[:12]
-    print "| {channel:>7d} | {rate_style}{rate:>8d}{tty.Reset} | {name:<31} | {system:<6} | {label:<12} |".format(**locals())
-print "|---------|----------|---------------------------------|--------|--------------|"
+    print "| {channel:>7d} | {rate_style}{rate:>9.1f}{tty.Reset} | {rate_style}{count:>8d}{tty.Reset} | {name:<30} | {system:<6} | {label:<12} |".format(**locals())
+print "|---------|-----------|----------|--------------------------------|--------|--------------|"
