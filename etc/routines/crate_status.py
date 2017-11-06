@@ -485,12 +485,16 @@ for device in devices:
     device.dispatch()
 
 # Match MP7 devices
+ref_gt_device = (filter(lambda device: device.is_present, gt_devices) or [None])[0]
 for device in [device for device in gt_devices if device.is_present]:
-    device.match(gt_devices[0])
+    if ref_gt_device:
+        device.match(ref_gt_device)
 
 # Match Extcond devices
+ref_extcond_device = (filter(lambda device: device.is_present, extcond_devices) or [None])[0]
 for device in [device for device in extcond_devices if device.is_present]:
-    device.match(extcond_devices[0])
+    if ref_extcond_device:
+        device.match(ref_extcond_device)
 
 # Build crate
 crate = CrateLayout()
