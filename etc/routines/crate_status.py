@@ -110,7 +110,7 @@ class DeviceProperty(object):
         elif self.is_warning:
             style = tty.Yellow+tty.Bold
         # Apply custom string formatting templates if value not None
-        value = '' if value is None else self.template.format(self.value)
+        value = '' if self.value is None else self.template.format(self.value)
         message = ""
         if self.message:
             message = "{}{:>24} : *** {:<49}".format(os.linesep, "", self.message)
