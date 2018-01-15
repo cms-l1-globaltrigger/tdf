@@ -208,16 +208,17 @@ try:
         configure(device, TDF.ROOT_DIR + "/etc/config/gt_mp7/tp_mux_finor.cfg")
 
     # Input delays (will be obsolete in future)
-    for device in devices:
-        write(device, "gt_mp7_frame.rb.dm.delay_muons", args.hw_delay)
-        write(device, "gt_mp7_frame.rb.dm.delay_eg", args.hw_delay)
-        write(device, "gt_mp7_frame.rb.dm.delay_tau", args.hw_delay)
-        write(device, "gt_mp7_frame.rb.dm.delay_jet", args.hw_delay)
-        write(device, "gt_mp7_frame.rb.dm.delay_ett", args.hw_delay)
-        write(device, "gt_mp7_frame.rb.dm.delay_ht", args.hw_delay)
-        write(device, "gt_mp7_frame.rb.dm.delay_etm", args.hw_delay)
-        write(device, "gt_mp7_frame.rb.dm.delay_htm", args.hw_delay)
-        write(device, "gt_mp7_frame.rb.dm.delay_ext_con", args.hw_delay)
+## HB 2017-09-18: removed dm.vhd from payload.vhd and rb.vhd
+    #for device in devices:
+        #write(device, "gt_mp7_frame.rb.dm.delay_muons", args.hw_delay)
+        #write(device, "gt_mp7_frame.rb.dm.delay_eg", args.hw_delay)
+        #write(device, "gt_mp7_frame.rb.dm.delay_tau", args.hw_delay)
+        #write(device, "gt_mp7_frame.rb.dm.delay_jet", args.hw_delay)
+        #write(device, "gt_mp7_frame.rb.dm.delay_ett", args.hw_delay)
+        #write(device, "gt_mp7_frame.rb.dm.delay_ht", args.hw_delay)
+        #write(device, "gt_mp7_frame.rb.dm.delay_etm", args.hw_delay)
+        #write(device, "gt_mp7_frame.rb.dm.delay_htm", args.hw_delay)
+        #write(device, "gt_mp7_frame.rb.dm.delay_ext_con", args.hw_delay)
 
     # Clear the memories.
     for device in devices:
@@ -244,9 +245,10 @@ try:
 
     ## HB 2016-01-19: bcres_delay for FDL (= 25 [3564-3539 from mp7_ttc_decl.vhd] + 1 [bcres sync.] + "--delay" + 1 [algo-bx-mem output] + 1 [algo spy mem input])
     # NOTE: how about less magic numbers?!
-    delay_bcres_fdl = TDF.ORBIT_LENGTH - args.ttc_bc0_bx + 1 + args.delay + 1 + 1
-    for device in devices:
-        write(device, "gt_mp7_frame.rb.dm.delay_bcres_fdl", delay_bcres_fdl)
+## HB 2017-09-18: removed dm.vhd from payload.vhd and rb.vhd
+    #delay_bcres_fdl = TDF.ORBIT_LENGTH - args.ttc_bc0_bx + 1 + args.delay + 1 + 1
+    #for device in devices:
+        #write(device, "gt_mp7_frame.rb.dm.delay_bcres_fdl", delay_bcres_fdl)
 
     # Start spy
     for device in devices:
