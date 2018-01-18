@@ -75,9 +75,7 @@ if not args.skip_setup:
     mp7butler("buffers", args.device, "loopPlay", "--e", "8,4", "--inject", "file://{data_filename}".format(**locals()))
 
     # Reset and setup the GT logic.
-    configure(args.device, TDF.ROOT_DIR + "/etc/config/gt_mp7/cfg-140/mp7-reset.cfg")
-    configure(args.device, TDF.ROOT_DIR + "/etc/config/gt_mp7/cfg-140/mp7-mux-tx-buffer.cfg")
-    configure(args.device, TDF.ROOT_DIR + "/etc/config/gt_mp7/cfg-140/mp7-delay-manager-values.cfg")
+    configure(args.device, TDF.ROOT_DIR + "/etc/config/gt_mp7/reset.cfg")
 
 ## Create new memory image.
 #image = AlgoBxMemoryImage()
@@ -93,7 +91,7 @@ if not args.skip_setup:
 #prescales[args.algorithm] = 1
 #blockwrite(args.device, 'gt_mp7_gtlfdl.prescale_factor', prescales)
 
-#masks = [0x1] * 512 
+#masks = [0x1] * 512
 #masks[args.algorithm] = 0x1
 #blockwrite(args.device, 'gt_mp7_gtlfdl.masks', masks)
 

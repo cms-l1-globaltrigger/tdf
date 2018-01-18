@@ -28,7 +28,6 @@ DEFAULT_SIZE = 170
 DEFAULT_RX_LINKS = '0-15'
 DEFAULT_TX_LINKS = '16-24'
 DEFAULT_CAP = 0
-DEFAULT_HW_DELAY = 0
 DEFAULT_FED_ID = 1404
 DEFAULT_SLOT = 1-2
 DEFAULT_ALGO_LATENCY = 45
@@ -46,7 +45,6 @@ parser.add_argument('device2', default = 'gt_mp7.2', help = "device defined in c
 parser.add_argument('--loopback', action = 'store_true', help = "run internal loopback mode (without cable)")
 parser.add_argument('--pattern', default = ':counter', metavar = '<source>', help = "source test vector to be loaded into the TX buffers (or ':counter' for generic counter, default)")
 parser.add_argument('--delay', default = DEFAULT_INPUT_DELAY, metavar = '<n>', type = int, help = "delay in BX for incomming data in spy memory, default is '{DEFAULT_INPUT_DELAY}'".format(**locals()))
-parser.add_argument('--hw-delay', default = DEFAULT_HW_DELAY, metavar = '<n>', type = int, help = "delay in BX for incomming data, default is '{DEFAULT_HW_DELAY}'".format(**locals()))
 parser.add_argument('--clksrc', choices = ("external", "internal"), default = "external", help = "clock source, default is 'external'")
 parser.add_argument('--rx-links', '--links', default = DEFAULT_RX_LINKS, metavar = '<n-m>', help = "RX links to be configured, default is '{DEFAULT_RX_LINKS}'".format(**locals()))
 parser.add_argument('--tx-links', default = DEFAULT_TX_LINKS, metavar = '<n-m>', help = "TX links to be configured, default is '{DEFAULT_TX_LINKS}'".format(**locals()))
@@ -235,26 +233,6 @@ if args.loopback:
 run_routine("setup_ugt_triggers", args.device1)
 run_routine("setup_ugt_triggers", args.device2)
 
-if args.hw_delay:
-    write(args.device1, "gt_mp7_frame.rb.dm.delay_muons", args.hw_delay)
-    write(args.device1, "gt_mp7_frame.rb.dm.delay_eg", args.hw_delay)
-    write(args.device1, "gt_mp7_frame.rb.dm.delay_tau", args.hw_delay)
-    write(args.device1, "gt_mp7_frame.rb.dm.delay_jet", args.hw_delay)
-    write(args.device1, "gt_mp7_frame.rb.dm.delay_ett", args.hw_delay)
-    write(args.device1, "gt_mp7_frame.rb.dm.delay_ht", args.hw_delay)
-    write(args.device1, "gt_mp7_frame.rb.dm.delay_etm", args.hw_delay)
-    write(args.device1, "gt_mp7_frame.rb.dm.delay_htm", args.hw_delay)
-    write(args.device1, "gt_mp7_frame.rb.dm.delay_ext_con", args.hw_delay)
-    write(args.device2, "gt_mp7_frame.rb.dm.delay_muons", args.hw_delay)
-    write(args.device2, "gt_mp7_frame.rb.dm.delay_eg", args.hw_delay)
-    write(args.device2, "gt_mp7_frame.rb.dm.delay_tau", args.hw_delay)
-    write(args.device2, "gt_mp7_frame.rb.dm.delay_jet", args.hw_delay)
-    write(args.device2, "gt_mp7_frame.rb.dm.delay_ett", args.hw_delay)
-    write(args.device2, "gt_mp7_frame.rb.dm.delay_ht", args.hw_delay)
-    write(args.device2, "gt_mp7_frame.rb.dm.delay_etm", args.hw_delay)
-    write(args.device2, "gt_mp7_frame.rb.dm.delay_htm", args.hw_delay)
-    write(args.device2, "gt_mp7_frame.rb.dm.delay_ext_con", args.hw_delay)
-
 # Setup GTL algorithm masks.
 if args.algo_bx_mask:
     run_routine("load_bx_masks", args.device1, args.algo_bx_mask)
@@ -279,7 +257,7 @@ if not args.demux:
 if not args.extcond:
     mp7butler("buffers", args.device1, "algoPlay", "--e", "11-15",   "--inject", "generate://empty") #to mask all the AMC502 inputs
     mp7butler("buffers", args.device2, "algoPlay", "--e", "11-15",   "--inject", "generate://empty") #to mask all the AMC502 inputs
-    
+
 # Wait for the run to be started.
 #print ''
 #raw_input('Now start the run. Then press Return to continue!')

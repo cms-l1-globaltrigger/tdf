@@ -16,7 +16,6 @@ DEFAULT_SIZE = 170
 DEFAULT_RX_LINKS = '0-15'
 DEFAULT_TX_LINKS = '0-3'
 DEFAULT_CAP = 0
-DEFAULT_HW_DELAY = 0
 DEFAULT_TTC_BC0_BX = 3539
 
 def result_area():
@@ -29,7 +28,6 @@ parser.add_argument('device', help = "device defined in connections file")
 parser.add_argument('--loopback', action = 'store_true', help = "run internal loopback mode (without cable)")
 parser.add_argument('--pattern', default = ':counter', metavar = '<source>', help = "source test vector to be loaded into the TX buffers (or ':counter' for generic counter, default)")
 parser.add_argument('--delay', default = DEFAULT_INPUT_DELAY, metavar = '<n>', type = int, help = "delay in BX for incomming data in spy memory, default is '{DEFAULT_INPUT_DELAY}'".format(**locals()))
-parser.add_argument('--hw-delay', default = DEFAULT_HW_DELAY, metavar = '<n>', type = int, help = "delay in BX for incomming data, default is '{DEFAULT_HW_DELAY}'".format(**locals()))
 parser.add_argument('--clksrc', choices = ("external", "internal"), default = "internal", help = "clock source, default is 'internal'")
 parser.add_argument('--rx-links', '--links', default = DEFAULT_RX_LINKS, metavar = '<n-m>', help = "RX links to be configured, default is '{DEFAULT_RX_LINKS}'".format(**locals()))
 parser.add_argument('--tx-links', default = DEFAULT_TX_LINKS, metavar = '<n-m>', help = "TX links to be configured, default is '{DEFAULT_TX_LINKS}'".format(**locals()))
@@ -84,20 +82,7 @@ if args.capture_buffers:
     mp7butler("capture", args.device)                  # buffer capture
 
 # Reset and setup the GT logic.
-configure(args.device, TDF.ROOT_DIR + "/etc/config/gt_mp7/cfg-140/mp7-reset.cfg")
-configure(args.device, TDF.ROOT_DIR + "/etc/config/gt_mp7/cfg-140/mp7-mux-tx-buffer.cfg")
-configure(args.device, TDF.ROOT_DIR + "/etc/config/gt_mp7/cfg-140/mp7-delay-manager-values.cfg")
-
-if args.hw_delay:
-    write(args.device, "gt_mp7_frame.rb.dm.delay_muons", args.hw_delay)
-    write(args.device, "gt_mp7_frame.rb.dm.delay_eg", args.hw_delay)
-    write(args.device, "gt_mp7_frame.rb.dm.delay_tau", args.hw_delay)
-    write(args.device, "gt_mp7_frame.rb.dm.delay_jet", args.hw_delay)
-    write(args.device, "gt_mp7_frame.rb.dm.delay_ett", args.hw_delay)
-    write(args.device, "gt_mp7_frame.rb.dm.delay_ht", args.hw_delay)
-    write(args.device, "gt_mp7_frame.rb.dm.delay_etm", args.hw_delay)
-    write(args.device, "gt_mp7_frame.rb.dm.delay_htm", args.hw_delay)
-    write(args.device, "gt_mp7_frame.rb.dm.delay_ext_con", args.hw_delay)
+configure(args.device, TDF.ROOT_DIR + "/etc/config/gt_mp7/reset.cfg")
 
 # Clear the memories.
 clear(args.device, "gt_mp7_frame.simspymem")
@@ -125,7 +110,7 @@ write(args.device, "gt_mp7_frame.rb.dm.delay_bcres_fdl", 3564-args.ttc_bc0_bx + 
 #write(args.device, "gt_mp7_gtlfdl.masks", 0)
 
 # Start spy
-configure(args.device, TDF.ROOT_DIR + "/etc/config/gt_mp7/cfg-140/mp7-spy.cfg")
+configure(args.device, TDF.ROOT_DIR + "/etc/config/gt_mp7/spy_next.cfg")
 
 # Dump the memories.
 dump(args.device, "gt_mp7_frame.simspymem", outfile = TDF_NAME + "_simspymem.dat")

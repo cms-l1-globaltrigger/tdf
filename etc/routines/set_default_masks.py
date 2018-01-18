@@ -8,7 +8,6 @@ args = parser.parse_args(TDF_ARGS)
 
 # Create new memory image.
 image = MasksMemoryImage()
-
 image.setDefault()
 
 # Write memory to firmware.
