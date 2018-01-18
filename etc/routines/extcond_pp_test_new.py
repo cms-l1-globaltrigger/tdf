@@ -117,11 +117,6 @@ for name, pattern in patterns:
     configure(args.target, os.path.join(TDF.ROOT_DIR, "etc/config/extcond_amc502/reset.cfg"))
     configure(args.target, os.path.join(TDF.ROOT_DIR, "etc/config/extcond_amc502/delay-manager-values.cfg"))
 
-    # Overwrite BC_res delay on demand.
-    #if args.bcres_delay is not None:
-        #TDF_WARNING("overwriting BCRES_DELAY:", args.bcres_delay, "BX")
-        #write(args.target, 'gt_mp7_frame.rb.dm.delay_bcres', args.bcres_delay)
-
     # -----------------------------------------------------------------------------
     #  Clear the memories
     # -----------------------------------------------------------------------------

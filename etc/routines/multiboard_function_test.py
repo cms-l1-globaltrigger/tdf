@@ -24,7 +24,6 @@ DEFAULT_SIZE = 170
 DEFAULT_RX_LINKS = '0-15'
 DEFAULT_TX_LINKS = '0-3'
 DEFAULT_CAP = 0
-DEFAULT_HW_DELAY = 0
 DEFAULT_TTC_BC0_BX = 3539
 
 # Keys
@@ -123,7 +122,6 @@ parser.add_argument('--loopback', action='store_true', help="run internal loopba
 parser.add_argument('--rx-links', '--links', default=DEFAULT_RX_LINKS, metavar='<n-m>', help="RX links to be configured, default is '{DEFAULT_RX_LINKS}'".format(**locals()))
 parser.add_argument('--tx-links', default=DEFAULT_TX_LINKS, metavar='<n-m>', help="TX links to be configured, default is '{DEFAULT_TX_LINKS}'".format(**locals()))
 parser.add_argument('--delay', default=DEFAULT_INPUT_DELAY, metavar='<n>', type=int, help="delay in BX for incomming data in spy memory, default is '{DEFAULT_INPUT_DELAY}'".format(**locals()))
-parser.add_argument('--hw-delay', default=DEFAULT_HW_DELAY, metavar='<n>', type=int, help="delay in BX for incomming data, default is '{DEFAULT_HW_DELAY}'".format(**locals()))
 parser.add_argument('--gtl-latency', default=DEFAULT_GTL_LATENCY, metavar='<n>', type=int, help="set latency for GTL logic in BX, default is '{DEFAULT_GTL_LATENCY}'".format(**locals()))
 parser.add_argument('--size', default=DEFAULT_SIZE, metavar='<n>', type=int, help="number of BX to be compared, default is '{DEFAULT_INPUT_DELAY}'".format(**locals()))
 parser.add_argument('--align-to', default=None, metavar='<bx,cycle>', help="overwrite link alignment, default '{DEFAULT_ALIGN_CABLE}', with --loopback option '{DEFAULT_ALIGN_LOOPBACK}' (bx, cycle)".format(**locals()))
@@ -148,6 +146,7 @@ modules = get_modules(menu)
 # Overwrite default device mapping on demand.
 for module, device in (entry.split(':') for entry in args.mapping):
     device_mapping[int(module)] = device
+
 # Compile ordered list of devices used for this menu
 devices = [device_mapping[module] for module in sorted(modules.keys())]
 
@@ -201,24 +200,7 @@ try:
 
     # Reset and setup the GT logic.
     for device in devices:
-        configure(device, TDF.ROOT_DIR + "/etc/config/gt_mp7/cfg-140/mp7-reset.cfg")
-        configure(device, TDF.ROOT_DIR + "/etc/config/gt_mp7/cfg-140/mp7-mux-tx-buffer.cfg")
-        configure(device, TDF.ROOT_DIR + "/etc/config/gt_mp7/cfg-140/mp7-delay-manager-values.cfg")
-        # Configure LEMO outputs to FINOR AMC502
-        configure(device, TDF.ROOT_DIR + "/etc/config/gt_mp7/tp_mux_finor.cfg")
-
-    # Input delays (will be obsolete in future)
-## HB 2017-09-18: removed dm.vhd from payload.vhd and rb.vhd
-    #for device in devices:
-        #write(device, "gt_mp7_frame.rb.dm.delay_muons", args.hw_delay)
-        #write(device, "gt_mp7_frame.rb.dm.delay_eg", args.hw_delay)
-        #write(device, "gt_mp7_frame.rb.dm.delay_tau", args.hw_delay)
-        #write(device, "gt_mp7_frame.rb.dm.delay_jet", args.hw_delay)
-        #write(device, "gt_mp7_frame.rb.dm.delay_ett", args.hw_delay)
-        #write(device, "gt_mp7_frame.rb.dm.delay_ht", args.hw_delay)
-        #write(device, "gt_mp7_frame.rb.dm.delay_etm", args.hw_delay)
-        #write(device, "gt_mp7_frame.rb.dm.delay_htm", args.hw_delay)
-        #write(device, "gt_mp7_frame.rb.dm.delay_ext_con", args.hw_delay)
+        configure(device, TDF.ROOT_DIR + "/etc/config/gt_mp7/reset.cfg")
 
     # Clear the memories.
     for device in devices:
@@ -243,16 +225,9 @@ try:
         if args.prescale_factors:
             run_routine("load_prescale_factors", args.device, args.prescale_factors)
 
-    ## HB 2016-01-19: bcres_delay for FDL (= 25 [3564-3539 from mp7_ttc_decl.vhd] + 1 [bcres sync.] + "--delay" + 1 [algo-bx-mem output] + 1 [algo spy mem input])
-    # NOTE: how about less magic numbers?!
-## HB 2017-09-18: removed dm.vhd from payload.vhd and rb.vhd
-    #delay_bcres_fdl = TDF.ORBIT_LENGTH - args.ttc_bc0_bx + 1 + args.delay + 1 + 1
-    #for device in devices:
-        #write(device, "gt_mp7_frame.rb.dm.delay_bcres_fdl", delay_bcres_fdl)
-
     # Start spy
     for device in devices:
-        configure(device, TDF.ROOT_DIR + "/etc/config/gt_mp7/cfg-140/mp7-spy.cfg")
+        configure(device, TDF.ROOT_DIR + "/etc/config/gt_mp7/spy_next.cfg")
 
     # Dump the memories.
     algo_dumps = {}

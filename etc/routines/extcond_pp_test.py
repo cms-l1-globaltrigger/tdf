@@ -21,7 +21,7 @@ DEFAULT_SOURCE = 'testing_amc502.8'
 DEFAULT_TARGET = 'extcond_amc502.12'
 DEFAULT_CONNECTOR = 0
 DEFAULT_PATTERN = ':counter'
-DEFAULT_INPUT_DELAY = 2 
+DEFAULT_INPUT_DELAY = 2
 DEFAULT_SIZE = 3564
 MODEL = 'r1'
 
@@ -90,11 +90,6 @@ for name, pattern in patterns:
     #load(args.source, "user.dpmem0", args.pattern) # load a pattern into the SIM MEM
     blockwrite(args.source, "payload.simmem", pattern_image.serialize())
     write(args.source, 'payload.module_info.data_mux', 0x1) # set the TFMC output mux to SIM MEM
-
-    # Overwrite BC_res delay on demand.
-    #if args.bcres_delay is not None:
-        #TDF_WARNING("overwriting BCRES_DELAY:", args.bcres_delay, "BX")
-        #write(args.target, 'gt_mp7_frame.rb.dm.delay_bcres', args.bcres_delay)
 
     # -----------------------------------------------------------------------------
     #  Clear the memories

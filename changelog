@@ -1,3 +1,12 @@
+tdf (2.11.0-0) extra; urgency=medium
+
+  * Removed obsolete etc/config files and related routine dependencies.
+  * Removed obsolete delays from routines.
+  * Removed obsolete routines find_bcres_fdl, power_cycle_slot, setup_ugt, startup_mp7.
+  * Reorganized MP7 related etc/config files.
+
+ --  Bernhard Arnold <bernhard.arnold@cern.ch>  Mon, 15 Jan 2018 12:53:55 +0100
+
 tdf (2.10.0-0) extra; urgency=medium
 
   * Added module tdf.core.tty to provide TTY control sequences (colors)

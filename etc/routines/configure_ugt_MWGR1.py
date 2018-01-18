@@ -28,7 +28,6 @@ DEFAULT_SIZE = 170
 DEFAULT_RX_LINKS = '0-10'
 DEFAULT_TX_LINKS = '16-24'
 DEFAULT_CAP = 0
-DEFAULT_HW_DELAY = 0
 DEFAULT_FED_ID = 1404
 DEFAULT_SLOT = 1
 DEFAULT_ALGO_LATENCY = 44
@@ -44,7 +43,6 @@ parser.add_argument('device', default = 'gt_mp7.1', help = "device defined in co
 parser.add_argument('--loopback', action = 'store_true', help = "run internal loopback mode (without cable)")
 parser.add_argument('--pattern', default = ':counter', metavar = '<source>', help = "source test vector to be loaded into the TX buffers (or ':counter' for generic counter, default)")
 parser.add_argument('--delay', default = DEFAULT_INPUT_DELAY, metavar = '<n>', type = int, help = "delay in BX for incomming data in spy memory, default is '{DEFAULT_INPUT_DELAY}'".format(**locals()))
-parser.add_argument('--hw-delay', default = DEFAULT_HW_DELAY, metavar = '<n>', type = int, help = "delay in BX for incomming data, default is '{DEFAULT_HW_DELAY}'".format(**locals()))
 parser.add_argument('--clksrc', choices = ("external", "internal"), default = "external", help = "clock source, default is 'external'")
 parser.add_argument('--rx-links', '--links', default = DEFAULT_RX_LINKS, metavar = '<n-m>', help = "RX links to be configured, default is '{DEFAULT_RX_LINKS}'".format(**locals()))
 parser.add_argument('--tx-links', default = DEFAULT_TX_LINKS, metavar = '<n-m>', help = "TX links to be configured, default is '{DEFAULT_TX_LINKS}'".format(**locals()))
@@ -136,14 +134,14 @@ def spy(amc13, state):
     #print "creating result area directory:", args.output_dir
     #os.makedirs(args.output_dir)
     #os.chdir(args.output_dir)
-    
-if args.configure_tcds:       
+
+if args.configure_tcds:
     print''
     print'Setup TCDS...'
     os.system("python /nfshome0/ugtts/software/tcds/setup-tcds.py")
     print''
 
-if args.configure_amc13:    
+if args.configure_amc13:
     state = "Undefined"
 
     # Sanitise the connection string
@@ -159,7 +157,7 @@ if args.configure_amc13:
     amc13T2 = cm.getDevice('T2')
 
     amc13 = dtm.DTManager(t1=amc13T1, t2=amc13T2)
-        
+
     # Reset AMC13 and set to 'Halted'
     print'Resetting AMC13...'
     state = reset(amc13)
@@ -196,13 +194,13 @@ else:
  	mp7butler("mgts", args.device, "--e", "4-10", "--align-to", "3534,5")
         #mp7butler("mgts", args.device, "--e", "12-15", "--align-to", "3534,5") # for the Ext Cond inputs
 
-if args.ugmt is False:        
+if args.ugmt is False:
     mp7butler("buffers", args.device, "algoPlay", "-e", "0-3",   "--inject", "generate://empty") #to mask all the uGMT inputs
 if args.demux is False:
     mp7butler("buffers", args.device, "algoPlay", "-e", "4-10",   "--inject", "generate://empty") #to mask all the demux inputs
 if args.extcond is False:
     mp7butler("buffers", args.device, "algoPlay", "-e", "11-15",   "--inject", "generate://empty") #to mask all the AMC502 inputs
- 
+
 # Setup for loopback or cable mode.
 if args.loopback:
     data_filename = TDF_NAME + "_in.dat" # Returns "tagged" filename tdf_simple_buffer_loopback_in.dat
@@ -219,23 +217,12 @@ if args.loopback:
 
 run_routine("setup_ugt_triggers", args.device)
 
-if args.hw_delay:
-    write(args.device, "gt_mp7_frame.rb.dm.delay_muons", args.hw_delay)
-    write(args.device, "gt_mp7_frame.rb.dm.delay_eg", args.hw_delay)
-    write(args.device, "gt_mp7_frame.rb.dm.delay_tau", args.hw_delay)
-    write(args.device, "gt_mp7_frame.rb.dm.delay_jet", args.hw_delay)
-    write(args.device, "gt_mp7_frame.rb.dm.delay_ett", args.hw_delay)
-    write(args.device, "gt_mp7_frame.rb.dm.delay_ht", args.hw_delay)
-    write(args.device, "gt_mp7_frame.rb.dm.delay_etm", args.hw_delay)
-    write(args.device, "gt_mp7_frame.rb.dm.delay_htm", args.hw_delay)
-    write(args.device, "gt_mp7_frame.rb.dm.delay_ext_con", args.hw_delay)
-    
 # Setup GTL algorithm masks.
 if args.algo_bx_mask:
     run_routine("load_bx_masks", args.device, args.algo_bx_mask)
 else:
     run_routine("enable_algo_bx_mem", args.device)
-    
+
 mp7butler("easylatency", args.device, "--rx", "0-15", "--tx", args.tx_links, "--algoLatency", args.algo_latency, "--masterLatency", args.master_latency)
 mp7butler("rosetup", args.device, "--bxoffset", "2")
 mp7butler("romenu", args.device, args.readout_menu, "menuUGTA")
@@ -256,7 +243,7 @@ if args.configure_amc13:
     print ''
     if args.spy:
         spy(amc13, state)
-    
+
 # Dump the memories.
 #dump(args.device, "gt_mp7_frame.simspymem", outfile = TDF_NAME + "_simspymem.dat")
 #algo_dump = dump(args.device, "gt_mp7_frame.spymem2_algos", outfile = TDF_NAME + "_spymem2_algos.dat")

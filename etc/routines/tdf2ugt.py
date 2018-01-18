@@ -79,13 +79,7 @@ for i in range(2):
 # -----------------------------------------------------------------------------
 #  Setup GT logic
 # -----------------------------------------------------------------------------
-configure(args.target, os.path.join(TDF.ROOT_DIR, "etc/config/gt_mp7/cfg-140/mp7-reset.cfg"))
-configure(args.target, os.path.join(TDF.ROOT_DIR, "etc/config/gt_mp7/cfg-140/mp7-mux-tx-buffer.cfg"))
-configure(args.target, os.path.join(TDF.ROOT_DIR, "etc/config/gt_mp7/cfg-140/mp7-delay-manager-values.cfg"))
-# Overwrite BC_res delay on demand.
-if args.bcres_delay is not None:
-    TDF_WARNING("overwriting BCRES_DELAY:", args.bcres_delay, "BX")
-    write(args.target, 'gt_mp7_frame.rb.dm.delay_bcres', args.bcres_delay)
+configure(args.target, os.path.join(TDF.ROOT_DIR, "etc/config/gt_mp7/reset.cfg"))
 
 # -----------------------------------------------------------------------------
 #  Clear the memories
@@ -100,7 +94,7 @@ run_routine("enable_algo_bx_mem", args.target)
 # -----------------------------------------------------------------------------
 #  Start spy
 # -----------------------------------------------------------------------------
-configure(args.target, os.path.join(TDF.ROOT_DIR, "etc/config/gt_mp7/cfg-140/mp7-spy.cfg"))
+configure(args.target, os.path.join(TDF.ROOT_DIR, "etc/config/gt_mp7/spy_next.cfg"))
 
 # -----------------------------------------------------------------------------
 #  Dump input data

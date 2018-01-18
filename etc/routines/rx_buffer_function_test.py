@@ -70,9 +70,7 @@ if args.capture_buffers:
     mp7butler("capture", args.device)                  # buffer capture
 
 # Reset and setup the GT logic.
-configure(args.device, TDF.ROOT_DIR + "/etc/config/gt_mp7/cfg-140/mp7-reset.cfg")
-configure(args.device, TDF.ROOT_DIR + "/etc/config/gt_mp7/cfg-140/mp7-mux-tx-buffer.cfg")
-configure(args.device, TDF.ROOT_DIR + "/etc/config/gt_mp7/cfg-140/mp7-delay-manager-values.cfg")
+configure(args.device, TDF.ROOT_DIR + "/etc/config/gt_mp7/reset.cfg")
 
 # Clear the memories.
 clear(args.device, "gt_mp7_frame.simspymem")
@@ -86,7 +84,7 @@ else:
     run_routine("enable_algo_bx_mem", args.device)
 
 # Start spy
-configure(args.device, TDF.ROOT_DIR + "/etc/config/gt_mp7/cfg-140/mp7-spy.cfg")
+configure(args.device, TDF.ROOT_DIR + "/etc/config/gt_mp7/spy_next.cfg")
 
 # Dump the memories.
 dump(args.device, "gt_mp7_frame.simspymem", outfile = TDF_NAME + "_simspymem.dat")
