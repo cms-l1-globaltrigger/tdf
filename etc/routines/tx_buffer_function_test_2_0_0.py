@@ -8,8 +8,6 @@ import os, re
 import time
 import datetime
 
-## HB 2016-04-18: changed DEFAULT_INPUT_DELAY with FW frame v0.0.38, because of additional delay for bcres_d in dm.vhd.
-#DEFAULT_INPUT_DELAY = 9
 DEFAULT_INPUT_DELAY = 8
 DEFAULT_GTL_LATENCY = 6
 DEFAULT_SIZE = 170
@@ -102,12 +100,6 @@ if args.finor_veto_masks:
 # Setup presclae factors.
 if args.prescale_factors:
     run_routine("load_prescale_factors", args.device, args.prescale_factors)
-
-## HB 2016-01-19: bcres_delay for FDL (= 25 [3564-3539 from mp7_ttc_decl.vhd] + 1 [bcres sync.] + "--delay" + 1 [algo-bx-mem output] + 1 [algo spy mem input])
-write(args.device, "gt_mp7_frame.rb.dm.delay_bcres_fdl", 3564-args.ttc_bc0_bx + 1 + args.delay + 1 + 1)
-
-## HB 2016-01-19: test for finor and veto masks
-#write(args.device, "gt_mp7_gtlfdl.masks", 0)
 
 # Start spy
 configure(args.device, TDF.ROOT_DIR + "/etc/config/gt_mp7/spy_next.cfg")
