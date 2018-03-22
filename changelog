@@ -1,3 +1,9 @@
+tdf (2.11.1-1) extra; urgency=medium
+
+  * Upated routine uploadfw_gt for new menu/tarball naming scheme (-dx suffix)
+
+ --  Bernhard Arnold <bernhard.arnold@cern.ch>  Thu, 22 Mar 2018 12:29:37 +0100
+
 tdf (2.11.0-0) extra; urgency=medium
 
   * Removed obsolete etc/config files and related routine dependencies.
