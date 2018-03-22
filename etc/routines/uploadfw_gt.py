@@ -41,14 +41,14 @@ if args.dryrun:
 # Regular expression defining the tarball filename.
 # eg. '(L1Menu_Sample)_v(1000)_(xe)-2015-01-01-T00-00-00.tar.gz'
 regex_filename = re.compile(
-    '(L1Menu_[a-zA-Z][0-9a-zA-Z_]+)_v([0-9a-f]{4})_([0-9a-zA-Z]+)\-20\d\d-\d\d-\d\d-[-T]\d\d-\d\d-\d\d.tar.gz')
+    '(L1Menu_[a-zA-Z][0-9a-zA-Z_]+(:?\-d\d+)?)_v([0-9a-f]{4})_([0-9a-zA-Z]+)\-20\d\d-\d\d-\d\d-[-T]\d\d-\d\d-\d\d.tar.gz')
 
 result = regex_filename.match(os.path.basename(args.filename))
 if not result:
     raise RuntimeError("Invalid filename for `{args.filename}'.\nNot a uGT firmware tarball?".format(**locals()))
 
 # Extracting captured match groups.
-menu, version, boardtype = result.groups()
+menu, suffix, version, boardtype = result.groups()
 
 print
 print " => analyzing metadata:"
