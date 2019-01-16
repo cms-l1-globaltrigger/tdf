@@ -3,11 +3,6 @@
 # Copyright 2013-2014 Bernhard Arnold <bernahrd.arnold@cern.ch>
 #                     Johannes Wittmann <johannes.wittmann@cern.ch>
 #
-# Repository path   : $HeadURL$
-# Last committed    : $Revision$
-# Last changed by   : $Author$
-# Last changed date : $Date$
-#
 
 """This module provides binary manipulation util classes and functions."""
 
@@ -16,8 +11,7 @@ import uuid
 
 __all__ = [ 'bitmask', 'charcount', 'requires', 'bitsplit', 'bitjoin',
     'hexencode', 'hexdecode', 'uuidencode', 'uuiddecode',
-    'BitVector', 'BitStream', 'BitStreamReader', '__doc__', '__version__' ]
-__version__ = '$Revision$'
+    'BitVector', 'BitStream', 'BitStreamReader', '__doc__', ]
 
 def bitmask(n):
     """Calculates bitmask for *n* bits.

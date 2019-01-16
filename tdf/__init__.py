@@ -3,11 +3,6 @@
 # Copyright 2013-2018 Bernhard Arnold <bernahrd.arnold@cern.ch>
 #                     Johannes Wittmann <johannes.wittmann@cern.ch>
 #
-# Repository path   : $HeadURL$
-# Last committed    : $Revision$
-# Last changed by   : $Author$
-# Last changed date : $Date$
-#
 
 """This package implements the Test and Development Framework software suite.
 """

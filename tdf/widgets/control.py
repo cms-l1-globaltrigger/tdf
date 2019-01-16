@@ -3,11 +3,6 @@
 # Copyright 2013-2014 Bernhard Arnold <bernahrd.arnold@cern.ch>
 #                     Johannes Wittmann <johannes.wittmann@cern.ch>
 #
-# Repository path   : $HeadURL$
-# Last committed    : $Revision$
-# Last changed by   : $Author$
-# Last changed date : $Date$
-#
 
 """TDF Control GUI
 A main window containing a central tab widget for handling multiple devices.
@@ -27,8 +22,6 @@ from tdf.core import binutils
 from tdf.core.translator import ItemTranslator
 from tdf.core.settings import TDF
 from tdf.core.cfgreader import ConfigFileReader
-
-__version__ = '$Revision$'
 
 # -----------------------------------------------------------------------------
 #  Helpers.
@@ -935,7 +928,7 @@ class MainWindow(QtGui.QMainWindow):
             "<p>Version %1</p>"
             "<p>Authors: Bernhard Arnold <a href=\"mailto:bernhard.arnold"
             "@cern.ch\">&lt;bernhard.arnold@cern.ch&gt;</a>, Johannes Wittmann <a href=\"mailto:johannes.wittmann"
-            "@cern.ch\">&lt;johannes.wittmann@cern.ch&gt;</a></p>").arg(__version__)
+            "@cern.ch\">&lt;johannes.wittmann@cern.ch&gt;</a></p>").arg(TDF.VERSION)
         )
 
     def loadConnections(self, filename):

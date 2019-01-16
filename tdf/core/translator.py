@@ -3,11 +3,6 @@
 #
 # Copyright 2013-2015 Bernhard Arnold <bernhard.arnold@cern.ch>
 #
-# Repository path   : $HeadURL$
-# Last committed    : $Revision$
-# Last changed by   : $Author$
-# Last changed date : $Date$
-#
 
 """This module contains classes for translating values to formatted strings
 defined in the uHAL address table using an item's 'type' parameter.
@@ -23,8 +18,7 @@ from tdf.extern import yaml
 import datetime
 import os
 
-__all__ = ['ItemTranslator', 'OptItemTranslator', '__doc__', '__version__', ]
-__version__ = '$Revision$'
+__all__ = ['ItemTranslator', 'OptItemTranslator', '__doc__', ]
 
 ENUMS_FILENAME = os.path.join(TDF.SETTINGS_DIR, 'enumerations.yml')
 
