@@ -19,7 +19,7 @@ def parse():
     argp = argparse.ArgumentParser(prog = "tdf-analyze", description = "")
     argp.add_argument('filename', nargs = "*", metavar='<file>', help = "memory dump/image file")
     #argp.add_argument('-v', '--verbose', action = 'store_true', help = "show uHAL logging information")
-    argp.add_argument('-V, --version', action='version', version='%(prog)s {TDF.VERSION}'.format(**globals()))
+    argp.add_argument('-V,', '--version', action='version', version='%(prog)s {TDF.VERSION}'.format(**globals()))
     return argp.parse_args()
 
 # -----------------------------------------------------------------------------
