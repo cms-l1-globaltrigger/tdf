@@ -106,7 +106,7 @@ def exceptionHandler(f):
 class MainWindow(QMainWindow):
 
     AppTitle = "TDF Analyzer"
-    AppVersion = __version__
+    AppVersion = TDF.VERSION
 
     def __init__(self, parent = None):
         super(MainWindow, self).__init__(parent)
