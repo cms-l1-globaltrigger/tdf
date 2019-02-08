@@ -3,11 +3,6 @@
 # Copyright 2013-2014 Bernhard Arnold <bernahrd.arnold@cern.ch>
 #                     Johannes Wittmann <johannes.wittmann@cern.ch>
 #
-# Repository path   : $HeadURL$
-# Last committed    : $Revision$
-# Last changed by   : $Author$
-# Last changed date : $Date$
-#
 
 """This module provides a test vector reader class for Global Trigger input data
 provided by the emulator.
@@ -73,8 +68,7 @@ from filereader import FileReader
 from binutils import charcount, bitsplit, bitjoin
 from settings import TDF
 
-__all__ = [ 'TestVector', 'TestVectorReader', '__doc__', '__version__' ]
-__version__ = '$Revision$'
+__all__ = [ 'TestVector', 'TestVectorReader', '__doc__', ]
 
 class TestVector(object):
     """

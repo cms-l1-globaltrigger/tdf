@@ -2,14 +2,6 @@
 #
 # Copyright 2013-2016 Bernhard Arnold <bernahrd.arnold@cern.ch>
 #
-# Repository path   : $HeadURL$
-# Last committed    : $Revision$
-# Last changed by   : $Author$
-# Last changed date : $Date$
-#
-# Changelog:
-# BA 2016-05-30: added NOTICE logging level
-#
 
 """Custom logger module providing a set of logging functions dedicated to
 different logging levels.

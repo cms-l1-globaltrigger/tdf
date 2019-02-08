@@ -3,11 +3,6 @@
 #
 # Copyright 2013-2015 Bernhard Arnold <bernahrd.arnold@cern.ch>
 #
-# Repository path   : $HeadURL: svn://heros.hephy.oeaw.ac.at/GlobalTriggerUpgrade/software/tdf/trunk/setup.py $
-# Last committed    : $Revision: 4010 $
-# Last changed by   : $Author: arnold $
-# Last changed date : $Date: 2015-05-28 16:50:01 +0200 (Thu, 28 May 2015) $
-#
 
 from distutils.core import setup
 from distutils.command.build import build

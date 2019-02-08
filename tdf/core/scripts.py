@@ -3,11 +3,6 @@
 #
 # Copyright 2013-2014 Bernhard Arnold <bernahrd.arnold@cern.ch>
 #
-# Repository path   : $HeadURL$
-# Last committed    : $Revision$
-# Last changed by   : $Author$
-# Last changed date : $Date$
-#
 
 """ code review required
 """

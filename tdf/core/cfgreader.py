@@ -3,11 +3,6 @@
 # Copyright 2013-2014 Bernhard Arnold <bernahrd.arnold@cern.ch>
 #                     Johannes Wittmann <johannes.wittmann@cern.ch>
 #
-# Repository path   : $HeadURL$
-# Last committed    : $Revision$
-# Last changed by   : $Author$
-# Last changed date : $Date$
-#
 
 """
 Configuration device reader.
@@ -24,8 +19,7 @@ Empty lines and lines beginning with #, ! or * (comments) are ignored.
 
 """
 
-__all__ = ['ConfigFileReader', '__doc__', '__version__', ]
-__version__ = '$Revision$'
+__all__ = ['ConfigFileReader', '__doc__', ]
 
 class ConfigFileReader(object):
     """Configuration file reader. Throws runtime errors.

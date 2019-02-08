@@ -4,11 +4,6 @@
 # Copyright 2013-2014 Bernhard Arnold <bernahrd.arnold@cern.ch>
 #                     Johannes Wittmann <johannes.wittmann@cern.ch>
 #
-# Repository path   : $HeadURL: svn://heros.hephy.oeaw.ac.at/GlobalTriggerUpgrade/software/tdf/trunk/Makefile $
-# Last committed    : $Revision: 3622 $
-# Last changed by   : $Author: arnold $
-# Last changed date : $Date: 2015-01-09 12:30:00 +0100 (Fri, 09 Jan 2015) $
-#
 
 # Package
 PKG_NAME = tdf

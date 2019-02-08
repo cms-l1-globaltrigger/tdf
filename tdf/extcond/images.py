@@ -3,11 +3,6 @@
 # Copyright 2013-2014 Bernhard Arnold <bernahrd.arnold@cern.ch>
 #                     Johannes Wittmann <johannes.wittmann@cern.ch>
 #
-# Repository path   : $HeadURL$
-# Last committed    : $Revision$
-# Last changed by   : $Author$
-# Last changed date : $Date$
-#
 
 """ExtCond specific memory images.
 """
@@ -26,8 +21,6 @@ from tdf.core.binutils import (
 )
 import json
 import sys
-
-__version__ = '$Revision$'
 
 # Blocksize of 32 bit simulation and spy memories.
 MEMORY_BLOCKSIZE = 4096

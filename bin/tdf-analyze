@@ -3,17 +3,11 @@
 #
 # Copyright 2013-2015 Bernhard Arnold <bernahrd.arnold@cern.ch>
 #
-# Repository path   : $HeadURL: svn://heros.hephy.oeaw.ac.at/GlobalTriggerUpgrade/software/tdf/trunk/bin/tdf-control $
-# Last committed    : $Revision: 3750 $
-# Last changed by   : $Author: arnold $
-# Last changed date : $Date: 2015-02-13 13:04:45 +0100 (Fri, 13 Feb 2015) $
-#
 
 from PyQt4 import QtCore, QtGui
 from tdf.core import TDF
 from tdf.extern import argparse
 from tdf.widgets.analyze import MainWindow
-from tdf.widgets.analyze import __version__
 import sys, os
 
 # -----------------------------------------------------------------------------
@@ -25,7 +19,7 @@ def parse():
     argp = argparse.ArgumentParser(prog = "tdf-analyze", description = "")
     argp.add_argument('filename', nargs = "*", metavar='<file>', help = "memory dump/image file")
     #argp.add_argument('-v', '--verbose', action = 'store_true', help = "show uHAL logging information")
-    argp.add_argument('-V, --version', action='version', version='%(prog)s {__version__}'.format(**globals()))
+    argp.add_argument('-V,', '--version', action='version', version='%(prog)s {TDF.VERSION}'.format(**globals()))
     return argp.parse_args()
 
 # -----------------------------------------------------------------------------

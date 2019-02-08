@@ -3,11 +3,6 @@
 #
 # Copyright 2013-2017 Bernhard Arnold <bernahrd.arnold@cern.ch>
 #
-# Repository path   : $HeadURL$
-# Last committed    : $Revision$
-# Last changed by   : $Author$
-# Last changed date : $Date$
-#
 
 """
 """
@@ -36,8 +31,7 @@ from tdf.core.binutils import charcount
 from tdf.core.scripts import ScriptRunner
 from tdf.core.logger import *
 
-__all__ = ['TDFCore', '__doc__', '__version__', ]
-__version__ = '$Revision$'
+__all__ = ['TDFCore', '__doc__', ]
 
 MP7_EXECUTABLE = 'mp7butler.py'
 """Executable name for the MP7 butler software."""

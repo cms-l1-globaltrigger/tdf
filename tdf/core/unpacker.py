@@ -2,19 +2,12 @@
 #
 # Copyright 2013-2015 Bernhard Arnold <bernahrd.arnold@cern.ch>
 #
-# Repository path   : $HeadURL$
-# Last committed    : $Revision$
-# Last changed by   : $Author$
-# Last changed date : $Date$
-#
 
 """Base classes for custom readout record unpackers.
 """
 
 from tdf.core.binutils import bitmask, charcount
 import re, sys
-
-__version__ = '$Revision$'
 
 TTY_WIDTH = 128
 TTY_HR_CHAR = '-'

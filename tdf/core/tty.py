@@ -3,11 +3,6 @@
 #
 # Copyright 2013-2017 Bernhard Arnold <bernahrd.arnold@cern.ch>
 #
-# Repository path   : $HeadURL: https://svn.cern.ch/reps/cactus/trunk/cactusprojects/ugt/tdf/tdf/core/core.py $
-# Last committed    : $Revision: 49552 $
-# Last changed by   : $Author: arnold $
-# Last changed date : $Date: 2017-08-22 16:22:41 +0200 (Tue, 22 Aug 2017) $
-#
 
 """
 TTY colors and control sequences.
