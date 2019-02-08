@@ -11,19 +11,14 @@
 
 from distutils.core import setup
 from distutils.command.build import build
+import importlib
 import glob, re, os.path
 import subprocess
 
-def get_version(filename):
-    """Fetch version from python module.
-        >>> __version__ = '1.2.3'
-    """
-    with open(filename) as fs:
-        for line in fs:
-            result = re.match('\s*__version__\s*\=\s*[\'\"]([0-9]+\.[0-9]+\.[0-9]+)[\'\"]', line)
-            if result:
-                return result.group(1)
-    raise RuntimeError("unable to fetch __version__ from {filename}".format(filename))
+def load_version(module):
+    """Returns __version__ from python module."""
+    module = importlib.import_module('tdf')
+    return module.__version__
 
 def glob_dirs(needle):
     """Returns list of subdirectories looked up by search needle."""
@@ -58,7 +53,7 @@ class build_hook(build):
 setup(
     cmdclass = {'build' : build_hook, },
     name = 'tdf',
-    version = get_version('tdf/__init__.py'),
+    version = load_version('tdf'),
     description = "TDF - Global Trigger Test and Development Framework",
     author = "Bernhard Arnold",
     author_email = "bernhard.arnold@cern.ch",
@@ -72,7 +67,7 @@ setup(
     ),
     scripts = (
         'bin/tdf',
-        'bin/tdf-analyzer',
+        'bin/tdf-analyze',
         'bin/tdf-control',
     ),
     setup_requires = [],
