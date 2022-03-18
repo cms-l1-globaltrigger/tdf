@@ -215,7 +215,8 @@ try:
         if args.algo_bx_mask:
             run_routine("load_bx_masks", device, args.algo_bx_mask)
         else:
-            run_routine("enable_algo_bx_mem", device)
+#            run_routine("set_default_algo_bx_masks", device)
+            run_routine("load_algo_bx_masks_default", device)
 
     # Setup finor/veto masks.
     for device in devices:
