@@ -44,6 +44,8 @@ device_mapping = {
 # Ignored algorithm names.
 ignored_algorithms = [
     'L1_FirstBunchInTrain',
+    'L1_SecondLastBunchInTrain',
+    'L1_SecondBunchInTrain',
 ]
 
 def mkfilename(module, name, prefix=TDF_NAME):
@@ -204,7 +206,7 @@ try:
 
     # Clear the memories.
     for device in devices:
-        clear(device, "gt_mp7_frame.simspymem")
+#        clear(device, "gt_mp7_frame.simspymem")
         clear(device, "gt_mp7_frame.spymem2_algos")
         clear(device, "gt_mp7_frame.spymem2_finor")
 
@@ -220,10 +222,18 @@ try:
         if args.finor_veto_masks:
             run_routine("load_finor_veto_masks", device, args.finor_veto_masks)
 
-    # Setup presclae factors.
+    # Setup prescale factors.
     for device in devices:
         if args.prescale_factors:
-            run_routine("load_prescale_factors", args.device, args.prescale_factors)
+            run_routine("load_prescale_factors", device, args.prescale_factors)
+	else:
+            run_routine("load_prescale_factors_default", device)
+        
+    # Generate prescale factor update pulse.
+    for device in devices:
+        configure(device, TDF.ROOT_DIR + "/etc/config/gt_mp7/update_factor_pulse.cfg")
+	    
+    run_routine("wait_4_next_lumi_section", 'gt_mp7.6')
 
     # Start spy
     for device in devices:
@@ -233,7 +243,7 @@ try:
     algo_dumps = {}
     finor_dumps = {}
     for module, device in enumerate(devices):
-        dump(device, "gt_mp7_frame.simspymem", outfile=mkfilename(module, "simspymem.dat"))
+#        dump(device, "gt_mp7_frame.simspymem", outfile=mkfilename(module, "simspymem.dat"))
         algo_dumps[module] = dump(device, "gt_mp7_frame.spymem2_algos", outfile=mkfilename(module, "spymem2_algos.dat"))
         finor_dumps[module] = dump(device, "gt_mp7_frame.spymem2_finor", outfile=mkfilename(module, "spymem2_finor.dat"))
 
@@ -250,14 +260,14 @@ try:
     # Compare the dumps.
     basename = os.path.splitext(os.path.basename(args.testvector))[0]
     tv_filename = "{basename}_module_{module}.txt".format(**locals())
-    print ""
-    print "Summary of input links"
-    for module, device in enumerate(devices):
-        print ""
-        print "Module {module} ({device}):".format(**locals())
-        compare(device, "gt_mp7_frame.simspymem", mkfilename(module, "simspymem.dat"), args.testvector, offset=args.delay, size=args.size)
+#    print ""
+#    print "Summary of input links"
+#    for module, device in enumerate(devices):
+#        print ""
+#        print "Module {module} ({device}):".format(**locals())
+#        compare(device, "gt_mp7_frame.simspymem", mkfilename(module, "simspymem.dat"), args.testvector, offset=args.delay, size=args.size)
 
-    print ""
+#    print ""
     print "-------------------------------------------------------"
     print ""
     print "Algo & finor summary (all modules merged):"
@@ -315,7 +325,9 @@ try:
         TDF_WARNING(ignored, "algorithms ignored.")
     if errors:
         TDF_ERROR(errors, "errors occured.")
-
+    else:
+        TDF_NOTICE("Success!!!")
+        
 # Clean up on exception
 except:
     TDF_NOTICE("removing temporary directory:", temp_dir)
