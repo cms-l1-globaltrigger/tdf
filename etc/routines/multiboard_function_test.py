@@ -206,7 +206,7 @@ try:
 
     # Clear the memories.
     for device in devices:
-#        clear(device, "gt_mp7_frame.simspymem")
+        clear(device, "gt_mp7_frame.simspymem")
         clear(device, "gt_mp7_frame.spymem2_algos")
         clear(device, "gt_mp7_frame.spymem2_finor")
 
@@ -215,7 +215,6 @@ try:
         if args.algo_bx_mask:
             run_routine("load_bx_masks", device, args.algo_bx_mask)
         else:
-#            run_routine("set_default_algo_bx_masks", device)
             run_routine("load_algo_bx_masks_default", device)
 
     # Setup finor/veto masks.
@@ -244,7 +243,7 @@ try:
     algo_dumps = {}
     finor_dumps = {}
     for module, device in enumerate(devices):
-#        dump(device, "gt_mp7_frame.simspymem", outfile=mkfilename(module, "simspymem.dat"))
+        dump(device, "gt_mp7_frame.simspymem", outfile=mkfilename(module, "simspymem.dat"))
         algo_dumps[module] = dump(device, "gt_mp7_frame.spymem2_algos", outfile=mkfilename(module, "spymem2_algos.dat"))
         finor_dumps[module] = dump(device, "gt_mp7_frame.spymem2_finor", outfile=mkfilename(module, "spymem2_finor.dat"))
 
@@ -261,14 +260,14 @@ try:
     # Compare the dumps.
     basename = os.path.splitext(os.path.basename(args.testvector))[0]
     tv_filename = "{basename}_module_{module}.txt".format(**locals())
-#    print ""
-#    print "Summary of input links"
-#    for module, device in enumerate(devices):
-#        print ""
-#        print "Module {module} ({device}):".format(**locals())
-#        compare(device, "gt_mp7_frame.simspymem", mkfilename(module, "simspymem.dat"), args.testvector, offset=args.delay, size=args.size)
+    print ""
+    print "Summary of input links"
+    for module, device in enumerate(devices):
+        print ""
+        print "Module {module} ({device}):".format(**locals())
+        compare(device, "gt_mp7_frame.simspymem", mkfilename(module, "simspymem.dat"), args.testvector, offset=args.delay, size=args.size)
 
-#    print ""
+    print ""
     print "-------------------------------------------------------"
     print ""
     print "Algo & finor summary (all modules merged):"
