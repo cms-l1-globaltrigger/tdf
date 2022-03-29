@@ -27,3 +27,6 @@ Software for communication with AMC boards (MP7 and AMC502) on MTCA crates of Gl
   
 3. Copy all file from unzipped directory to tdf directory
   > cp -r "dir unzipped file"/* software/tdf/.
+
+4. Delete unzipped directory and zip file
+  > rm -rf "dir unzipped file" "zip file"
