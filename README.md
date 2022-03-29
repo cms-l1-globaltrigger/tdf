@@ -9,14 +9,14 @@ Software for communication with AMC boards on MTCA crates.
 - click on "CODE" button and on "Download ZIP"
 
 * Go to local download directory
-$ scp <path zip file> <user>@lxplus.cern.ch:.
+  $ scp <path zip file> <user>@lxplus.cern.ch:.
 
 * Login on lxplus
-$ scp <zip file> <user>@cmsusr:.
+  $ scp <zip file> <user>@cmsusr:.
 
 * login test or production crate
-$ cp ../<user>/<zip file> .
-$ unzip <zip file>
-$ rm -rf software/tdf
-$ mkdir software/tdf
-$ cp -r <dir unzipped file>/* software/tdf/.
+  $ cp ../<user>/<zip file> .
+  $ unzip <zip file>
+  $ rm -rf software/tdf
+  $ mkdir software/tdf
+  $ cp -r <dir unzipped file>/* software/tdf/.
