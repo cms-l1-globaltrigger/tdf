@@ -5,7 +5,7 @@ Software for communication with AMC boards (MP7 and AMC502) on MTCA crates of Gl
 ## Installation of TDF on test and production crates
 
 * Go to TDF repo web side
-1. Select branch for installation
+1. Select branch or tag for installation
 2. Click on "CODE" button and on "Download ZIP"
 
 * Go to local download directory
