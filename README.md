@@ -1,6 +1,6 @@
-# Test and Development Framework (TDF)
+# Test and Development Framework (TDF) for the level 1 global trigger
 
-Software for communication with AMC boards (MP7 and AMC502) on MTCA crates.
+Software for communication with AMC boards (MP7 and AMC502) on MTCA crates of Global Trigger.
 
 ## Installation of TDF on test and production crates
 
