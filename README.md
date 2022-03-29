@@ -1,22 +1,29 @@
 # Test and Development Framework (TDF)
 
-Software for communication with AMC boards on MTCA crates.
+Software for communication with AMC boards (MP7 and AMC502) on MTCA crates.
 
 ## Installation of TDF on test and production crates
 
 * Go to TDF repo web side
-- select branch for installation
-- click on "CODE" button and on "Download ZIP"
+1. Select branch for installation
+2. Click on "CODE" button and on "Download ZIP"
 
 * Go to local download directory
-  $ scp <path zip file> <user>@lxplus.cern.ch:.
+1. Copy zip file to lxplus
+  > scp "path zip file" "user"@lxplus.cern.ch:.
 
 * Login on lxplus
-  $ scp <zip file> <user>@cmsusr:.
+1. Copy zip file to cmsusr
+  > scp "zip file" "user"@cmsusr:.
 
-* login test or production crate
-  $ cp ../<user>/<zip file> .
-  $ unzip <zip file>
-  $ rm -rf software/tdf
-  $ mkdir software/tdf
-  $ cp -r <dir unzipped file>/* software/tdf/.
+* Login test or production crate
+1. Copy zip file to "crate" and unzip file 
+  > cp ../"user"/"zip file" .
+  
+  > unzip "zip file"
+  
+2. Delete all files of tdf directory
+  > rm -rf software/tdf/*
+  
+3. Copy all file from unzipped directory to tdf directory
+  > cp -r "dir unzipped file"/* software/tdf/.
