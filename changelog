@@ -5,7 +5,13 @@ tdf (2.12.0-0) extra; urgency=medium
 
  --  Herbert Bergauer <herbert.bergauer@cern.ch> Thu, 24 Mar 2022
 
-tdf (2.11.1-1) extra; urgency=medium
+tdf (2.11.2-0) extra; urgency=medium
+
+  * Fixed broken setup.py
+
+ --  Bernhard Arnold <bernhard.arnold@cern.ch>  Wed, 2 Feb 2019
+ 
+ tdf (2.11.1-1) extra; urgency=medium
 
   * Updated routine uploadfw_gt for new menu/tarball naming scheme (-dx suffix)
 
