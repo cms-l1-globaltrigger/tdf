@@ -79,11 +79,12 @@ class FancyHeader(object):
 
 class DeviceProperty(object):
 
-    def __init__(self, name, label=None, callback=None, template=None):
+    def __init__(self, name, label=None, callback=None, template=None, version_format=False):
         self.name = name
         self.label = label or name
         self.callback = callback
         self.template = template or "{}"
+        self.version_format = False
         # Retrieved information
         self.value = None
         self.is_warning = False
@@ -98,6 +99,14 @@ class DeviceProperty(object):
             self.value = None
             self.is_error = True
 
+    def padded_hex(val, l):
+        hex_result = hex(val)[2:] # remove '0x' from beginning of str
+        num_hex_chars = len(hex_result)
+        lead_zeros = '0' * (l - num_hex_chars) # may not get used.
+        return ('0x' + hex_result if num_hex_chars == l else
+                '0x' + lead_zeros + hex_result if num_hex_chars < l else
+                None)
+
     def render(self):
         """Render property for device listing.
         >>> print property.render()
@@ -109,8 +118,13 @@ class DeviceProperty(object):
             style = tty.Red+tty.Bold
         elif self.is_warning:
             style = tty.Yellow+tty.Bold
-        # Apply custom string formatting templates if value not None
-        value = '' if self.value is None else self.template.format(self.value)
+
+        if self.version_format:
+            value=padded_hex(self.value,8)
+        else:
+            # Apply custom string formatting templates if value not None
+            value = '' if self.value is None else self.template.format(self.value)
+
         message = ""
         if self.message:
             message = "{}{:>24} : *** {:<49}".format(os.linesep, "", self.message)
@@ -138,8 +152,8 @@ class Device(object):
         properties_order = self.properties_order + unordered
         return sorted(self.properties.values(), key=lambda prop: properties_order.index(prop.name))
 
-    def add_property(self, name, label=None, callback=None, template=None):
-        prop = DeviceProperty(name, label, callback, template)
+    def add_property(self, name, label=None, callback=None, template=None, version_format=False):
+        prop = DeviceProperty(name, label, callback, template, version_format)
         self.properties[name] = prop
         setattr(self, name, prop)
 
@@ -255,7 +269,7 @@ class GtDevice(MP7Device):
             label="GTL version",
             callback=lambda: read(self.device, 'gt_mp7_gtlfdl.read_versions.gtl_fw_version', translate=True)
         )
-	self.add_property(
+        self.add_property(
             name='fdl_version',
             label="FDL version",
             callback=lambda: read(self.device, 'gt_mp7_gtlfdl.read_versions.fdl_fw_version', translate=True)
@@ -263,11 +277,12 @@ class GtDevice(MP7Device):
         self.add_property(
             name='frame_version',
             label="frame version",
+            version_format=True,
             callback=lambda: read(self.device, 'gt_mp7_gtlfdl.read_versions.svn_revision_number', translate=True)
         )
 
         self.properties_order = [
-            'module_id',            
+            'module_id',
             'menu_name',
             'menu_uuid',
             'menu_uuid_fw',
