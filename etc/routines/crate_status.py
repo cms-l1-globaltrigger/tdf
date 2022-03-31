@@ -260,6 +260,11 @@ class GtDevice(MP7Device):
             label="FDL version",
             callback=lambda: read(self.device, 'gt_mp7_gtlfdl.read_versions.fdl_fw_version', translate=True)
         )
+        self.add_property(
+            name='frame_version',
+            label="frame version",
+            callback=lambda: read(self.device, 'gt_mp7_gtlfdl.read_versions.svn_revision_number', translate=True)
+        )
 
         self.properties_order = [
             'menu_name',
@@ -274,6 +279,7 @@ class GtDevice(MP7Device):
             'payload_version',
             'gtl_version',
             'fdl_version',
+            'frame_version',
         ] + self.properties_order
 
     def dispatch(self):

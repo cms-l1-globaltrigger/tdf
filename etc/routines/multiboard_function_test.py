@@ -44,6 +44,8 @@ device_mapping = {
 # Ignored algorithm names.
 ignored_algorithms = [
     'L1_FirstBunchInTrain',
+    'L1_SecondLastBunchInTrain',
+    'L1_SecondBunchInTrain',
 ]
 
 def mkfilename(module, name, prefix=TDF_NAME):
@@ -220,10 +222,18 @@ try:
         if args.finor_veto_masks:
             run_routine("load_finor_veto_masks", device, args.finor_veto_masks)
 
-    # Setup presclae factors.
+    # Setup prescale factors.
     for device in devices:
         if args.prescale_factors:
-            run_routine("load_prescale_factors", args.device, args.prescale_factors)
+            run_routine("load_prescale_factors", device, args.prescale_factors)
+	else:
+            run_routine("load_prescale_factors_default", device)
+        
+    # Generate prescale factor update pulse.
+    for device in devices:
+        configure(device, TDF.ROOT_DIR + "/etc/config/gt_mp7/update_factor_pulse.cfg")
+	    
+    run_routine("wait_4_next_lumi_section", 'gt_mp7.6')
 
     # Start spy
     for device in devices:
@@ -315,7 +325,9 @@ try:
         TDF_WARNING(ignored, "algorithms ignored.")
     if errors:
         TDF_ERROR(errors, "errors occured.")
-
+    else:
+        TDF_NOTICE("Success!!!")
+        
 # Clean up on exception
 except:
     TDF_NOTICE("removing temporary directory:", temp_dir)
