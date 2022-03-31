@@ -22,7 +22,7 @@ def all_equal(items):
     return len(set(items)) == 1
 
 def is_device_present(device):
-    """Returns True if device is accessible (assumingly present)."""
+    """Retruns True if device is accessible (assumingly present)."""
     try:
         read(device, 'ctrl.id')
     except uhal._core.exception:
@@ -30,14 +30,14 @@ def is_device_present(device):
     return True
 
 def mp7_version(device):
-    """Returns MP7 firmware version."""
+    """Retruns MP7 firmware version."""
     a = read(device, 'ctrl.id.fwrev.a')
     b = read(device, 'ctrl.id.fwrev.b')
     c = read(device, 'ctrl.id.fwrev.c')
     return "{0}.{1}.{2}".format(a, b, c)
 
 def mp7_design(device):
-    """Returns MP7 firmware design version."""
+    """Retruns MP7 firmware design version."""
     design = read(device, 'ctrl.id.fwrev.design')
     return design
 
@@ -52,7 +52,7 @@ RedStyle = tty.White + tty.Bold + tty.BackgroundRed
 BlueStyle = tty.White + tty.Bold + tty.BackgroundBlue
 
 def get_style(item):
-    """Returns style for fancy header according to error level of item."""
+    """Retruns style for fancy header according to error level of item."""
     if item.is_error:
         return RedStyle
     if item.is_warning:
@@ -79,12 +79,11 @@ class FancyHeader(object):
 
 class DeviceProperty(object):
 
-    def __init__(self, name, label=None, callback=None, template=None, version_format=False):
+    def __init__(self, name, label=None, callback=None, template=None):
         self.name = name
         self.label = label or name
         self.callback = callback
         self.template = template or "{}"
-        self.version_format = version_format
         # Retrieved information
         self.value = None
         self.is_warning = False
@@ -110,17 +109,8 @@ class DeviceProperty(object):
             style = tty.Red+tty.Bold
         elif self.is_warning:
             style = tty.Yellow+tty.Bold
-
-        if self.version_format:
-            val="0x{:08x}".format(self.value)
-            a=int(val[5:6])
-            b=int(val[7:8])
-            c=int(val[9:10])
-            value = "{0}.{1}.{2}".format(a, b, c)
-        else:
-            # Apply custom string formatting templates if value not None
-            value = '' if self.value is None else self.template.format(self.value)
-
+        # Apply custom string formatting templates if value not None
+        value = '' if self.value is None else self.template.format(self.value)
         message = ""
         if self.message:
             message = "{}{:>24} : *** {:<49}".format(os.linesep, "", self.message)
@@ -148,8 +138,8 @@ class Device(object):
         properties_order = self.properties_order + unordered
         return sorted(self.properties.values(), key=lambda prop: properties_order.index(prop.name))
 
-    def add_property(self, name, label=None, callback=None, template=None, version_format=False):
-        prop = DeviceProperty(name, label, callback, template, version_format)
+    def add_property(self, name, label=None, callback=None, template=None):
+        prop = DeviceProperty(name, label, callback, template)
         self.properties[name] = prop
         setattr(self, name, prop)
 
@@ -175,7 +165,7 @@ class MP7Device(Device):
 
     def __init__(self, device):
         super(MP7Device, self).__init__(device)
-        self.add_property('mp7_firmware', "MP7 firmware version", self._mp7_version)
+        self.add_property('mp7_firmware', "MP7 firmware", self._mp7_version)
         self.add_property('mp7_design', "MP7 design", self._mp7_design)
         self.properties_order = [
             'mp7_firmware',
@@ -183,7 +173,7 @@ class MP7Device(Device):
         ]
 
     def _mp7_present(self):
-        """Returns True if device is accessible (assumingly present)."""
+        """Retruns True if device is accessible (assumingly present)."""
         try:
             read(self.device, 'ctrl.id')
         except uhal._core.exception:
@@ -191,14 +181,14 @@ class MP7Device(Device):
         return True
 
     def _mp7_version(self):
-        """Returns MP7 firmware version."""
+        """Retruns MP7 firmware version."""
         a = read(self.device, 'ctrl.id.fwrev.a')
         b = read(self.device, 'ctrl.id.fwrev.b')
         c = read(self.device, 'ctrl.id.fwrev.c')
         return "{0}.{1}.{2}".format(a, b, c)
 
     def _mp7_design(self):
-        """Returns MP7 firmware design version."""
+        """Retruns MP7 firmware design version."""
         design = read(self.device, 'ctrl.id.fwrev.design')
         return design
 
@@ -234,7 +224,7 @@ class GtDevice(MP7Device):
         )
         self.add_property(
             name='producer_version',
-            label="VHDL producer version",
+            label="VHDL producer",
             callback=lambda: read(self.device, 'gt_mp7_gtlfdl.read_versions.l1tm_compiler_version', translate=True)
         )
         self.add_property(
@@ -251,13 +241,13 @@ class GtDevice(MP7Device):
         )
         self.add_property(
             name='build_version',
-            label="build version",
+            label="uGT build",
             template="0x{:04x}",
             callback=lambda: read(self.device, 'gt_mp7_frame.module_info.build_version')
         )
         self.add_property(
             name='payload_version',
-            label="uGT payload version",
+            label="payload (frame) version",
             callback=lambda: read(self.device, 'gt_mp7_frame.module_info.frame_version', translate=True)
         )
         self.add_property(
@@ -273,24 +263,23 @@ class GtDevice(MP7Device):
         self.add_property(
             name='frame_version',
             label="frame version",
-            version_format=True,
-            callback=lambda: read(self.device, 'gt_mp7_gtlfdl.read_versions.svn_revision_number')
+            callback=lambda: read(self.device, 'gt_mp7_gtlfdl.read_versions.svn_revision_number', translate=True)
         )
 
         self.properties_order = [
-            'module_id',
             'menu_name',
             'menu_uuid',
             'menu_uuid_fw',
+            'module_id',
             'producer_version',
             'timestamp',
             'hostname',
             'username',
             'build_version',
             'payload_version',
-            'frame_version',
             'gtl_version',
             'fdl_version',
+            'frame_version',
         ] + self.properties_order
 
     def dispatch(self):
@@ -358,7 +347,7 @@ class FinorDevice(AMC502Device):
         )
         self.add_property(
             name='username',
-            label="username (creator)",
+            label="username (crator)",
             callback=lambda: read(self.device, 'payload.module_info.username', translate=True)
         )
 
